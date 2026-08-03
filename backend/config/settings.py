@@ -121,3 +121,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "accounts.User"
+
+# Application settings
+PENDING_REGISTRATION_EXPIRY_DAYS = int(
+    os.getenv("PENDING_REGISTRATION_EXPIRY_DAYS", 7)
+)
+
+OTP_EXPIRY_MINUTES = int(
+    os.getenv("OTP_EXPIRY_MINUTES", 5)
+)
