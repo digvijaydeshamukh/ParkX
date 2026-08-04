@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from datetime import timedelta
 from django.conf import settings
+from .validators import phone_number_validator
 
 # Create your models here.
 class Roles(models.TextChoices):
@@ -19,7 +20,8 @@ class User(AbstractUser):
 
     phone = models.CharField(
         unique=True,
-        max_length=15
+        max_length=15,
+        validators=[phone_number_validator]
     )
 
     profile_image = models.ImageField(
@@ -39,7 +41,7 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.username
+        return self.email
 
 def get_expiry_time():
     return timezone.now() + timedelta(days=settings.PENDING_REGISTRATION_EXPIRY_DAYS)
@@ -47,17 +49,12 @@ def get_expiry_time():
 #Pending Registratin Model
 class PendingRegistration(models.Model):
     first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
 
-    username = models.CharField(
-         max_length=150,
-         unique=True,
-         db_index=True
-    )
+    last_name = models.CharField(max_length=150)
 
     email = models.EmailField(unique=True,db_index=True)
 
-    phone = models.CharField(max_length=15, unique=True)
+    phone = models.CharField(max_length=15, unique=True, validators=[phone_number_validator])
 
     password = models.CharField(max_length=255)
 
@@ -67,7 +64,7 @@ class PendingRegistration(models.Model):
          default=Roles.VEHICLE_OWNER
     )
 
-    otp = models.CharField(max_length=255)
+    otp_hash = models.CharField(max_length=255)
 
     otp_created_at = models.DateTimeField(default=timezone.now)
 
@@ -78,4 +75,4 @@ class PendingRegistration(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-         return self.username
+         return self.email

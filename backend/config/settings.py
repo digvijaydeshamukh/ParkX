@@ -1,8 +1,11 @@
 from pathlib import Path
 import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+PROJECT_ROOT = BASE_DIR.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,6 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
+    'rest_framework',
 ]
 
 LOCAL_APPS = [
@@ -103,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 
@@ -130,3 +135,15 @@ PENDING_REGISTRATION_EXPIRY_DAYS = int(
 OTP_EXPIRY_MINUTES = int(
     os.getenv("OTP_EXPIRY_MINUTES", 5)
 )
+
+OTP_LENGTH = int(os.getenv("OTP_LENGTH",6))
+
+
+#Email settings
+EMAIL_BACKEND = config("EMAIL_BACKEND")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
