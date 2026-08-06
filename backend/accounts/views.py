@@ -20,5 +20,6 @@ class RegisterView(APIView):
                 "message": "OTP sent successfully.",
                 "email" : serializer.validated_data['email'],
             },
-            status = status.HTTP_200_OK
+            status = status.HTTP_201_CREATED
         )
+
