@@ -33,20 +33,38 @@ class RegisterSerializer(serializers.Serializer):
         validators = [password_validator]
     )
 
-    role = serializers.ChoiceField(
-        choices=Roles.choices,
-        default=Roles.VEHICLE_OWNER
-    )
 
 
     def validate_email(self,value):
+        value = value.lower()
         if User.objects.filter(email__iexact=value).exists():
             raise serializers.ValidationError("Email is already registered.")
 
         return value
 
     def validate_phone(self,value):
-        if User.objects.filter(phone=value).exists():
-            raise serializers.ValidationError("Phone number already registered.")
+        if User.objects.filter(
+            phone=value
+        ).exists():
+
+            raise serializers.ValidationError(
+                "Phone number already registered."
+            )
 
         return value
+
+class RegisterResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+    email = serializers.EmailField()
+
+class VerifyOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.CharField(
+        max_length = 6,
+        min_length = 6,
+        trim_whitespace = True,
+        write_only = True,
+    )
+
+class VerifyOTPResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()

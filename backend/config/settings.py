@@ -14,10 +14,19 @@ PROJECT_ROOT = BASE_DIR.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-ztf=%o=1_5tfna6+)hudblsli^+58$iu6*z&un^nx@s-9r+%of'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = config(
+    "DEBUG",
+    default=False,
+    cast=bool,
+)
+
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS",
+    default="",
+    cast=lambda v: [host.strip() for host in v.split(",") if host.strip()],
+)
 
 
 # Application definition
@@ -30,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    "drf_spectacular",
 ]
 
 LOCAL_APPS = [
@@ -37,6 +47,16 @@ LOCAL_APPS = [
 ]
 
 INSTALLED_APPS += LOCAL_APPS
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "ParkX API",
+    "DESCRIPTION": "Backend APIs for the ParkX Parking Management System",
+    "VERSION": "1.0.0",
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,11 +94,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": "3306",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST"),
+        "PORT": config("DB_PORT", cast=int),
     }
 }
 
@@ -127,22 +147,45 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "accounts.User"
 
 # Application settings
-PENDING_REGISTRATION_EXPIRY_DAYS = int(
-    os.getenv("PENDING_REGISTRATION_EXPIRY_DAYS", 7)
+PENDING_REGISTRATION_EXPIRY_DAYS = config(
+    "PENDING_REGISTRATION_EXPIRY_DAYS",
+    default=7,
+    cast=int,
 )
 
-OTP_EXPIRY_MINUTES = int(
-    os.getenv("OTP_EXPIRY_MINUTES", 5)
+OTP_EXPIRY_MINUTES = config(
+    "OTP_EXPIRY_MINUTES",
+    default=5,
+    cast=int,
 )
 
-OTP_LENGTH = int(os.getenv("OTP_LENGTH",6))
+OTP_LENGTH = config(
+    "OTP_LENGTH",
+    default=6,
+    cast=int,
+)
+
+USERNAME_PREFIX = config(
+    "USERNAME_PREFIX",
+    default="parkx_",
+)
 
 
 #Email settings
-EMAIL_BACKEND = config("EMAIL_BACKEND")
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+EMAIL_HOST = config("EMAIL_HOST")
+
+EMAIL_PORT = config(
+    "EMAIL_PORT",
+    cast=int,
+)
+
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+
+EMAIL_USE_TLS = config(
+    "EMAIL_USE_TLS",
+    cast=bool,
+)
+
+
