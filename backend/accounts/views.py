@@ -15,7 +15,7 @@ from .services import (
     verify_registration_otp
 )
 
-# Create your views here.
+# API views
 
 class RegisterView(APIView):
     @extend_schema(
@@ -71,3 +71,7 @@ class VerifyOTPView(APIView):
             },
             status=status.HTTP_201_CREATED
         )
+
+# Page views
+def register_page(request):
+    return render(request, "register.html")

@@ -33,6 +33,11 @@ class RegisterSerializer(serializers.Serializer):
         validators = [password_validator]
     )
 
+    confirm_password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+    )
+
 
 
     def validate_email(self,value):
@@ -52,6 +57,17 @@ class RegisterSerializer(serializers.Serializer):
             )
 
         return value
+
+    def validate(self, attrs):
+        if attrs["password"] != attrs["confirm_password"]:
+            raise serializers.ValidationError({
+                "confirm_password": [
+                    "Passwords do not match."
+                ]
+            })
+
+        attrs.pop("confirm_password")
+        return attrs
 
 class RegisterResponseSerializer(serializers.Serializer):
     message = serializers.CharField()

@@ -7,6 +7,8 @@ from drf_spectacular.views import (
     SpectacularRedocView,
 )
 
+from accounts.views import register_page
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/accounts/",include("accounts.urls")),
@@ -31,4 +33,7 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
+
+     # Register Page
+    path("register/", register_page, name="register-page"),
 ]
