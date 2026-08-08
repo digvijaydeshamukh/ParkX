@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer 
 from .models import PendingRegistration,User,Roles
 from .validators import(
     phone_number_validator,
@@ -82,5 +83,17 @@ class VerifyOTPSerializer(serializers.Serializer):
         write_only = True,
     )
 
+#Verify OTP
 class VerifyOTPResponseSerializer(serializers.Serializer):
     message = serializers.CharField()
+
+#Login
+class LoginSerializer(TokenObtainPairSerializer):
+    default_error_messages = {
+        "no_active_account": "Invalid email or password."
+    }
+
+#Login Response serializer
+class LoginResponseSerializer(serializers.Serializer):
+    access = serializers.CharField()
+    refresh = serializers.CharField()

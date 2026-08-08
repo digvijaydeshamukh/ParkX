@@ -3,12 +3,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .serializers import (
     RegisterSerializer,
     RegisterResponseSerializer,
     VerifyOTPSerializer,
     VerifyOTPResponseSerializer,
+    LoginSerializer
 )
 from .services import (
     register_user,
@@ -74,9 +76,16 @@ class VerifyOTPView(APIView):
 
 # Page views
 def register_page(request):
-
     return render(request, "register.html")
 
-   
 
 
+
+
+
+
+
+
+# Login view
+class LoginView(TokenObtainPairView):
+    serializer_class = LoginSerializer
