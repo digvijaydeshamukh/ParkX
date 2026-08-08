@@ -1,0 +1,286 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ParkX | Register</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/register.css' %}"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    >
+
+</head>
+
+<body>
+
+    <div class="background">
+
+        <div class="circle c1"></div>
+        <div class="circle c2"></div>
+
+    </div>
+
+
+    <div class="register-card">
+
+        <!-- Logo / Heading -->
+        <div class="logo">
+
+            <!-- Uncomment when logo is available -->
+            
+            <img
+                src="{% static 'images/logo.png' %}"
+                alt="ParkX Logo"
+                class="logo-img"
+            >
+            
+
+            <!-- <h2>ParkX</h2> -->
+
+            <p>
+                Park Smarter Move Faster
+            </p>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- REGISTRATION FORM -->
+        <!-- ========================= -->
+
+        <form id="registerForm">
+
+            {% csrf_token %}
+
+            <!-- First Name + Last Name -->
+
+            <div class="row">
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <input
+                        type="text"
+                        id="first_name"
+                        name="first_name"
+                        placeholder="First Name"
+                        autocomplete="given-name"
+                    >
+
+                    <small
+                        class="error"
+                        id="first_name_error"
+                    ></small>
+
+                </div>
+
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <input
+                        type="text"
+                        id="last_name"
+                        name="last_name"
+                        placeholder="Last Name"
+                        autocomplete="family-name"
+                    >
+
+                    <small
+                        class="error"
+                        id="last_name_error"
+                    ></small>
+
+                </div>
+
+            </div>
+
+
+            <!-- Phone -->
+
+            <div class="input-box">
+
+                <i class="fa-solid fa-phone"></i>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="Phone Number"
+                    autocomplete="tel"
+                >
+
+                <small
+                    class="error"
+                    id="phone_error"
+                ></small>
+
+            </div>
+
+
+            <!-- Email -->
+
+            <div class="input-box">
+
+                <i class="fa-solid fa-envelope"></i>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Email Address"
+                    autocomplete="email"
+                >
+
+                <small
+                    class="error"
+                    id="email_error"
+                ></small>
+
+            </div>
+
+
+            <!-- Password -->
+
+            <div class="input-box">
+
+                <i class="fa-solid fa-lock"></i>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    autocomplete="new-password"
+                >
+
+                <small
+                    class="error"
+                    id="password_error"
+                ></small>
+
+            </div>
+
+
+            <!-- Confirm Password -->
+
+            <div class="input-box">
+
+                <i class="fa-solid fa-lock"></i>
+
+                <input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    placeholder="Confirm Password"
+                    autocomplete="new-password"
+                >
+
+                <small
+                    class="error"
+                    id="confirm_password_error"
+                ></small>
+
+            </div>
+
+
+            <!-- Send OTP -->
+
+            <button
+                type="submit"
+                id="sendOtpBtn"
+                class="otp-btn"
+            >
+                Send OTP
+            </button>
+
+        </form>
+
+
+        <!-- ========================= -->
+        <!-- OTP SECTION -->
+        <!-- ========================= -->
+
+        <div
+            id="otpSection"
+            style="display: none;"
+        >
+
+            <div class="input-box otp-box">
+
+                <i class="fa-solid fa-key"></i>
+
+                <input
+                    type="text"
+                    id="otp"
+                    name="otp"
+                    placeholder="Enter OTP"
+                    maxlength="6"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                >
+
+                <small
+                    class="error"
+                    id="otp_error"
+                ></small>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="verifyOtpBtn"
+                class="register-btn"
+            >
+                Verify OTP & Register
+            </button>
+
+        </div>
+
+
+        <!-- Login -->
+
+        <div class="login-link">
+
+            Already have an account?
+
+            <a href="#">
+                Login
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- JavaScript -->
+
+    <script src="{% static 'js/register.js' %}"></script>
+
+</body>
+
+</html>

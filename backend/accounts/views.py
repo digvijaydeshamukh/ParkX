@@ -74,4 +74,9 @@ class VerifyOTPView(APIView):
 
 # Page views
 def register_page(request):
+
     return render(request, "register.html")
+
+   
+
+

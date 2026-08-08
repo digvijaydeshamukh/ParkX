@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Smart Parking System{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+</head>
+<body>
+
+    <!-- ================= Navbar ================= -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'img/Logo.png' %}" alt="SmartPark Logo">
+            </a>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+
+        <div class="auth-buttons">
+
+            {% if user.is_authenticated %}
+                <span class="username">Welcome, {{ user.username }}</span>
+                <a href="{% url 'logout' %}" class="login-btn">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="login-btn">Login</a>
+                <a href="{% url 'register' %}" class="register-btn">Register</a>
+            {% endif %}
+
+        </div>
+    </nav>
+
+    <!-- ================= Main Content ================= -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- ================= Footer ================= -->
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-section">
+                <img src="{% static 'img/Logo.png' %}" alt="Company Logo" width="350" height="180">
+
+                <p>
+                    Fully Automated Smart Parking System.
+                    Book, Park and Pay — Completely Automated.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: support@smartpark.com</p>
+                <p>Phone: +91 9876543210</p>
+                <p>Location: Pune, India</p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 SmartPark. All Rights Reserved.</p>
+            <p>Developed By Digvijay & Ganesh</p>
+        </div>
+    </footer>
+
+</body>
+</html>
