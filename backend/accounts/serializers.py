@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer 
 from .models import PendingRegistration,User,Roles
 from .validators import(
     phone_number_validator,
@@ -33,6 +34,11 @@ class RegisterSerializer(serializers.Serializer):
         validators = [password_validator]
     )
 
+    confirm_password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+    )
+
 
 
     def validate_email(self,value):
@@ -53,6 +59,17 @@ class RegisterSerializer(serializers.Serializer):
 
         return value
 
+    def validate(self, attrs):
+        if attrs["password"] != attrs["confirm_password"]:
+            raise serializers.ValidationError({
+                "confirm_password": [
+                    "Passwords do not match."
+                ]
+            })
+
+        attrs.pop("confirm_password")
+        return attrs
+
 class RegisterResponseSerializer(serializers.Serializer):
     message = serializers.CharField()
     email = serializers.EmailField()
@@ -66,5 +83,17 @@ class VerifyOTPSerializer(serializers.Serializer):
         write_only = True,
     )
 
+#Verify OTP
 class VerifyOTPResponseSerializer(serializers.Serializer):
     message = serializers.CharField()
+
+#Login
+class LoginSerializer(TokenObtainPairSerializer):
+    default_error_messages = {
+        "no_active_account": "Invalid email or password."
+    }
+
+#Login Response serializer
+class LoginResponseSerializer(serializers.Serializer):
+    access = serializers.CharField()
+    refresh = serializers.CharField()

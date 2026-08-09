@@ -43,7 +43,7 @@
 
 
         <!-- Login Form -->
-        <form method="POST" action="">
+        <form method="POST" action=""  id="loginForm">
 
             {% csrf_token %}
 
@@ -110,7 +110,7 @@
             <!-- Login Button -->
             <button
                 type="submit"
-                class="login-btn"
+                class="login-btn" id="loginBtn"
             >
 
                 <i class="fa-solid fa-right-to-bracket"></i>
@@ -169,5 +169,6 @@ function togglePassword() {
 }
 
 </script>
+<script src="{% static 'js/login.js' %}"></script>
 
 {% endblock %}

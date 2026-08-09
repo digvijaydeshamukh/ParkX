@@ -1,6 +1,6 @@
 from pathlib import Path
-import os
 from decouple import config
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,7 +12,7 @@ PROJECT_ROOT = BASE_DIR.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ztf=%o=1_5tfna6+)hudblsli^+58$iu6*z&un^nx@s-9r+%of'
+SECRET_KEY = config("SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -50,12 +50,36 @@ INSTALLED_APPS += LOCAL_APPS
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
 }
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+# SPECTACULAR_SETTINGS = {
+#     "TITLE": "ParkX API",
+#     "DESCRIPTION": "Backend APIs for the ParkX Parking Management System",
+#     "VERSION": "1.0.0",
+# }
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "ParkX API",
     "DESCRIPTION": "Backend APIs for the ParkX Parking Management System",
     "VERSION": "1.0.0",
+
+    "COMPONENTS": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            }
+        }
+    },
 }
 
 MIDDLEWARE = [

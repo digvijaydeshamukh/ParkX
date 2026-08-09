@@ -5,7 +5,7 @@
 .login-page {
 /* 
     min-height: calc(90vh - 70px); */
-    height: 80vh;
+    /* height: 80vh; */
     display: flex;
 
     align-items: center;
