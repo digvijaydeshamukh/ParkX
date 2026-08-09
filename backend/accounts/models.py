@@ -79,3 +79,36 @@ class PendingRegistration(models.Model):
 
     def __str__(self):
          return self.email
+
+# Forgot Password Model
+class PasswordResetOTP(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="password_reset_otps"
+    )
+
+    otp_hash = models.CharField(max_length=255)
+
+    otp_created_at = models.DateTimeField(default=timezone.now)
+
+    expires_at = models.DateTimeField()
+
+    reset_token_jti = models.CharField(
+        max_length=255,
+        unique=True,
+        null=True,
+        blank=True
+    )
+
+    reset_token_expires_at = models.DateTimeField(
+    null=True,
+    blank=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.email

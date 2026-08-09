@@ -97,3 +97,59 @@ class LoginSerializer(TokenObtainPairSerializer):
 class LoginResponseSerializer(serializers.Serializer):
     access = serializers.CharField()
     refresh = serializers.CharField()
+
+#Forgot Password serializer
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+#Forgot Password Response serializer
+class ForgotPasswordResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+
+# Verify Reset Otp
+class VerifyResetOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.CharField(
+        min_length=6,
+        max_length=6,
+        trim_whitespace=True,
+        write_only=True,
+    )
+
+#Verfy Reset Otp Responce
+class VerifyResetOTPResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+    reset_token = serializers.CharField()
+
+# Reset Password Serializer
+class ResetPasswordSerializer(serializers.Serializer):
+    reset_token = serializers.CharField(
+        write_only=True
+    )
+
+    password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+        validators=[password_validator]
+    )
+
+    confirm_password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+    )
+
+    def validate(self, attrs):
+        if attrs["password"] != attrs["confirm_password"]:
+            raise serializers.ValidationError({
+                "confirm_password": [
+                    "Passwords do not match."
+                ]
+            })
+
+        attrs.pop("confirm_password")
+
+        return attrs
+
+# Reset Password Response Serializer
+class ResetPasswordResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()

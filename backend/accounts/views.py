@@ -11,11 +11,21 @@ from .serializers import (
     RegisterResponseSerializer,
     VerifyOTPSerializer,
     VerifyOTPResponseSerializer,
-    LoginSerializer
+    LoginSerializer,
+    LoginResponseSerializer,
+    ForgotPasswordSerializer,
+    ForgotPasswordResponseSerializer,
+    VerifyResetOTPSerializer,
+    VerifyResetOTPResponseSerializer,
+    ResetPasswordSerializer,
+    ResetPasswordResponseSerializer,
 )
 from .services import (
     register_user,
-    verify_registration_otp
+    verify_registration_otp,
+    forgot_password,
+    verify_password_reset_otp,
+    reset_password,
 )
 
 # API views
@@ -88,7 +98,119 @@ def home_page(request):
 def login_page(request):
     return render(request, "login.html")
 
+@extend_schema(
+    tags=["Accounts"],
+    summary="Login user",
+    description="Authenticates the user using email and password and returns JWT access and refresh tokens.",
+    request=LoginSerializer,
+    responses={
+        200: LoginResponseSerializer,
+    },
+)
 # Login view
 class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
 
+# Forgot password view
+class ForgotPasswordAPIView(APIView):
+    @extend_schema(
+    tags=["Accounts"],
+    summary="Request password reset OTP",
+    description="Sends a password reset OTP to the user's email if an account exists.",
+    request=ForgotPasswordSerializer,
+    responses={
+        200: ForgotPasswordResponseSerializer,
+    },
+)
+    def post(self, request):
+
+        serializer = ForgotPasswordSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        forgot_password(
+            serializer.validated_data["email"]
+        )
+
+        return Response(
+            {
+                "message": (
+                    "If an account exists with this email, "
+                    "a password reset OTP has been sent."
+                )
+            },
+            status=status.HTTP_200_OK,
+        )
+
+# Verify forgot Password
+@extend_schema(
+    tags=["Accounts"],
+    summary="Verify password reset OTP",
+    description=(
+        "Verifies the password reset OTP and returns a short-lived "
+        "reset token when the OTP is valid."
+    ),
+    request=VerifyResetOTPSerializer,
+    responses={
+        200: VerifyResetOTPResponseSerializer,
+    },
+)
+class VerifyResetOTPAPIView(APIView):
+
+    def post(self, request):
+
+        serializer = VerifyResetOTPSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        reset_token = verify_password_reset_otp(
+            email=serializer.validated_data["email"],
+            otp=serializer.validated_data["otp"],
+        )
+
+        return Response(
+            {
+                "message": "OTP verified successfully.",
+                "reset_token": reset_token,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+# Reset Password view
+@extend_schema(
+    tags=["Accounts"],
+    summary="Reset user password",
+    description=(
+        "Resets the user's password using the short-lived "
+        "password reset token received after OTP verification."
+    ),
+    request=ResetPasswordSerializer,
+    responses={
+        200: ResetPasswordResponseSerializer,
+    },
+)
+class ResetPasswordAPIView(APIView):
+
+    def post(self, request):
+
+        serializer = ResetPasswordSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        reset_password(
+            reset_token=serializer.validated_data["reset_token"],
+            password=serializer.validated_data["password"],
+        )
+
+        return Response(
+            {
+                "message": "Password reset successfully."
+            },
+            status=status.HTTP_200_OK,
+        )

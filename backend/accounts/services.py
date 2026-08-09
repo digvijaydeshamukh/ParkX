@@ -2,6 +2,7 @@ from .models import (
     PendingRegistration,
     Roles,
     User,
+    PasswordResetOTP,
 )
 from .utils import (
     generate_otp,
@@ -11,11 +12,13 @@ from .utils import (
     generate_unique_username,
 )
 from django.utils import timezone
-from .email import send_registration_otp
+from .email import send_registration_otp,send_password_reset_otp
 from datetime import timedelta
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
+from rest_framework_simplejwt.tokens import UntypedToken,AccessToken
+from rest_framework_simplejwt.exceptions import TokenError
 
 def get_pending_registration(email):
     """
@@ -138,3 +141,159 @@ def verify_registration_otp(validated_data):
         pending_registration.delete()
 
     return user
+
+# Generate and send a password-reset OTP.
+def forgot_password(email):
+    email = email.lower()
+
+    user = User.objects.filter(
+        email__iexact=email
+    ).first()
+
+    # Do not reveal whether the email exists.
+    if not user:
+        return
+
+    # Remove any previous OTP.
+    PasswordResetOTP.objects.filter(
+        user=user
+    ).delete()
+
+    # Generate a new OTP.
+    otp = generate_otp()
+
+    # Hash OTP before storing it.
+    otp_hash = make_otp_hash(otp)
+
+    now = timezone.now()
+
+    # Calculate OTP expiration.
+    expires_at = now + timedelta(
+        minutes=settings.OTP_EXPIRY_MINUTES
+    )
+
+    # Store OTP information.
+    PasswordResetOTP.objects.create(
+        user=user,
+        otp_hash=otp_hash,
+        otp_created_at=now,
+        expires_at=expires_at,
+    )
+
+    # Send plain OTP only through email.
+    send_password_reset_otp(
+        email=user.email,
+        first_name=user.first_name,
+        otp=otp,
+    )
+
+def verify_password_reset_otp(email, otp):
+    email = email.lower()
+
+    user = User.objects.filter(
+        email__iexact=email
+    ).first()
+
+    if not user:
+        raise ValidationError("Invalid or expired OTP.")
+
+    reset_otp = PasswordResetOTP.objects.filter(
+        user=user
+    ).first()
+
+    if not reset_otp:
+        raise ValidationError("Invalid or expired OTP.")
+
+    # Check OTP expiration
+    if timezone.now() >= reset_otp.expires_at:
+        reset_otp.delete()
+        raise ValidationError("Invalid or expired OTP.")
+
+    # Verify OTP
+    if not verify_otp_hash(
+        otp,
+        reset_otp.otp_hash
+    ):
+        raise ValidationError("Invalid or expired OTP.")
+
+    # Create password reset token
+    reset_token = AccessToken.for_user(user)
+
+    reset_token["token_type"] = "password_reset"
+
+    reset_token.set_exp(
+        lifetime=timedelta(minutes=10)
+    )
+
+    # Store reset-token information
+    reset_otp.reset_token_jti = reset_token["jti"]
+
+    reset_otp.reset_token_expires_at = timezone.now() + timedelta(
+        minutes=10
+    )
+
+    reset_otp.save(
+        update_fields=[
+            "reset_token_jti",
+            "reset_token_expires_at",
+            "updated_at"
+        ]
+    )
+
+    return str(reset_token)
+
+# Reset Password
+def reset_password(reset_token, password):
+    try:
+        token = UntypedToken(reset_token)
+    except TokenError:
+        raise ValidationError(
+            "Invalid or expired reset token."
+        )
+
+    if token.get("token_type") != "password_reset":
+        raise ValidationError(
+            "Invalid reset token."
+        )
+
+    user_id = token.get("user_id")
+    jti = token.get("jti")
+
+    reset_otp = PasswordResetOTP.objects.filter(
+        user_id=user_id,
+        reset_token_jti=jti
+    ).first()
+
+    if not reset_otp:
+        raise ValidationError(
+            "Invalid or expired reset token."
+        )
+
+    # Check reset-token expiration
+    if (
+        reset_otp.reset_token_expires_at is None
+        or timezone.now() >= reset_otp.reset_token_expires_at
+    ):
+        reset_otp.delete()
+
+        raise ValidationError(
+            "Invalid or expired reset token."
+        )
+
+    user = User.objects.filter(
+        id=user_id
+    ).first()
+
+    if not user:
+        raise ValidationError(
+            "Invalid reset token."
+        )
+
+    user.set_password(password)
+
+    user.save(
+        update_fields=["password"]
+    )
+
+    # Make reset token single-use
+    reset_otp.delete()
