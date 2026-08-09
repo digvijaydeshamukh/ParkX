@@ -1,44 +1,114 @@
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{% block title %}Smart Parking System{% endblock %}</title>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" integrity="sha512-ApSLB1Pd3/bZN8fWB/RG9YhN/7bd9Hkf3AGaE2mPfebjrxagjuBtx2GcgdqIlJkUzwylBo61r9Xa9NmgBI0swA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
 
     <!-- ================= Navbar ================= -->
-    <nav class="navbar">
+   <div class="container">
+     <nav class="navbar">
         <div class="logo">
-            <a href="{% url 'home' %}">
-                <img src="{% static 'img/Logo.png' %}" alt="SmartPark Logo">
+
+            <a>
+                <img src="{% static 'images/Logo.png' %}" alt="SmartPark Logo">
             </a>
         </div>
-
+        {% if user.is_authenticated or request.path == '/home/' %}
         <ul class="nav-links">
-            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'home-page' %}">Home</a></li>
             <li><a href="#">Features</a></li>
             <li><a href="#">How It Works</a></li>
             <li><a href="#">Contact</a></li>
         </ul>
+        {% endif %}
+    <div class="navbar-buttons">
 
-        <div class="auth-buttons">
+    {% if user.is_authenticated %}
 
-            {% if user.is_authenticated %}
-                <span class="username">Welcome, {{ user.username }}</span>
-                <a href="{% url 'logout' %}" class="login-btn">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="login-btn">Login</a>
-                <a href="{% url 'register' %}" class="register-btn">Register</a>
-            {% endif %}
+        <!-- =========================
+             USER LOGGED IN
+        ========================== -->
 
-        </div>
+        <a href="{% url 'home-page' %}" class="nav-home">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="{% url 'logout-page' %}" class="nav-login">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+
+    {% elif request.path == '/login/' %}
+
+        <!-- =========================
+             LOGIN PAGE
+        ========================== -->
+
+        <a href="{% url 'home-page' %}" class="nav-home">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="{% url 'register-page' %}" class="nav-register">
+            <i class="fa-solid fa-user-plus"></i>
+            Register
+        </a>
+
+
+    {% elif request.path == '/register/' %}
+
+        <!-- =========================
+             REGISTER PAGE
+        ========================== -->
+
+        <a href="{% url 'home-page' %}" class="nav-home">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="{% url 'login-page' %}" class="nav-login">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Login
+        </a>
+
+
+    {% else %}
+
+        <!-- =========================
+             HOME PAGE / NOT LOGGED IN
+        ========================== -->
+
+        <a href="{% url 'login-page' %}" class="nav-login-home">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Login
+        </a>
+
+        <a href="{% url 'register-page' %}" class="nav-register">
+            <i class="fa-solid fa-user-plus"></i>
+            Register
+        </a>
+
+    {% endif %}
+
+</div>
+    
     </nav>
+   </div>
 
     <!-- ================= Main Content ================= -->
     <main>
@@ -47,42 +117,139 @@
     </main>
 
     <!-- ================= Footer ================= -->
-    <footer class="footer">
-        <div class="footer-container">
+     {% if request.path != '/login/' and request.path != '/register/' %}
 
-            <div class="footer-section">
-                <img src="{% static 'img/Logo.png' %}" alt="Company Logo" width="350" height="180">
 
-                <p>
-                    Fully Automated Smart Parking System.
-                    Book, Park and Pay — Completely Automated.
-                </p>
+    <footer class="parkx-footer">
+
+    <div class="parkx-footer-container">
+
+        <!-- =========================
+             BRAND SECTION
+        ========================== -->
+
+        <div class="parkx-footer-section parkx-footer-brand">
+
+            <img
+                src="{% static 'img/Logo.png' %}"
+                alt="ParkX Logo"
+                class="parkx-footer-logo"
+            >
+
+            <p>
+                Fully Automated Smart Parking System.
+                Book, Park and Pay — Completely Automated.
+            </p>
+
+        </div>
+
+
+        <!-- =========================
+             QUICK LINKS
+        ========================== -->
+
+        <div class="parkx-footer-section">
+
+            <h3>Quick Links</h3>
+
+            <ul class="parkx-footer-links">
+
+                <li>
+                    <a href="{% url 'home-page' %}">
+                        <i class="fa-solid fa-house"></i>
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <i class="fa-solid fa-star"></i>
+                        Features
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <i class="fa-solid fa-circle-info"></i>
+                        How It Works
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <i class="fa-solid fa-envelope"></i>
+                        Contact
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+
+        <!-- =========================
+             CONTACT
+        ========================== -->
+
+        <div class="parkx-footer-section">
+
+            <h3>Contact</h3>
+
+            <div class="parkx-contact-item">
+
+                <i class="fa-solid fa-envelope"></i>
+
+                <span>
+                    support@smartpark.com
+                </span>
+
             </div>
 
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="{% url 'home' %}">Home</a></li>
-                    <li><a href="#">Features</a></li>
-                    <li><a href="#">How It Works</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
+            <div class="parkx-contact-item">
+
+                <i class="fa-solid fa-phone"></i>
+
+                <span>
+                    +91 9876543210
+                </span>
+
             </div>
 
-            <div class="footer-section">
-                <h3>Contact</h3>
-                <p>Email: support@smartpark.com</p>
-                <p>Phone: +91 9876543210</p>
-                <p>Location: Pune, India</p>
+            <div class="parkx-contact-item">
+
+                <i class="fa-solid fa-location-dot"></i>
+
+                <span>
+                    Pune, India
+                </span>
+
             </div>
 
         </div>
 
-        <div class="footer-bottom">
-            <p>© 2026 SmartPark. All Rights Reserved.</p>
-            <p>Developed By Digvijay & Ganesh</p>
-        </div>
-    </footer>
+    </div>
+
+
+    <!-- =========================
+         FOOTER BOTTOM
+    ========================== -->
+
+    <div class="parkx-footer-bottom">
+
+        <p>
+            © 2026 SmartPark. All Rights Reserved.
+        </p>
+
+        <p>
+            Developed By
+            <span>Digvijay & Ganesh</span>
+        </p>
+
+    </div>
+
+</footer>
+    {% endif %}
 
 </body>
+
 </html>

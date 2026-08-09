@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
 
+
 from .serializers import (
     RegisterSerializer,
     RegisterResponseSerializer,
@@ -76,3 +77,10 @@ class VerifyOTPView(APIView):
 def register_page(request):
     return render(request, "register.html")
 
+#Home / landing page views
+def home_page(request):
+    return render(request, "home.html")
+
+#Login page
+def login_page(request):
+    return render(request, "login.html")

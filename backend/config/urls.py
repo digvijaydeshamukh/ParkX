@@ -7,11 +7,15 @@ from drf_spectacular.views import (
     SpectacularRedocView,
 )
 
-from accounts.views import register_page
+from accounts.views import ( 
+    register_page, 
+    home_page,
+    login_page,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("api/accounts/",include("accounts.urls")),
+    path("api/accounts/", include("accounts.urls")),
 
      # OpenAPI Schema
     path(
@@ -36,4 +40,7 @@ urlpatterns = [
 
      # Register Page
     path("register/", register_page, name="register-page"),
+    #Homepage
+    path("home/", home_page, name="home-page"),
+    path("login/", login_page, name="login-page"),
 ]

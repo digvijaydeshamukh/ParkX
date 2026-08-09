@@ -1,0 +1,505 @@
+/* ================================
+   PARKX LOGIN PAGE
+================================ */
+
+.login-page {
+
+    min-height: calc(100vh - 80px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 40px 20px;
+
+}
+
+
+/* ================================
+   BACKGROUND
+================================ */
+
+.login-bg {
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+}
+
+
+.login-circle {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter: blur(5px);
+
+    animation: loginFloat 8s ease-in-out infinite;
+
+}
+
+
+.circle-one {
+
+    width: 350px;
+
+    height: 350px;
+
+    background: rgba(37, 99, 235, 0.12);
+
+    top: -150px;
+
+    left: -120px;
+
+}
+
+
+.circle-two {
+
+    width: 300px;
+
+    height: 300px;
+
+    background: rgba(16, 185, 129, 0.10);
+
+    right: -100px;
+
+    bottom: -120px;
+
+    animation-delay: 2s;
+
+}
+
+
+@keyframes loginFloat {
+
+    0% {
+
+        transform: translate(0, 0);
+
+    }
+
+    50% {
+
+        transform: translate(20px, -20px);
+
+    }
+
+    100% {
+
+        transform: translate(0, 0);
+
+    }
+
+}
+
+
+/* ================================
+   LOGIN CARD
+================================ */
+
+.login-card {
+
+    width: 100%;
+
+    max-width: 420px;
+
+    padding: 40px;
+
+    position: relative;
+
+    z-index: 2;
+
+    border-radius: 25px;
+
+    background: rgba(13, 34, 56, 0.82);
+
+    border: 1px solid rgba(255,255,255,0.10);
+
+    backdrop-filter: blur(20px);
+
+    -webkit-backdrop-filter: blur(20px);
+
+    box-shadow:
+
+        0 25px 70px rgba(0,0,0,0.35);
+
+    animation: loginAppear 0.7s ease;
+
+}
+
+
+@keyframes loginAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(25px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+/* ================================
+   HEADER
+================================ */
+
+.login-header {
+
+    text-align: center;
+
+    margin-bottom: 30px;
+
+}
+
+
+.login-logo {
+
+    width: 135px;
+
+    height: auto;
+
+    display: block;
+
+    margin: 0 auto 12px;
+
+}
+
+
+.login-header h2 {
+
+    color: #ffffff;
+
+    font-size: 23px;
+
+    font-weight: 600;
+
+    margin-bottom: 5px;
+
+}
+
+
+.login-header p {
+
+    color: #94a3b8;
+
+    font-size: 12px;
+
+}
+
+
+/* ================================
+   INPUT
+================================ */
+
+.login-input {
+
+    width: 100%;
+
+    height: 53px;
+
+    display: flex;
+
+    align-items: center;
+
+    margin-bottom: 17px;
+
+    border-radius: 13px;
+
+    background: rgba(255,255,255,0.045);
+
+    border: 1px solid rgba(255,255,255,0.10);
+
+    transition: 0.3s ease;
+
+}
+
+
+.login-input:focus-within {
+
+    border-color: #3b82f6;
+
+    background: rgba(37,99,235,0.06);
+
+    box-shadow:
+
+        0 0 0 3px rgba(37,99,235,0.08);
+
+}
+
+
+.login-input > i {
+
+    margin-left: 16px;
+
+    width: 20px;
+
+    color: #64748b;
+
+}
+
+
+.login-input:focus-within > i {
+
+    color: #34d399;
+
+}
+
+
+.login-input input {
+
+    width: 100%;
+
+    height: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    padding: 0 12px;
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 13px;
+
+}
+
+
+.login-input input::placeholder {
+
+    color: #64748b;
+
+}
+
+
+/* ================================
+   PASSWORD TOGGLE
+================================ */
+
+.password-toggle {
+
+    width: 45px;
+
+    height: 100%;
+
+    border: none;
+
+    background: transparent;
+
+    color: #64748b;
+
+    cursor: pointer;
+
+}
+
+
+.password-toggle:hover {
+
+    color: #34d399;
+
+}
+
+
+/* ================================
+   FORGOT PASSWORD
+================================ */
+
+.login-options {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin: 2px 0 22px;
+
+}
+
+
+.forgot-password {
+
+    color: #34d399;
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    transition: 0.3s;
+
+}
+
+
+.forgot-password:hover {
+
+    color: #3b82f6;
+
+}
+
+
+/* ================================
+   LOGIN BUTTON
+================================ */
+
+.login-btn {
+
+    width: 100%;
+
+    height: 52px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    cursor: pointer;
+
+    color: #ffffff;
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #10b981
+        );
+
+    box-shadow:
+
+        0 12px 28px rgba(37,99,235,0.20);
+
+    transition: 0.3s ease;
+
+}
+
+
+.login-btn:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+
+        0 18px 35px rgba(37,99,235,0.30);
+
+}
+
+
+.login-btn:active {
+
+    transform: scale(0.98);
+
+}
+
+
+/* ================================
+   REGISTER TEXT
+================================ */
+
+.register-text {
+
+    margin-top: 25px;
+
+    text-align: center;
+
+    font-size: 11px;
+
+    color: #94a3b8;
+
+}
+
+
+.register-text a {
+
+    margin-left: 5px;
+
+    color: #34d399;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: 0.3s;
+
+}
+
+
+.register-text a:hover {
+
+    color: #3b82f6;
+
+    text-decoration: underline;
+
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 500px) {
+
+    .login-page {
+
+        padding: 25px 15px;
+
+    }
+
+
+    .login-card {
+
+        padding: 30px 20px;
+
+        border-radius: 21px;
+
+    }
+
+
+    .login-logo {
+
+        width: 120px;
+
+    }
+
+
+    .login-header h2 {
+
+        font-size: 21px;
+
+    }
+
+}
