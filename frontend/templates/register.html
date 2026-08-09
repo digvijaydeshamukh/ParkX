@@ -1,286 +1,285 @@
-
+{% extends "base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %}
+    ParkX | Login
+{% endblock %}
 
-<head>
+{% block content %}
 
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<!-- ========================= -->
+<!-- BACKGROUND -->
+<!-- ========================= -->
 
-    <title>ParkX | Register</title>
+<!-- <div class="background">
 
-    <link
-        rel="stylesheet"
-        href="{% static 'css/register.css' %}"
-    >
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
+</div>
+ -->
 
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
-    >
+<!-- ========================= -->
+<!-- REGISTER CARD -->
+<!-- ========================= -->
+<div class="login-page">
+<!-- Background Animation -->
+    <div class="login-bg">
+        <div class="login-circle circle-one"></div>
+        <div class="login-circle circle-two"></div>
+    </div>
+<div class="register-card">
 
-</head>
 
-<body>
+    <!-- Logo / Heading -->
 
-    <div class="background">
+    <div class="logo">
 
-        <div class="circle c1"></div>
-        <div class="circle c2"></div>
+        <!-- <img
+            src="{% static 'images/logo.png' %}"
+            alt="ParkX Logo"
+            class="logo-img"
+        > -->
+
+        <p>
+            Park Smarter Move Faster
+        </p>
 
     </div>
 
 
-    <div class="register-card">
 
-        <!-- Logo / Heading -->
-        <div class="logo">
+    <!-- ========================= -->
+    <!-- REGISTRATION FORM -->
+    <!-- ========================= -->
 
-            <!-- Uncomment when logo is available -->
-            
-            <img
-                src="{% static 'images/logo.png' %}"
-                alt="ParkX Logo"
-                class="logo-img"
-            >
-            
+    <form id="registerForm">
 
-            <!-- <h2>ParkX</h2> -->
-
-            <p>
-                Park Smarter Move Faster
-            </p>
-
-        </div>
+        {% csrf_token %}
 
 
-        <!-- ========================= -->
-        <!-- REGISTRATION FORM -->
-        <!-- ========================= -->
+        <!-- First Name + Last Name -->
 
-        <form id="registerForm">
-
-            {% csrf_token %}
-
-            <!-- First Name + Last Name -->
-
-            <div class="row">
-
-                <div class="input-box">
-
-                    <i class="fa-solid fa-user"></i>
-
-                    <input
-                        type="text"
-                        id="first_name"
-                        name="first_name"
-                        placeholder="First Name"
-                        autocomplete="given-name"
-                    >
-
-                    <small
-                        class="error"
-                        id="first_name_error"
-                    ></small>
-
-                </div>
-
-
-                <div class="input-box">
-
-                    <i class="fa-solid fa-user"></i>
-
-                    <input
-                        type="text"
-                        id="last_name"
-                        name="last_name"
-                        placeholder="Last Name"
-                        autocomplete="family-name"
-                    >
-
-                    <small
-                        class="error"
-                        id="last_name_error"
-                    ></small>
-
-                </div>
-
-            </div>
-
-
-            <!-- Phone -->
+        <div class="row">
 
             <div class="input-box">
 
-                <i class="fa-solid fa-phone"></i>
-
-                <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    placeholder="Phone Number"
-                    autocomplete="tel"
-                >
-
-                <small
-                    class="error"
-                    id="phone_error"
-                ></small>
-
-            </div>
-
-
-            <!-- Email -->
-
-            <div class="input-box">
-
-                <i class="fa-solid fa-envelope"></i>
-
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Email Address"
-                    autocomplete="email"
-                >
-
-                <small
-                    class="error"
-                    id="email_error"
-                ></small>
-
-            </div>
-
-
-            <!-- Password -->
-
-            <div class="input-box">
-
-                <i class="fa-solid fa-lock"></i>
-
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    autocomplete="new-password"
-                >
-
-                <small
-                    class="error"
-                    id="password_error"
-                ></small>
-
-            </div>
-
-
-            <!-- Confirm Password -->
-
-            <div class="input-box">
-
-                <i class="fa-solid fa-lock"></i>
-
-                <input
-                    type="password"
-                    id="confirm_password"
-                    name="confirm_password"
-                    placeholder="Confirm Password"
-                    autocomplete="new-password"
-                >
-
-                <small
-                    class="error"
-                    id="confirm_password_error"
-                ></small>
-
-            </div>
-
-
-            <!-- Send OTP -->
-
-            <button
-                type="submit"
-                id="sendOtpBtn"
-                class="otp-btn"
-            >
-                Send OTP
-            </button>
-
-        </form>
-
-
-        <!-- ========================= -->
-        <!-- OTP SECTION -->
-        <!-- ========================= -->
-
-        <div
-            id="otpSection"
-            style="display: none;"
-        >
-
-            <div class="input-box otp-box">
-
-                <i class="fa-solid fa-key"></i>
+                <i class="fa-solid fa-user"></i>
 
                 <input
                     type="text"
-                    id="otp"
-                    name="otp"
-                    placeholder="Enter OTP"
-                    maxlength="6"
-                    inputmode="numeric"
-                    autocomplete="one-time-code"
+                    id="first_name"
+                    name="first_name"
+                    placeholder="First Name"
+                    autocomplete="given-name"
                 >
 
                 <small
                     class="error"
-                    id="otp_error"
+                    id="first_name_error"
                 ></small>
 
             </div>
 
 
-            <button
-                type="button"
-                id="verifyOtpBtn"
-                class="register-btn"
+            <div class="input-box">
+
+                <i class="fa-solid fa-user"></i>
+
+                <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    placeholder="Last Name"
+                    autocomplete="family-name"
+                >
+
+                <small
+                    class="error"
+                    id="last_name_error"
+                ></small>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Phone -->
+
+        <div class="input-box">
+
+            <i class="fa-solid fa-phone"></i>
+
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="Phone Number"
+                autocomplete="tel"
             >
-                Verify OTP & Register
-            </button>
+
+            <small
+                class="error"
+                id="phone_error"
+            ></small>
 
         </div>
 
 
-        <!-- Login -->
 
-        <div class="login-link">
+        <!-- Email -->
 
-            Already have an account?
+        <div class="input-box">
 
-            <a href="#">
-                Login
-            </a>
+            <i class="fa-solid fa-envelope"></i>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Email Address"
+                autocomplete="email"
+            >
+
+            <small
+                class="error"
+                id="email_error"
+            ></small>
 
         </div>
+
+
+
+        <!-- Password -->
+
+        <div class="input-box">
+
+            <i class="fa-solid fa-lock"></i>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Password"
+                autocomplete="new-password"
+            >
+
+            <small
+                class="error"
+                id="password_error"
+            ></small>
+
+        </div>
+
+
+
+        <!-- Confirm Password -->
+
+        <div class="input-box">
+
+            <i class="fa-solid fa-lock"></i>
+
+            <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                placeholder="Confirm Password"
+                autocomplete="new-password"
+            >
+
+            <small
+                class="error"
+                id="confirm_password_error"
+            ></small>
+
+        </div>
+
+
+
+        <!-- Send OTP -->
+
+        <button
+            type="submit"
+            id="sendOtpBtn"
+            class="otp-btn"
+        >
+            <i class="fa-solid fa-paper-plane"></i>
+            Send OTP
+        </button>
+
+    </form>
+
+
+
+    <!-- ========================= -->
+    <!-- OTP SECTION -->
+    <!-- ========================= -->
+
+    <div
+        id="otpSection"
+        style="display: none;"
+    >
+
+        <div class="input-box otp-box">
+
+            <i class="fa-solid fa-key"></i>
+
+            <input
+                type="text"
+                id="otp"
+                name="otp"
+                placeholder="Enter OTP"
+                maxlength="6"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+            >
+
+            <small
+                class="error"
+                id="otp_error"
+            ></small>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="verifyOtpBtn"
+            class="register-btn"
+        >
+            <i class="fa-solid fa-circle-check"></i>
+            Verify OTP & Register
+        </button>
 
     </div>
 
 
-    <!-- JavaScript -->
 
-    <script src="{% static 'js/register.js' %}"></script>
+    <!-- ========================= -->
+    <!-- LOGIN -->
+    <!-- ========================= -->
 
-</body>
+    <div class="login-link">
 
-</html>
+        Already have an account?
+
+        <a href="{% url 'login-page' %}">
+            Login
+        </a>
+
+    </div>
+
+
+</div>
+
+</div>
+
+<!-- ========================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================= -->
+
+<script src="{% static 'js/register.js' %}"></script>
+
+{% endblock %}

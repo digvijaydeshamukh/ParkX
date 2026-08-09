@@ -5,6 +5,7 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+
 from .serializers import (
     RegisterSerializer,
     RegisterResponseSerializer,
@@ -79,13 +80,15 @@ def register_page(request):
     return render(request, "register.html")
 
 
+#Home / landing page views
+def home_page(request):
+    return render(request, "home.html")
 
-
-
-
-
-
+#Login page
+def login_page(request):
+    return render(request, "login.html")
 
 # Login view
 class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
+
