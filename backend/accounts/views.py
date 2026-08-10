@@ -214,3 +214,19 @@ class ResetPasswordAPIView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+    
+#Forgot page view
+def forgot_page(request):
+    return render(request, "forgot_password.html")
+
+#verify otp page view
+def verify_otp_page(request):
+    return render(request, "verify_otp.html")
+
+#Reset password view
+def reset_password_page(request):
+    return render(request, "reset_password.html")
+
+#Dashboard view
+def dashboard_page(request):
+    return render(request, "dashboard.html")
