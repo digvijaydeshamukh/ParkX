@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema,OpenApiResponse
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 
@@ -19,6 +19,7 @@ from .serializers import (
     VerifyResetOTPResponseSerializer,
     ResetPasswordSerializer,
     ResetPasswordResponseSerializer,
+    ResendResetOTPSerializer,
 )
 from .services import (
     register_user,
@@ -26,6 +27,7 @@ from .services import (
     forgot_password,
     verify_password_reset_otp,
     reset_password,
+    resend_password_reset_otp,
 )
 
 # API views
@@ -211,6 +213,75 @@ class ResetPasswordAPIView(APIView):
         return Response(
             {
                 "message": "Password reset successfully."
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class ResendResetOTPAPIView(APIView):
+
+    @extend_schema(
+        tags=["Accounts"],
+        summary="Resend password reset OTP",
+        description=(
+            "Resends a password reset OTP to the user's email "
+            "if an account exists."
+        ),
+        request=ResendResetOTPSerializer,
+        responses={
+            200: ForgotPasswordResponseSerializer,
+            429: OpenApiResponse(
+                description="OTP resend cooldown active."
+            ),
+        },
+    )
+    def post(self, request):
+
+        serializer = ResendResetOTPSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        remaining_seconds = resend_password_reset_otp(
+            serializer.validated_data["email"]
+        )
+
+        if remaining_seconds is not None:
+            return Response(
+                {
+                    "detail": (
+                        "Please wait before requesting "
+                        "another OTP."
+                    ),
+                    "retry_after": remaining_seconds,
+                },
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+
+        return Response(
+            {
+                "message": (
+                    "If an account exists with this email, "
+                    "a new password reset OTP has been sent."
+                )
             },
             status=status.HTTP_200_OK,
         )

@@ -202,6 +202,10 @@ USERNAME_PREFIX = config(
     default="parkx_",
 )
 
+OTP_RESEND_COOLDOWN_SECONDS = int(
+    config("OTP_RESEND_COOLDOWN_SECONDS", "60")
+)
+
 
 #Email settings
 EMAIL_HOST = config("EMAIL_HOST")

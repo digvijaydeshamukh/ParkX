@@ -153,3 +153,7 @@ class ResetPasswordSerializer(serializers.Serializer):
 # Reset Password Response Serializer
 class ResetPasswordResponseSerializer(serializers.Serializer):
     message = serializers.CharField()
+
+#Resend Otp Serializer
+class ResendResetOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField()

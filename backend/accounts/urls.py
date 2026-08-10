@@ -6,8 +6,8 @@ from .views import (
     LoginView,
     ForgotPasswordAPIView,
     VerifyResetOTPAPIView,
-    ResetPasswordAPIView
-    
+    ResetPasswordAPIView,
+    ResendResetOTPAPIView,
 )
 
 urlpatterns = [
@@ -18,4 +18,5 @@ urlpatterns = [
     path("forgot-password/",ForgotPasswordAPIView.as_view(),name="forgot-password",),
     path("verify-reset-otp/",VerifyResetOTPAPIView.as_view(),name="verify-reset-otp",),
     path("reset-password/",ResetPasswordAPIView.as_view(),name="reset-password"),
+    path( "resend-reset-otp/", ResendResetOTPAPIView.as_view(), name="resend-reset-otp" ),
 ]

@@ -297,3 +297,64 @@ def reset_password(reset_token, password):
 
     # Make reset token single-use
     reset_otp.delete()
+
+# Resend Otp 
+def resend_password_reset_otp(email):
+    email = email.lower()
+
+    user = User.objects.filter(
+        email__iexact=email
+    ).first()
+
+    if not user:
+        return None
+
+    existing_otp = PasswordResetOTP.objects.filter(
+        user=user
+    ).first()
+
+    if existing_otp:
+        cooldown_expires_at = (
+            existing_otp.otp_created_at
+            + timedelta(
+                seconds=settings.OTP_RESEND_COOLDOWN_SECONDS
+            )
+        )
+
+        now = timezone.now()
+
+        if now < cooldown_expires_at:
+            remaining_seconds = int(
+                (
+                    cooldown_expires_at - now
+                ).total_seconds()
+            ) + 1
+
+            return remaining_seconds
+
+        existing_otp.delete()
+
+    otp = generate_otp()
+
+    otp_hash = make_otp_hash(otp)
+
+    now = timezone.now()
+
+    expires_at = now + timedelta(
+        minutes=settings.OTP_EXPIRY_MINUTES
+    )
+
+    PasswordResetOTP.objects.create(
+        user=user,
+        otp_hash=otp_hash,
+        otp_created_at=now,
+        expires_at=expires_at,
+    )
+
+    send_password_reset_otp(
+        email=user.email,
+        first_name=user.first_name,
+        otp=otp,
+    )
+
+    return None
