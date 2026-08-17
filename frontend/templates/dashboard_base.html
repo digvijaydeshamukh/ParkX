@@ -1,0 +1,374 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+            ParkX | Dashboard
+        {% endblock %}
+    </title>
+
+
+    <!-- =========================
+         GOOGLE FONT
+    ========================== -->
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =========================
+         FONT AWESOME
+    ========================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    >
+
+
+    <!-- =========================
+         DASHBOARD CSS
+    ========================== -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/dashboard_base.css' %}"
+    >
+
+<script src="{% static 'js/dashboard_base.js' %}"></script>
+
+
+    <!-- =========================
+         PAGE SPECIFIC CSS
+    ========================== -->
+
+    {% block extra_css %}
+    {% endblock %}
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard-layout">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="dashboard-sidebar">
+
+
+        <!-- MENU TOGGLE -->
+
+        <button
+            type="button"
+            class="dashboard-menu-toggle"
+            id="dashboardMenuToggle"
+        >
+
+            <i class="fa-solid fa-bars"></i>
+
+        </button>
+
+
+        <!-- =========================
+             PARKX LOGO
+        ========================== -->
+
+        <div class="sidebar-logo">
+
+            <a href="{% url 'dashboard-page' %}">
+
+                <img
+                    src="{% static 'images/logo.png' %}"
+                    alt="ParkX Logo"
+                >
+
+            </a>
+
+        </div>
+
+
+        <!-- =========================
+             USER PROFILE
+        ========================== -->
+
+        <div class="sidebar-user">
+
+            <div class="sidebar-profile-image">
+
+                {% if user.profile_image %}
+
+                    <img
+                        src="{{ user.profile_image.url }}"
+                        alt="Profile Image"
+                    >
+
+                {% else %}
+
+                    <i class="fa-solid fa-user"></i>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="sidebar-user-info">
+
+                <h3>
+                    {{ user.first_name|default:user.username }}
+                </h3>
+
+                <span>
+                    {{ user.email }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             NAVIGATION
+        ========================== -->
+
+        <nav class="sidebar-navigation">
+
+
+            <!-- Dashboard -->
+
+            <a
+                href="{% url 'dashboard-page' %}"
+                class="sidebar-link
+                {% if request.resolver_match.url_name == 'dashboard-page' %}
+                    active
+                {% endif %}"
+            >
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <!-- My Profile -->
+
+            <a
+                href="{% url 'profile-page' %}"
+                class="sidebar-link
+                {% if request.resolver_match.url_name == 'profile-page' %}
+                    active
+                {% endif %}"
+            >
+
+                <i class="fa-solid fa-user"></i>
+
+                <span>
+                    My Profile
+                </span>
+
+            </a>
+
+
+            <!-- My Bookings -->
+
+            <a
+                href="#"
+                class="sidebar-link
+                {% if request.resolver_match.url_name == 'bookings-page' %}
+                    active
+                {% endif %}"
+            >
+
+                <i class="fa-solid fa-calendar-check"></i>
+
+                <span>
+                    My Bookings
+                </span>
+
+            </a>
+
+
+            <!-- Find Parking -->
+
+            <a
+                href="{% url 'dashboard-page' %}#parking-section"
+                class="sidebar-link"
+            >
+
+                <i class="fa-solid fa-square-parking"></i>
+
+                <span>
+                    Find Parking
+                </span>
+
+            </a>
+
+
+            <!-- Parking History -->
+
+            <a
+                href="#"
+                class="sidebar-link
+                {% if request.resolver_match.url_name == 'parking-history-page' %}
+                    active
+                {% endif %}"
+            >
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                <span>
+                    Parking History
+                </span>
+
+            </a>
+
+
+            <!-- Payments -->
+
+            <a
+                href="#"
+                class="sidebar-link
+                {% if request.resolver_match.url_name == 'payments-page' %}
+                    active
+                {% endif %}"
+            >
+
+                <i class="fa-solid fa-credit-card"></i>
+
+                <span>
+                    Payments
+                </span>
+
+            </a>
+
+
+        </nav>
+
+
+        <!-- =========================
+             SIDEBAR BOTTOM
+        ========================== -->
+
+        <div class="sidebar-bottom">
+
+
+            <!-- Help -->
+
+            <a
+                href="#"
+                class="sidebar-link"
+            >
+
+                <i class="fa-solid fa-headset"></i>
+
+                <span>
+                    Help & Support
+                </span>
+
+            </a>
+
+
+            <!-- Logout -->
+
+            <form
+                method="POST"
+                action=""
+            >
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="sidebar-logout"
+                >
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    <span>
+                        Logout
+                    </span>
+
+                </button>
+
+            </form>
+
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- =====================================================
+         RIGHT SIDE
+    ====================================================== -->
+
+    <div class="dashboard-right">
+
+
+        <!-- =================================================
+             MAIN CONTENT
+        ================================================== -->
+
+        <main class="dashboard-main">
+
+            {% block dashboard_content %}
+            {% endblock %}
+
+        </main>
+
+
+        <!-- =================================================
+             COPYRIGHT
+        ================================================== -->
+
+        <div class="parkx-footer-bottom">
+
+            <p>
+                © 2026 SmartPark. All Rights Reserved.
+            </p>
+
+            <p>
+                Developed By
+                <span>Digvijay & Ganesh</span>
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================
+     DASHBOARD JAVASCRIPT
+========================== -->
+
+<script src="{% static 'js/dashboard_base.js' %}"></script>
+
+
+</body>
+
+</html>

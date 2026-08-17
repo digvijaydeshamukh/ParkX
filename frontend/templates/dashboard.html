@@ -1,0 +1,621 @@
+
+
+
+{% extends "dashboard_base.html" %}
+{% load static %}
+
+{% block title %}ParkX | Dashboard{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+
+{% endblock %}
+
+
+{% block dashboard_content %}
+
+<main class="dashboard-page">
+
+
+
+
+   
+
+</section>
+
+    <!-- ============================= -->
+    <!-- DASHBOARD HERO -->
+    <!-- ============================= -->
+
+    <section class="dashboard-hero">
+        <div class="dashboard-hero-image"></div>
+
+        <div class="dashboard-overlay"></div>
+
+        <div class="dashboard-content">
+
+            <div class="dashboard-welcome">
+
+                <span class="dashboard-label">
+                    <i class="fa-solid fa-square-parking"></i>
+                    PARKX SMART PARKING
+                </span>
+
+                <h1>
+                    Welcome,
+                    <span>{{ user.first_name|default:user.username }}</span>
+                </h1>
+
+                <p>
+                    Your smart parking experience starts here.
+                    Find, reserve and manage your parking effortlessly.
+                </p>
+
+                <div class="dashboard-actions">
+
+                    <a href="#parking-section" class="dashboard-primary-btn">
+                        <i class="fa-solid fa-square-parking"></i>
+                        Find Parking
+                    </a>
+
+                    <a href="#" class="dashboard-secondary-btn">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        My Bookings
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+  
+
+
+    <!-- ============================= -->
+    <!-- QUICK STATS -->
+    <!-- ============================= -->
+
+    <section class="dashboard-stats">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                <i class="fa-solid fa-car"></i>
+            </div>
+
+            <div class="stat-info">
+                <span>Available Slots</span>
+                <h2>{{ available_slots|default:"0" }}</h2>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+
+            <div class="stat-info">
+                <span>My Bookings</span>
+                <h2>{{ total_bookings|default:"0" }}</h2>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+
+            <div class="stat-info">
+                <span>Active Booking</span>
+                <h2>{{ active_bookings|default:"0" }}</h2>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+
+            <div class="stat-info">
+                <span>Total Spent</span>
+                <h2>₹{{ total_spent|default:"0" }}</h2>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- PARKING SEARCH -->
+    <!-- ============================= -->
+
+    <section
+        class="parking-search-section"
+        id="parking-section"
+    >
+
+        <div class="parking-search-overlay"></div>
+
+        <div class="parking-search-content">
+
+            <span class="section-label">
+                <i class="fa-solid fa-location-dot"></i>
+                FIND YOUR PARKING
+            </span>
+
+            <h2>
+                Find a Parking Spot
+                <span>Near You</span>
+            </h2>
+
+            <p>
+                Search for available parking spaces and reserve your
+                preferred spot in just a few clicks.
+            </p>
+
+
+            <!-- Search Form -->
+
+            <form
+                method="GET"
+                action="#"
+                class="parking-search-form"
+            >
+
+                <div class="search-input">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    <input
+                        type="text"
+                        name="location"
+                        placeholder="Enter parking location"
+                    >
+
+                </div>
+
+
+                <div class="search-input">
+
+                    <i class="fa-solid fa-calendar"></i>
+
+                    <input
+                        type="date"
+                        name="date"
+                    >
+
+                </div>
+
+
+                <div class="search-input">
+
+                    <i class="fa-solid fa-clock"></i>
+
+                    <input
+                        type="time"
+                        name="time"
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="parking-search-btn"
+                >
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Search Parking
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- DASHBOARD MENU -->
+    <!-- ============================= -->
+
+    <section class="dashboard-menu">
+
+        <div class="dashboard-section-heading">
+
+            <div>
+                <span class="section-label">
+                    PARKX
+                </span>
+
+                <h2>
+                    Manage Your Parking
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-menu-grid">
+
+
+            <!-- Find Parking -->
+
+            <a href="#parking-section" class="dashboard-menu-card">
+
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+
+                <div class="menu-card-content">
+
+                    <h3>Find Parking</h3>
+
+                    <p>
+                        Search and find available parking
+                        spaces near your location.
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-arrow-right menu-arrow"></i>
+
+            </a>
+
+
+            <!-- My Bookings -->
+
+            <a href="#" class="dashboard-menu-card">
+
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+
+                <div class="menu-card-content">
+
+                    <h3>My Bookings</h3>
+
+                    <p>
+                        View and manage your current
+                        and previous parking bookings.
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-arrow-right menu-arrow"></i>
+
+            </a>
+
+
+            <!-- Parking History -->
+
+            <a href="#" class="dashboard-menu-card">
+
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+
+                <div class="menu-card-content">
+
+                    <h3>Parking History</h3>
+
+                    <p>
+                        Check your complete parking
+                        and booking history.
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-arrow-right menu-arrow"></i>
+
+            </a>
+
+
+            <!-- Payments -->
+
+            <a href="#" class="dashboard-menu-card">
+
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-credit-card"></i>
+                </div>
+
+                <div class="menu-card-content">
+
+                    <h3>Payments</h3>
+
+                    <p>
+                        View your payment history and
+                        manage parking transactions.
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-arrow-right menu-arrow"></i>
+
+            </a>
+
+
+            <!-- Profile -->
+
+            <a href="#" class="dashboard-menu-card">
+
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="menu-card-content">
+
+                    <h3>My Profile</h3>
+
+                    <p>
+                        Update your personal information
+                        and account details.
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-arrow-right menu-arrow"></i>
+
+            </a>
+
+
+            <!-- Support -->
+
+            <a href="#contact" class="dashboard-menu-card">
+
+                <div class="menu-card-icon">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+
+                <div class="menu-card-content">
+
+                    <h3>Help & Support</h3>
+
+                    <p>
+                        Need help? Contact ParkX support
+                        for assistance.
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-arrow-right menu-arrow"></i>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- RECENT BOOKINGS -->
+    <!-- ============================= -->
+
+    <section class="recent-bookings">
+
+        <div class="dashboard-section-heading">
+
+            <div>
+
+                <span class="section-label">
+                    ACTIVITY
+                </span>
+
+                <h2>
+                    Recent Bookings
+                </h2>
+
+            </div>
+
+            <a href="#" class="view-all-btn">
+                View All
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <div class="booking-container">
+
+            {% if bookings %}
+
+                {% for booking in bookings %}
+
+                <div class="booking-card">
+
+                    <div class="booking-location">
+
+                        <div class="booking-icon">
+                            <i class="fa-solid fa-square-parking"></i>
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                {{ booking.parking_location }}
+                            </h3>
+
+                            <p>
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ booking.address }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="booking-details">
+
+                        <span>
+                            <i class="fa-solid fa-calendar"></i>
+                            {{ booking.date }}
+                        </span>
+
+                        <span>
+                            <i class="fa-solid fa-clock"></i>
+                            {{ booking.time }}
+                        </span>
+
+                    </div>
+
+
+                    <span class="booking-status">
+                        {{ booking.status }}
+                    </span>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty-bookings">
+
+                    <div class="empty-icon">
+                        <i class="fa-solid fa-car"></i>
+                    </div>
+
+                    <h3>
+                        No bookings yet
+                    </h3>
+
+                    <p>
+                        Your parking bookings will appear here.
+                    </p>
+
+                    <a
+                        href="#parking-section"
+                        class="dashboard-primary-btn"
+                    >
+                        Find Parking
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- WHY PARKX -->
+    <!-- ============================= -->
+
+    <section class="why-parkx">
+
+        <div class="dashboard-section-heading centered">
+
+            <span class="section-label">
+                WHY PARKX
+            </span>
+
+            <h2>
+                Parking Made Simple
+            </h2>
+
+            <p>
+                Everything you need for a smarter and
+                hassle-free parking experience.
+            </p>
+
+        </div>
+
+
+        <div class="features-grid">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+
+                <h3>
+                    Fast & Easy
+                </h3>
+
+                <p>
+                    Find and reserve your parking
+                    spot within seconds.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <h3>
+                    Secure
+                </h3>
+
+                <p>
+                    Your account and payment information
+                    are protected.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                </div>
+
+                <h3>
+                    Real-Time Availability
+                </h3>
+
+                <p>
+                    See available parking spaces
+                    in real time.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+
+                <h3>
+                    Smart Experience
+                </h3>
+
+                <p>
+                    Manage your complete parking
+                    experience from one place.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}
+
+
+

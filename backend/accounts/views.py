@@ -230,3 +230,11 @@ def reset_password_page(request):
 #Dashboard view
 def dashboard_page(request):
     return render(request, "dashboard.html")
+
+#Profile page view
+def profile_page(request):
+    return render(request, "profile.html")
+
+#Reset password page view
+def password_reset_page(request):
+    return render(request, "password_reset.html")
