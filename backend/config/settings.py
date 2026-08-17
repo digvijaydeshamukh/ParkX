@@ -224,4 +224,5 @@ EMAIL_USE_TLS = config(
     cast=bool,
 )
 
-
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"

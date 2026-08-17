@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer 
-from .models import PendingRegistration,User,Roles
+from .models import PendingRegistration,User,Roles,Vehicle
 from .validators import(
     phone_number_validator,
     password_validator,
@@ -93,10 +93,31 @@ class LoginSerializer(TokenObtainPairSerializer):
         "no_active_account": "Invalid email or password."
     }
 
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        data["user"] = {
+            "id": self.user.id,
+            "username": self.user.username,
+            "fisrt_name": self.user.first_name,
+            "email": self.user.email,
+            "role": self.user.role,
+        }
+
+        return data
+
+#Login User Serializer
+class LoginUserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    username = serializers.CharField()
+    email = serializers.EmailField()
+    role = serializers.CharField()
+
 #Login Response serializer
 class LoginResponseSerializer(serializers.Serializer):
     access = serializers.CharField()
     refresh = serializers.CharField()
+    user = LoginUserSerializer()
 
 #Forgot Password serializer
 class ForgotPasswordSerializer(serializers.Serializer):
@@ -157,3 +178,62 @@ class ResetPasswordResponseSerializer(serializers.Serializer):
 #Resend Otp Serializer
 class ResendResetOTPSerializer(serializers.Serializer):
     email = serializers.EmailField()
+
+# User Profile serializer
+class ProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+
+        fields = [
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "profile_image",
+        ]
+
+        read_only_fields = [
+            "username",
+            "email",
+            "phone",
+        ]
+
+# User Profile Response serializer
+class ProfileUpdateResponseSerializer(serializers.Serializer):
+
+    message = serializers.CharField()
+
+    user = ProfileSerializer()
+
+# Vehicle serializer
+class VehicleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Vehicle
+
+        fields = [
+            "id",
+            "vehicle_type",
+            "registration_number",
+            "brand",
+            "model",
+            "color",
+            "is_default",
+        ]
+
+        read_only_fields = [
+            "id",
+            "is_default",
+        ]
+
+        def validate_registration_number(self, value):
+
+            return value.strip().upper()
+
+# Vehicle Response Serializer
+class VehicleResponseSerializer(serializers.Serializer):
+
+    message = serializers.CharField()
+    vehicle = VehicleSerializer()

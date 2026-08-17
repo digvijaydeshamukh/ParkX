@@ -8,6 +8,10 @@ from .views import (
     VerifyResetOTPAPIView,
     ResetPasswordAPIView,
     ResendResetOTPAPIView,
+    ProfileView,
+    VehicleListCreateView,
+    VehicleDetailView,
+    SetDefaultVehicleView,
 )
 
 urlpatterns = [
@@ -19,4 +23,8 @@ urlpatterns = [
     path("verify-reset-otp/",VerifyResetOTPAPIView.as_view(),name="verify-reset-otp",),
     path("reset-password/",ResetPasswordAPIView.as_view(),name="reset-password"),
     path( "resend-reset-otp/", ResendResetOTPAPIView.as_view(), name="resend-reset-otp" ),
+    path("profile/",ProfileView.as_view(),name="profile"),
+    path("vehicles/",VehicleListCreateView.as_view(),name="vehicle-list-create"),
+    path("vehicles/<int:pk>/",VehicleDetailView.as_view(),name="vehicle-detail"),
+    path("vehicles/<int:pk>/set-default/",SetDefaultVehicleView.as_view(),name="vehicle-set-default"),
 ]

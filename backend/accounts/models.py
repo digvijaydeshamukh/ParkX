@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from datetime import timedelta
 from django.conf import settings
-from .validators import phone_number_validator
+from .validators import phone_number_validator,vehicle_registration_validator
 
 # Create your models here.
 class Roles(models.TextChoices):
@@ -42,6 +42,37 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+
+    def save(self, *args, **kwargs):
+
+        old_image = None
+
+        if self.pk:
+
+            try:
+                old_user = User.objects.get(
+                    pk=self.pk
+                )
+
+                old_image = old_user.profile_image
+
+            except User.DoesNotExist:
+                pass
+
+
+        super().save(*args, **kwargs)
+
+
+        if (
+            old_image
+            and old_image != self.profile_image
+            and old_image.name
+        ):
+
+            old_image.delete(
+                save=False
+            )
+
 
     def __str__(self):
         return self.email
@@ -112,3 +143,58 @@ class PasswordResetOTP(models.Model):
 
     def __str__(self):
         return self.user.email
+
+# Vehicle models
+class VehicleType(models.TextChoices):
+    CAR = "car", "Car"
+    BIKE = "bike", "Bike"
+
+
+class Vehicle(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="vehicles"
+    )
+
+    vehicle_type = models.CharField(
+        max_length=10,
+        choices=VehicleType.choices
+    )
+
+    registration_number = models.CharField(
+        max_length=20,
+        unique=True,
+        validators=[vehicle_registration_validator]
+    )
+
+    brand = models.CharField(
+        max_length=50,
+        blank=True
+    )
+
+    model = models.CharField(
+        max_length=50,
+        blank=True
+    )
+
+    color = models.CharField(
+        max_length=30,
+        blank=True
+    )
+
+    is_default = models.BooleanField(
+        default=False
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return self.registration_number

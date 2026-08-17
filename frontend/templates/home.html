@@ -1,364 +1,284 @@
-<!DOCTYPE html>
-{% extends "base.html" %}
-{% load static %}
+<!doctype html>
+{% extends "base.html" %} {% load static %}
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
+    {% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    {% endblock %} 
+    
+    {% block title %}
+    ParkX | Smart Parking Management System
+    {%endblock %} 
+    {% block content %}
 
+    <!-- ========================================= -->
+    <!-- HERO SECTION -->
+    <!-- ========================================= -->
 
-
-{% block title %}ParkX | Smart Parking Management System{% endblock %}
-
-{% block content %}
-
-<!-- ========================================= -->
-<!-- HERO SECTION -->
-<!-- ========================================= -->
-
-<section id="hero">
-
-    <div class="hero-container">
-
+    <section id="hero">
+      <div class="hero-container">
         <div class="hero-content">
+          <span class="hero-tag"> AI Powered Smart Parking System </span>
 
-            <span class="hero-tag">
-                AI Powered Smart Parking System
-            </span>
+          <h1>
+            Park Smarter,
+            <br />
+            Drive Better.
+          </h1>
 
-            <h1>
-                Park Smarter,
-                <br>
-                Drive Better.
-            </h1>
+          <p>
+            Find available parking spaces in real-time, reserve your parking,
+            make secure online payments and enjoy hassle-free parking with
+            ParkX.
+          </p>
 
-            <p>
-                Find available parking spaces in real-time, reserve your parking,
-                make secure online payments and enjoy hassle-free parking with ParkX.
-            </p>
+          <div class="hero-buttons">
+            <a href="" class="btn-primary"> Book Parking </a>
 
-            <div class="hero-buttons">
+            <a href="#" class="btn-secondary"> Explore More </a>
+          </div>
 
-                <a href="" class="btn-primary">
-                    Book Parking
-                </a>
-
-                <a href="#" class="btn-secondary">
-                    Explore More
-                </a>
-
+          <div class="hero-features">
+            <div class="feature">
+              <i class="fa-solid fa-location-dot"></i>
+              <span>Live Parking</span>
             </div>
 
-            <div class="hero-features">
-
-                <div class="feature">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <span>Live Parking</span>
-                </div>
-
-                <div class="feature">
-                    <i class="fa-solid fa-qrcode"></i>
-                    <span>QR Entry</span>
-                </div>
-
-                <div class="feature">
-                    <i class="fa-solid fa-credit-card"></i>
-                    <span>Secure Payment</span>
-                </div>
-
+            <div class="feature">
+              <i class="fa-solid fa-qrcode"></i>
+              <span>QR Entry</span>
             </div>
 
+            <div class="feature">
+              <i class="fa-solid fa-credit-card"></i>
+              <span>Secure Payment</span>
+            </div>
+          </div>
         </div>
 
         <div class="hero-image">
-
-            <!-- <img src="{% static 'images/hero-car.png' %}" alt="Hero Image"> -->
-            <img src="../static/img/logo.png" alt="">
+          <!-- <img src="{% static 'images/hero-car.png' %}" alt="Hero Image"> -->
+          <img src="../static/img/logo.png" alt="" />
         </div>
+      </div>
+    </section>
 
-    </div>
+    <!-- ========================================= -->
+    <!-- TRUSTED BY -->
+    <!-- ========================================= -->
 
-</section>
-
-
-<!-- ========================================= -->
-<!-- TRUSTED BY -->
-<!-- ========================================= -->
-
-<section id="trusted">
-
-    <div class="section-title">
-
+    <section id="trusted">
+      <div class="section-title">
         <h2>Trusted By</h2>
 
         <p>Leading companies and organizations</p>
+      </div>
 
-    </div>
-
-    <div class="trusted-container">
-
+      <div class="trusted-container">
         <div class="company">
-            <img src="{% static 'images/company/google.png' %}" alt="">
+          <img src="{% static 'images/company/google.png' %}" alt="" />
         </div>
 
         <div class="company">
-            <img src="{% static 'images/company/microsoft.png' %}" alt="">
+          <img src="{% static 'images/company/microsoft.png' %}" alt="" />
         </div>
 
         <div class="company">
-            <img src="{% static 'images/company/amazon.png' %}" alt="">
+          <img src="{% static 'images/company/amazon.png' %}" alt="" />
         </div>
 
         <div class="company">
-            <img src="{% static 'images/company/ibm.png' %}" alt="">
+          <img src="{% static 'images/company/ibm.png' %}" alt="" />
         </div>
 
         <div class="company">
-            <img src="{% static 'images/company/tcs.png' %}" alt="">
+          <img src="{% static 'images/company/tcs.png' %}" alt="" />
         </div>
+      </div>
+    </section>
 
-    </div>
+    <!-- ========================================= -->
+    <!-- STATISTICS -->
+    <!-- ========================================= -->
 
-</section>
-
-
-<!-- ========================================= -->
-<!-- STATISTICS -->
-<!-- ========================================= -->
-
-<section id="statistics">
-
-    <div class="stat-card">
-
+    <section id="statistics">
+      <div class="stat-card">
         <h2>50K+</h2>
 
         <p>Happy Users</p>
+      </div>
 
-    </div>
-
-    <div class="stat-card">
-
+      <div class="stat-card">
         <h2>120+</h2>
 
         <p>Parking Locations</p>
+      </div>
 
-    </div>
-
-    <div class="stat-card">
-
+      <div class="stat-card">
         <h2>1M+</h2>
 
         <p>Bookings Completed</p>
+      </div>
 
-    </div>
-
-    <div class="stat-card">
-
+      <div class="stat-card">
         <h2>99%</h2>
 
         <p>Customer Satisfaction</p>
+      </div>
+    </section>
 
-    </div>
+    <!-- ========================================= -->
+    <!-- ABOUT -->
+    <!-- ========================================= -->
 
-</section>
-
-
-<!-- ========================================= -->
-<!-- ABOUT -->
-<!-- ========================================= -->
-
-<section id="about">
-
-    <div class="about-image">
-
+    <section id="about">
+      <div class="about-image">
         <!-- <img src="{% static 'images/about.png' %}" alt=""> -->
-        <img src="../static/img/logo.png" alt="">
-    </div>
+        <img src="../static/img/logo.png" alt="" />
+      </div>
 
-    <div class="about-content">
-
+      <div class="about-content">
         <h2>About ParkX</h2>
 
         <p>
-            ParkX is an intelligent parking management solution designed
-            to simplify vehicle parking with real-time availability,
-            secure reservations and cashless payments.
+          ParkX is an intelligent parking management solution designed to
+          simplify vehicle parking with real-time availability, secure
+          reservations and cashless payments.
         </p>
 
         <ul>
+          <li>Real Time Parking Availability</li>
 
-            <li>Real Time Parking Availability</li>
+          <li>Online Slot Reservation</li>
 
-            <li>Online Slot Reservation</li>
+          <li>Digital Payments</li>
 
-            <li>Digital Payments</li>
+          <li>Vehicle Tracking</li>
 
-            <li>Vehicle Tracking</li>
-
-            <li>24×7 Customer Support</li>
-
+          <li>24×7 Customer Support</li>
         </ul>
+      </div>
+    </section>
 
-    </div>
+    <!-- ========================================= -->
+    <!-- HOW IT WORKS -->
+    <!-- ========================================= -->
 
-</section>
-
-
-<!-- ========================================= -->
-<!-- HOW IT WORKS -->
-<!-- ========================================= -->
-
-<section id="how-it-works">
-
-    <div class="section-title">
-
+    <section id="how-it-works">
+      <div class="section-title">
         <h2>How ParkX Works</h2>
+      </div>
 
-    </div>
-
-    <div class="steps">
-
+      <div class="steps">
         <div class="step">
+          <i class="fa-solid fa-search"></i>
 
-            <i class="fa-solid fa-search"></i>
+          <h3>Search</h3>
 
-            <h3>Search</h3>
-
-            <p>Find nearby parking spaces.</p>
-
+          <p>Find nearby parking spaces.</p>
         </div>
 
         <div class="step">
+          <i class="fa-solid fa-calendar-check"></i>
 
-            <i class="fa-solid fa-calendar-check"></i>
+          <h3>Reserve</h3>
 
-            <h3>Reserve</h3>
-
-            <p>Select your preferred slot.</p>
-
+          <p>Select your preferred slot.</p>
         </div>
 
         <div class="step">
+          <i class="fa-solid fa-credit-card"></i>
 
-            <i class="fa-solid fa-credit-card"></i>
+          <h3>Pay</h3>
 
-            <h3>Pay</h3>
-
-            <p>Complete secure online payment.</p>
-
+          <p>Complete secure online payment.</p>
         </div>
 
         <div class="step">
+          <i class="fa-solid fa-car-side"></i>
 
-            <i class="fa-solid fa-car-side"></i>
+          <h3>Park</h3>
 
-            <h3>Park</h3>
-
-            <p>Scan QR and enter instantly.</p>
-
+          <p>Scan QR and enter instantly.</p>
         </div>
+      </div>
+    </section>
 
-    </div>
+    <!-- ========================================= -->
+    <!-- FEATURES -->
+    <!-- ========================================= -->
 
-</section>
-
-
-<!-- ========================================= -->
-<!-- FEATURES -->
-<!-- ========================================= -->
-
-<section id="features">
-
-    <div class="section-title">
-
+    <section id="features">
+      <div class="section-title">
         <h2>Our Features</h2>
+      </div>
 
-    </div>
-
-    <div class="feature-grid">
-
+      <div class="feature-grid">
         <div class="feature-card">
+          <i class="fa-solid fa-square-parking"></i>
 
-            <i class="fa-solid fa-square-parking"></i>
+          <h3>Live Parking</h3>
 
-            <h3>Live Parking</h3>
-
-            <p>Check parking availability instantly.</p>
-
+          <p>Check parking availability instantly.</p>
         </div>
 
         <div class="feature-card">
+          <i class="fa-solid fa-location-arrow"></i>
 
-            <i class="fa-solid fa-location-arrow"></i>
+          <h3>GPS Navigation</h3>
 
-            <h3>GPS Navigation</h3>
-
-            <p>Navigate directly to your parking slot.</p>
-
+          <p>Navigate directly to your parking slot.</p>
         </div>
 
         <div class="feature-card">
+          <i class="fa-solid fa-qrcode"></i>
 
-            <i class="fa-solid fa-qrcode"></i>
+          <h3>QR Entry</h3>
 
-            <h3>QR Entry</h3>
-
-            <p>Contactless parking access.</p>
-
+          <p>Contactless parking access.</p>
         </div>
 
         <div class="feature-card">
+          <i class="fa-solid fa-wallet"></i>
 
-            <i class="fa-solid fa-wallet"></i>
+          <h3>Digital Payment</h3>
 
-            <h3>Digital Payment</h3>
-
-            <p>Fast and secure online payments.</p>
-
+          <p>Fast and secure online payments.</p>
         </div>
 
         <div class="feature-card">
+          <i class="fa-solid fa-clock-rotate-left"></i>
 
-            <i class="fa-solid fa-clock-rotate-left"></i>
+          <h3>Booking History</h3>
 
-            <h3>Booking History</h3>
-
-            <p>View all previous reservations.</p>
-
+          <p>View all previous reservations.</p>
         </div>
 
         <div class="feature-card">
+          <i class="fa-solid fa-charging-station"></i>
 
-            <i class="fa-solid fa-charging-station"></i>
+          <h3>EV Charging</h3>
 
-            <h3>EV Charging</h3>
-
-            <p>Find EV charging stations nearby.</p>
-
+          <p>Find EV charging stations nearby.</p>
         </div>
+      </div>
+    </section>
 
-    </div>
+    <!-- ========================================= -->
+    <!-- POPULAR LOCATIONS -->
+    <!-- ========================================= -->
 
-</section>
-
-
-<!-- ========================================= -->
-<!-- POPULAR LOCATIONS -->
-<!-- ========================================= -->
-
-<section id="locations">
-
-    <div class="section-title">
-
+    <section id="locations">
+      <div class="section-title">
         <h2>Popular Parking Locations</h2>
+      </div>
 
-    </div>
-
-    <div class="location-grid">
-
+      <div class="location-grid">
         <!-- 6 Location Cards -->
 
         <div class="location-card"></div>
@@ -372,52 +292,38 @@
         <div class="location-card"></div>
 
         <div class="location-card"></div>
+      </div>
+    </section>
 
-    </div>
+    <!-- ========================================= -->
+    <!-- DASHBOARD PREVIEW -->
+    <!-- ========================================= -->
 
-</section>
-
-
-<!-- ========================================= -->
-<!-- DASHBOARD PREVIEW -->
-<!-- ========================================= -->
-
-<section id="dashboard">
-
-    <div class="dashboard-content">
-
+    <section id="dashboard">
+      <div class="dashboard-content">
         <h2>Manage Everything From One Dashboard</h2>
 
         <p>
-            Track bookings, parking slots,
-            payments and vehicle history in one place.
+          Track bookings, parking slots, payments and vehicle history in one
+          place.
         </p>
+      </div>
 
-    </div>
+      <div class="dashboard-image">
+        <img src="{% static 'images/dashboard.png' %}" alt="" />
+      </div>
+    </section>
 
-    <div class="dashboard-image">
+    <!-- ========================================= -->
+    <!-- WHY CHOOSE US -->
+    <!-- ========================================= -->
 
-        <img src="{% static 'images/dashboard.png' %}" alt="">
-
-    </div>
-
-</section>
-
-
-<!-- ========================================= -->
-<!-- WHY CHOOSE US -->
-<!-- ========================================= -->
-
-<section id="why-us">
-
-    <div class="section-title">
-
+    <section id="why-us">
+      <div class="section-title">
         <h2>Why Choose ParkX?</h2>
+      </div>
 
-    </div>
-
-    <div class="why-grid">
-
+      <div class="why-grid">
         <div class="why-item">AI Powered Parking Prediction</div>
 
         <div class="why-item">Fast Booking</div>
@@ -429,51 +335,37 @@
         <div class="why-item">Smart Analytics</div>
 
         <div class="why-item">Affordable Pricing</div>
+      </div>
+    </section>
 
-    </div>
+    <!-- ========================================= -->
+    <!-- TESTIMONIALS -->
+    <!-- ========================================= -->
 
-</section>
-
-
-<!-- ========================================= -->
-<!-- TESTIMONIALS -->
-<!-- ========================================= -->
-
-<section id="testimonials">
-
-    <div class="section-title">
-
+    <section id="testimonials">
+      <div class="section-title">
         <h2>What Our Customers Say</h2>
+      </div>
 
-    </div>
-
-    <div class="testimonial-container">
-
+      <div class="testimonial-container">
         <div class="testimonial-card"></div>
 
         <div class="testimonial-card"></div>
 
         <div class="testimonial-card"></div>
+      </div>
+    </section>
 
-    </div>
+    <!-- ========================================= -->
+    <!-- FAQ -->
+    <!-- ========================================= -->
 
-</section>
-
-
-<!-- ========================================= -->
-<!-- FAQ -->
-<!-- ========================================= -->
-
-<section id="faq">
-
-    <div class="section-title">
-
+    <section id="faq">
+      <div class="section-title">
         <h2>Frequently Asked Questions</h2>
+      </div>
 
-    </div>
-
-    <div class="faq-container">
-
+      <div class="faq-container">
         <div class="faq-item"></div>
 
         <div class="faq-item"></div>
@@ -483,37 +375,24 @@
         <div class="faq-item"></div>
 
         <div class="faq-item"></div>
+      </div>
+    </section>
 
-    </div>
+    <!-- ========================================= -->
+    <!-- CALL TO ACTION -->
+    <!-- ========================================= -->
 
-</section>
+    <section id="cta">
+      <h2>Ready To Experience Smart Parking?</h2>
 
+      <p>
+        Reserve your parking space today and enjoy a smarter, faster and
+        stress-free parking experience.
+      </p>
 
-<!-- ========================================= -->
-<!-- CALL TO ACTION -->
-<!-- ========================================= -->
+      <a href="#" class="btn-primary"> Book Parking Now </a>
+    </section>
 
-<section id="cta">
-
-    <h2>
-        Ready To Experience Smart Parking?
-    </h2>
-
-    <p>
-        Reserve your parking space today and enjoy
-        a smarter, faster and stress-free parking experience.
-    </p>
-
-    <a href="#" class="btn-primary">
-        Book Parking Now
-    </a>
-
-</section>
-
-{% endblock %}
-
-
-
-
-</body>
+    {% endblock %}
+  </body>
 </html>

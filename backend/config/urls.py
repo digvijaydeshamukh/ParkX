@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.urls import path,include
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
@@ -15,9 +18,11 @@ from accounts.views import (
     verify_otp_page,
     reset_password_page,
     dashboard_page,
+    profile_page,
 )
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
     path("api/accounts/", include("accounts.urls")),
 
@@ -56,4 +61,13 @@ urlpatterns = [
     path("reset-password/", reset_password_page, name="reset-password-page"),
     #Dashboard page
     path("dashboard/", dashboard_page, name="dashboard-page"),
+    # Profile page
+    path("profile/", profile_page, name="profile"),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

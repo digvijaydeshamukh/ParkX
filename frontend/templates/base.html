@@ -15,14 +15,18 @@
     <link rel="stylesheet" href="{% static 'css/forgot_password.css' %}">
     <link rel="stylesheet" href="{% static 'css/verify_otp.css' %}">
     <link rel="stylesheet" href="{% static 'css/reset_password.css' %}">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" integrity="sha512-ApSLB1Pd3/bZN8fWB/RG9YhN/7bd9Hkf3AGaE2mPfebjrxagjuBtx2GcgdqIlJkUzwylBo61r9Xa9NmgBI0swA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    {% block extra_css %}
+
+
+    {% endblock %}
 </head>
 
 <body>
 
     <!-- ================= Navbar ================= -->
    <div class="container">
+    {% if request.path != '/dashboard/' %}
      <nav class="navbar">
         <div class="logo">
 
@@ -108,10 +112,12 @@
         </a>
 
     {% endif %}
+    {% endif %}
 
 </div>
     
     </nav>
+    
    </div>
 
     <!-- ================= Main Content ================= -->
@@ -121,7 +127,7 @@
     </main>
 
     <!-- ================= Footer ================= -->
-     {% if request.path != '/login/' and request.path != '/register/' and request.path != '/forgot-password/' and request.path != '/verify-otp/' and request.path != '/reset-password/' %} 
+     {% if request.path != '/login/' and request.path != '/register/' and request.path != '/forgot-password/' and request.path != '/verify-otp/' and request.path != '/reset-password/' and request.path != '/dashboard/' %} 
 
 
     <footer class="parkx-footer">
