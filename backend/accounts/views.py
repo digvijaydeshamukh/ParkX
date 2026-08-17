@@ -243,6 +243,7 @@ def reset_password_page(request):
 def dashboard_page(request):
     return render(request, "dashboard.html")
 
+
 #Resent Otp Api View
 class ResendResetOTPAPIView(APIView):
 
@@ -367,9 +368,6 @@ class ProfileView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-# Profile page view
-def profile_page(request):
-    return render(request, "profile.html")
 
 # Vehicle list Api View 
 class VehicleListCreateView(APIView):
@@ -677,3 +675,11 @@ class SetDefaultVehicleView(APIView):
             },
             status=status.HTTP_200_OK
         )
+#Profile page view
+def profile_page(request):
+    return render(request, "profile.html")
+
+#Reset password page view
+def password_reset_page(request):
+    return render(request, "password_reset.html")
+

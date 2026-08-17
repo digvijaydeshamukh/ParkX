@@ -1,0 +1,1431 @@
+/* =========================================================
+   PARKX DASHBOARD
+   ========================================================= */
+
+:root {
+    --dashboard-bg: #081b29;
+    --dashboard-bg-light: #0b2436;
+
+    --primary: #2563eb;
+    --primary-light: #3b82f6;
+
+    --secondary: #00c853;
+    --green: #00e676;
+
+    --white: #ffffff;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+
+    --glass: rgba(255, 255, 255, 0.07);
+    --glass-hover: rgba(255, 255, 255, 0.10);
+
+    --border: rgba(255, 255, 255, 0.12);
+
+    --shadow:
+        0 15px 40px rgba(0, 0, 0, 0.25);
+
+    --gradient:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #00c853
+        );
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+.dashboard-page *,
+.dashboard-page *::before,
+.dashboard-page *::after {
+    box-sizing: border-box;
+}
+
+
+.dashboard-page {
+    width: 100%;
+    min-height: 100vh;
+
+    padding: 30px 0 80px;
+
+    color: var(--text);
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(37, 99, 235, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 50%,
+            rgba(0, 200, 83, 0.08),
+            transparent 30%
+        );
+}
+
+/* =========================================================
+   DASHBOARD HERO
+   ========================================================= */
+/* =========================================================
+   HERO IMAGE
+========================================================= */
+
+
+.dashboard-hero {
+    position: relative;
+
+    width: 92%;
+    max-width: 1450px;
+
+    min-height: 420px;
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+
+    border-radius: 30px;
+
+    border: 1px solid var(--border);
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(5, 23, 36, 0.98),
+            rgba(8, 39, 61, 0.92)
+        );
+    
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.30);
+}
+
+
+/* Decorative circles */
+
+.dashboard-hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    right: -150px;
+    top: -170px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(59, 130, 246, 0.20);
+
+    box-shadow:
+        0 0 100px rgba(37, 99, 235, 0.12);
+}
+
+
+.dashboard-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    right: 40px;
+    bottom: -180px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(0, 230, 118, 0.15);
+}
+
+
+/* Hero overlay */
+
+.dashboard-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(8, 27, 41, 0.98) 0%,
+            rgba(8, 27, 41, 0.85) 45%,
+            rgba(8, 27, 41, 0.35) 100%
+        );
+
+    pointer-events: none;
+}
+
+
+/* Hero content */
+
+.dashboard-content {
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    padding: 70px;
+}
+
+
+.dashboard-welcome {
+    max-width: 720px;
+
+    animation:
+        dashboardFadeUp 0.8s ease both;
+}
+
+
+.dashboard-label,
+.section-label {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: var(--green);
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+
+.dashboard-welcome h1 {
+    margin-top: 15px;
+
+    font-size: clamp(42px, 5vw, 68px);
+
+    line-height: 1.1;
+
+    font-weight: 700;
+}
+
+
+.dashboard-welcome h1 span {
+    background:
+        linear-gradient(
+            90deg,
+            #3b82f6,
+            #00e676
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}
+
+
+.dashboard-welcome p {
+    max-width: 650px;
+
+    margin-top: 20px;
+
+    color: var(--muted);
+
+    font-size: 15px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   DASHBOARD BUTTONS
+   ========================================================= */
+
+.dashboard-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-top: 30px;
+}
+
+
+.dashboard-primary-btn,
+.dashboard-secondary-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    min-height: 48px;
+
+    padding: 12px 23px;
+
+    border-radius: 30px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        background 0.3s ease;
+}
+
+
+.dashboard-primary-btn {
+    color: var(--white);
+
+    background: var(--gradient);
+
+    box-shadow:
+        0 10px 30px rgba(37, 99, 235, 0.25);
+}
+
+
+.dashboard-secondary-btn {
+    color: var(--white);
+
+    background: rgba(255, 255, 255, 0.06);
+
+    border: 1px solid var(--border);
+}
+
+
+.dashboard-primary-btn:hover,
+.dashboard-secondary-btn:hover {
+    transform: translateY(-3px);
+}
+
+
+.dashboard-primary-btn:hover {
+    box-shadow:
+        0 15px 35px rgba(37, 99, 235, 0.35);
+}
+
+
+.dashboard-secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.11);
+
+    border-color:
+        rgba(59, 130, 246, 0.5);
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.dashboard-stats {
+    width: 92%;
+    max-width: 1450px;
+
+    margin: 25px auto 0;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+}
+
+
+.stat-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    min-height: 110px;
+
+    padding: 22px;
+
+    background: var(--glass);
+
+    border: 1px solid var(--border);
+
+    border-radius: 20px;
+
+    box-shadow: var(--shadow);
+
+    backdrop-filter: blur(18px);
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        background 0.3s ease;
+}
+
+
+.stat-card:hover {
+    transform: translateY(-5px);
+
+    background: var(--glass-hover);
+
+    border-color:
+        rgba(59, 130, 246, 0.35);
+}
+
+
+.stat-icon {
+    width: 55px;
+    height: 55px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    color: #60a5fa;
+
+    font-size: 21px;
+
+    background:
+        rgba(37, 99, 235, 0.14);
+}
+
+
+.stat-info span {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+
+.stat-info h2 {
+    margin-top: 5px;
+
+    font-size: 25px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   PARKING SEARCH
+   ========================================================= */
+
+.parking-search-section {
+    position: relative;
+
+    width: 92%;
+    max-width: 1450px;
+
+    min-height: 360px;
+
+    margin: 55px auto 0;
+
+    padding: 55px;
+
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+
+    border-radius: 28px;
+
+    border: 1px solid var(--border);
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(6, 27, 42, 0.96),
+            rgba(7, 42, 63, 0.90)
+        );
+
+    box-shadow: var(--shadow);
+}
+
+
+/* Decorative parking background */
+
+.parking-search-section::before {
+    content: "P";
+
+    position: absolute;
+
+    right: 8%;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 270px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    color: rgba(59, 130, 246, 0.045);
+
+    pointer-events: none;
+}
+
+
+.parking-search-section::after {
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+    height: 350px;
+
+    right: -100px;
+    bottom: -200px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(0, 200, 83, 0.07);
+
+    filter: blur(5px);
+}
+
+
+.parking-search-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(8, 27, 41, 0.98),
+            rgba(8, 27, 41, 0.60)
+        );
+
+    pointer-events: none;
+}
+
+
+.parking-search-content {
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+}
+
+
+.parking-search-content h2 {
+    margin-top: 10px;
+
+    font-size: clamp(28px, 4vw, 43px);
+
+    line-height: 1.2;
+}
+
+
+.parking-search-content h2 span {
+    color: var(--green);
+}
+
+
+.parking-search-content > p {
+    max-width: 650px;
+
+    margin-top: 10px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* Search form */
+
+.parking-search-form {
+    display: grid;
+
+    grid-template-columns:
+        2fr 1fr 1fr auto;
+
+    gap: 12px;
+
+    margin-top: 28px;
+}
+
+
+.search-input {
+    height: 54px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 0 17px;
+
+    border-radius: 13px;
+
+    background:
+        rgba(0, 0, 0, 0.25);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.12);
+
+    transition: 0.3s;
+}
+
+
+.search-input:focus-within {
+    border-color: var(--primary-light);
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+.search-input i {
+    color: var(--primary-light);
+
+    font-size: 14px;
+}
+
+
+.search-input input {
+    width: 100%;
+
+    height: 100%;
+
+    outline: none;
+
+    border: none;
+
+    background: transparent;
+
+    color: var(--white);
+
+    font-size: 12px;
+}
+
+
+.search-input input::placeholder {
+    color: #718096;
+}
+
+
+.parking-search-btn {
+    min-width: 155px;
+
+    height: 54px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    color: white;
+
+    background: var(--gradient);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+
+.parking-search-btn:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 30px rgba(37, 99, 235, 0.3);
+}
+
+
+/* =========================================================
+   COMMON SECTION HEADING
+   ========================================================= */
+
+.dashboard-menu,
+.recent-bookings,
+.why-parkx {
+    width: 92%;
+    max-width: 1450px;
+
+    margin: 65px auto 0;
+}
+
+
+.dashboard-section-heading {
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+}
+
+
+.dashboard-section-heading h2 {
+    margin-top: 7px;
+
+    font-size: 28px;
+
+    font-weight: 600;
+}
+
+
+.dashboard-section-heading p {
+    margin-top: 8px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+.dashboard-section-heading.centered {
+    display: block;
+
+    text-align: center;
+}
+
+
+.dashboard-section-heading.centered p {
+    max-width: 550px;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* =========================================================
+   DASHBOARD MENU
+   ========================================================= */
+
+.dashboard-menu-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 18px;
+}
+
+
+.dashboard-menu-card {
+    position: relative;
+
+    min-height: 190px;
+
+    padding: 25px;
+
+    display: block;
+
+    text-decoration: none;
+
+    color: var(--white);
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: var(--glass);
+
+    border: 1px solid var(--border);
+
+    backdrop-filter: blur(15px);
+
+    transition:
+        transform 0.35s ease,
+        background 0.35s ease,
+        border-color 0.35s ease;
+}
+
+
+.dashboard-menu-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 130px;
+    height: 130px;
+
+    right: -70px;
+    top: -70px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(37, 99, 235, 0.12);
+
+    transition: 0.4s;
+}
+
+
+.dashboard-menu-card:hover {
+    transform: translateY(-7px);
+
+    background:
+        rgba(255, 255, 255, 0.10);
+
+    border-color:
+        rgba(37, 99, 235, 0.35);
+}
+
+
+.dashboard-menu-card:hover::before {
+    width: 180px;
+    height: 180px;
+}
+
+
+.menu-card-icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    color: #60a5fa;
+
+    font-size: 20px;
+
+    background:
+        rgba(37, 99, 235, 0.13);
+
+    transition: 0.3s;
+}
+
+
+.dashboard-menu-card:hover .menu-card-icon {
+    color: white;
+
+    background: var(--gradient);
+
+    transform: scale(1.05);
+}
+
+
+.menu-card-content {
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.menu-card-content h3 {
+    margin-top: 18px;
+
+    font-size: 17px;
+
+    font-weight: 600;
+}
+
+
+.menu-card-content p {
+    max-width: 300px;
+
+    margin-top: 7px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.7;
+}
+
+
+.menu-arrow {
+    position: absolute;
+
+    right: 23px;
+    bottom: 23px;
+
+    color: var(--primary-light);
+
+    font-size: 13px;
+
+    transition: 0.3s;
+}
+
+
+.dashboard-menu-card:hover .menu-arrow {
+    transform: translateX(5px);
+
+    color: var(--green);
+}
+
+
+/* =========================================================
+   RECENT BOOKINGS
+   ========================================================= */
+
+.view-all-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: var(--primary-light);
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    transition: 0.3s;
+}
+
+
+.view-all-btn:hover {
+    color: var(--green);
+
+    gap: 11px;
+}
+
+
+.booking-container {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+
+.booking-card {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 17px 20px;
+
+    min-height: 80px;
+
+    border-radius: 17px;
+
+    background: var(--glass);
+
+    border: 1px solid var(--border);
+
+    transition: 0.3s;
+}
+
+
+.booking-card:hover {
+    transform: translateX(5px);
+
+    border-color:
+        rgba(37, 99, 235, 0.35);
+}
+
+
+.booking-location {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    min-width: 230px;
+}
+
+
+.booking-icon {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    color: #60a5fa;
+
+    background:
+        rgba(37, 99, 235, 0.12);
+}
+
+
+.booking-location h3 {
+    font-size: 13px;
+}
+
+
+.booking-location p {
+    margin-top: 4px;
+
+    color: var(--muted);
+
+    font-size: 10px;
+}
+
+
+.booking-details {
+    display: flex;
+
+    gap: 22px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+
+.booking-details span {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+}
+
+
+.booking-details i {
+    color: var(--primary-light);
+}
+
+
+.booking-status {
+    padding: 6px 12px;
+
+    border-radius: 20px;
+
+    color: var(--green);
+
+    background:
+        rgba(0, 230, 118, 0.10);
+
+    font-size: 10px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   EMPTY BOOKINGS
+   ========================================================= */
+
+.empty-bookings {
+    padding: 55px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+    border-radius: 20px;
+
+    background: var(--glass);
+
+    border: 1px solid var(--border);
+}
+
+
+.empty-icon {
+    width: 65px;
+    height: 65px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: var(--primary-light);
+
+    background:
+        rgba(37, 99, 235, 0.12);
+
+    font-size: 24px;
+}
+
+
+.empty-bookings h3 {
+    margin-top: 15px;
+
+    font-size: 17px;
+}
+
+
+.empty-bookings p {
+    margin: 6px 0 20px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   WHY PARKX
+   ========================================================= */
+
+.features-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+}
+
+
+.feature-card {
+    padding: 30px 23px;
+
+    text-align: center;
+
+    border-radius: 20px;
+
+    background: var(--glass);
+
+    border: 1px solid var(--border);
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease;
+}
+
+
+.feature-card:hover {
+    transform: translateY(-6px);
+
+    border-color:
+        rgba(0, 200, 83, 0.30);
+}
+
+
+.feature-icon {
+    width: 55px;
+    height: 55px;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    color: var(--green);
+
+    background:
+        rgba(0, 200, 83, 0.10);
+
+    font-size: 21px;
+}
+
+
+.feature-card h3 {
+    margin-top: 17px;
+
+    font-size: 15px;
+}
+
+
+.feature-card p {
+    margin-top: 8px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes dashboardFadeUp {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+@keyframes dashboardGlow {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+.dashboard-hero::before {
+    animation:
+        dashboardGlow 7s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .dashboard-stats {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+
+    .dashboard-menu-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+
+    .features-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+
+    .parking-search-form {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+
+    .parking-search-btn {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .dashboard-content {
+        padding: 50px;
+    }
+
+
+    .dashboard-hero {
+        min-height: 400px;
+    }
+
+
+    .dashboard-welcome h1 {
+        font-size: 48px;
+    }
+
+
+    .dashboard-menu-grid {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+
+    .booking-card {
+        flex-wrap: wrap;
+    }
+
+
+    .booking-details {
+        order: 3;
+
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .dashboard-page {
+        padding-top: 15px;
+    }
+
+
+    .dashboard-hero,
+    .dashboard-stats,
+    .parking-search-section,
+    .dashboard-menu,
+    .recent-bookings,
+    .why-parkx {
+        width: 94%;
+    }
+
+
+    .dashboard-hero {
+        min-height: 450px;
+
+        border-radius: 23px;
+    }
+
+
+    .dashboard-content {
+        padding: 35px 25px;
+    }
+
+
+    .dashboard-welcome h1 {
+        font-size: 40px;
+    }
+
+
+    .dashboard-welcome p {
+        font-size: 13px;
+    }
+
+
+    .dashboard-actions {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+
+    .dashboard-primary-btn,
+    .dashboard-secondary-btn {
+        width: 100%;
+    }
+
+
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+
+
+    .parking-search-section {
+        padding: 35px 22px;
+    }
+
+
+    .parking-search-form {
+        grid-template-columns: 1fr;
+    }
+
+
+    .dashboard-section-heading {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+
+    .dashboard-section-heading h2 {
+        font-size: 23px;
+    }
+
+
+    .dashboard-menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .booking-card {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+
+    .booking-location {
+        width: 100%;
+    }
+
+
+    .booking-details {
+        flex-direction: column;
+
+        gap: 7px;
+    }
+
+
+    .booking-status {
+        align-self: flex-start;
+    }
+
+}
+
+
+@media (max-width: 400px) {
+
+    .dashboard-welcome h1 {
+        font-size: 34px;
+    }
+
+
+    .dashboard-content {
+        padding: 30px 20px;
+    }
+
+
+    .stat-card {
+        padding: 18px;
+    }
+
+
+    .parking-search-content h2 {
+        font-size: 27px;
+    }
+
+}

@@ -18,8 +18,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" integrity="sha512-ApSLB1Pd3/bZN8fWB/RG9YhN/7bd9Hkf3AGaE2mPfebjrxagjuBtx2GcgdqIlJkUzwylBo61r9Xa9NmgBI0swA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     {% block extra_css %}
 
-
-    {% endblock %}
+    
+    {% endblock%}
 </head>
 
 <body>
@@ -34,12 +34,12 @@
                 <img src="{% static 'images/Logo.png' %}" alt="SmartPark Logo">
             </a>
         </div>
-        {% if user.is_authenticated or request.path == '/home/' %}
+        {% if user.is_authenticated or request.path == '/dashboard/' %}
         <ul class="nav-links">
             <li><a href="{% url 'home-page' %}">Home</a></li>
             <li><a href="#">Features</a></li>
             <li><a href="#">How It Works</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="#contact">Contact</a></li>
         </ul>
         {% endif %}
     <div class="navbar-buttons">
@@ -141,7 +141,7 @@
         <div class="parkx-footer-section parkx-footer-brand">
 
             <img
-                src="{% static 'img/Logo.png' %}"
+                src="{% static 'images/Logo.png' %}"
                 alt="ParkX Logo"
                 class="parkx-footer-logo"
             >
@@ -203,14 +203,14 @@
 
         <div class="parkx-footer-section">
 
-            <h3>Contact</h3>
+            <h3 id="contact">Contact</h3>
 
             <div class="parkx-contact-item">
 
                 <i class="fa-solid fa-envelope"></i>
 
                 <span>
-                    support@smartpark.com
+                    parkx2026@gmail.com
                 </span>
 
             </div>
@@ -220,7 +220,7 @@
                 <i class="fa-solid fa-phone"></i>
 
                 <span>
-                    +91 9876543210
+                    +91 9545509367
                 </span>
 
             </div>

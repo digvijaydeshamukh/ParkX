@@ -1,0 +1,500 @@
+{% extends "dashboard_base.html" %}
+{% load static %}
+
+
+{% block title %}
+    ParkX | My Profile
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/profile.css' %}"
+>
+
+<!-- Cropper.js CSS -->
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
+>
+
+{% endblock %}
+
+
+{% block dashboard_content %}
+
+<section class="profile-page">
+
+
+    <!-- =========================================
+         PROFILE HEADER
+    ========================================== -->
+
+    <div class="profile-page-header">
+
+        <div>
+
+            <span class="profile-section-label">
+                PARKX ACCOUNT
+            </span>
+
+            <h1>
+                Profile Information
+            </h1>
+
+            <p>
+                Manage your personal information and account details.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         PROFILE CARD
+    ========================================== -->
+
+    <div class="profile-card">
+
+
+        <!-- =====================================
+             PROFILE IMAGE SECTION
+        ====================================== -->
+
+      <div class="profile-image-section">
+
+    <div class="profile-image-area">
+
+        <!-- PROFILE IMAGE -->
+        <div
+            class="profile-image-wrapper"
+            id="profileImageWrapper"
+        >
+
+            {% if user.profile_image %}
+
+                <img
+                    src="{{ user.profile_image.url }}"
+                    alt="Profile Image"
+                    class="profile-image"
+                    id="profileImagePreview"
+                >
+
+            {% else %}
+
+                <div
+                    class="profile-image-placeholder"
+                    id="profileImagePreview"
+                >
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+            {% endif %}
+
+            <!-- CAMERA ICON -->
+            <div class="profile-image-camera">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+
+        </div>
+
+
+        <!-- HIDDEN MENU -->
+        <div
+            class="profile-image-menu"
+            id="profileImageMenu"
+        >
+
+            <button
+                type="button"
+                id="addProfileImageBtn"
+            >
+                <i class="fa-solid fa-image"></i>
+                <span>Add New Profile Image</span>
+            </button>
+
+
+            <button
+                type="button"
+                id="cropProfileImageBtn"
+            >
+                <i class="fa-solid fa-crop-simple"></i>
+                <span>Crop Image</span>
+            </button>
+
+        </div>
+
+
+        <!-- HIDDEN FILE INPUT -->
+        <input
+            type="file"
+            id="profileImageInput"
+            name="profile_image"
+            accept="image/*"
+            hidden
+        >
+
+    </div>
+
+
+    <!-- USER INFORMATION -->
+    <div class="profile-image-info">
+
+        <h2>
+            {{ user.first_name|default:user.username }}
+        </h2>
+
+        <p>
+            {{ user.email }}
+        </p>
+
+        <span>
+            <i class="fa-solid fa-circle"></i>
+            Account Active
+        </span>
+
+    </div>
+
+</div>
+
+
+        <!-- =====================================
+             PROFILE INFORMATION FORM
+        ====================================== -->
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="profile-form"
+        >
+
+            {% csrf_token %}
+
+
+
+            <!-- =================================
+                 USERNAME
+            ================================== -->
+
+            <div class="profile-form-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <div class="profile-input-wrapper">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value="{{ user.username }}"
+                        readonly
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 FIRST NAME
+            ================================== -->
+
+            <div class="profile-form-group">
+
+                <label for="first_name">
+                    First Name
+                </label>
+
+                <div class="profile-input-wrapper">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <input
+                        type="text"
+                        id="first_name"
+                        name="first_name"
+                        value="{{ user.first_name }}"
+                        placeholder="Enter first name"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 LAST NAME
+            ================================== -->
+
+            <div class="profile-form-group">
+
+                <label for="last_name">
+                    Last Name
+                </label>
+
+                <div class="profile-input-wrapper">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <input
+                        type="text"
+                        id="last_name"
+                        name="last_name"
+                        value="{{ user.last_name }}"
+                        placeholder="Enter last name"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 EMAIL
+            ================================== -->
+
+            <div class="profile-form-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <div class="profile-input-wrapper">
+
+                    <i class="fa-solid fa-envelope"></i>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ user.email }}"
+                        placeholder="Enter email address"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 PHONE
+            ================================== -->
+
+            <div class="profile-form-group">
+
+                <label for="phone">
+                    Phone Number
+                </label>
+
+                <div class="profile-input-wrapper">
+
+                    <i class="fa-solid fa-phone"></i>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value="{{ user.phone|default:'' }}"
+                        placeholder="Enter phone number"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 SAVE BUTTON
+            ================================== -->
+
+            <div class="profile-form-actions full-width">
+
+                <button
+                    type="submit"
+                    class="profile-save-btn"
+                >
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+
+    <!-- =========================================
+         PASSWORD SECTION
+    ========================================== -->
+
+    <div class="password-card">
+
+
+        <div class="password-icon">
+
+            <i class="fa-solid fa-lock"></i>
+
+        </div>
+
+
+        <div class="password-content">
+
+            <h2>
+                Password & Security
+            </h2>
+
+            <p>
+                Keep your account secure by regularly updating
+                your password.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'password-reset-page' %}"
+            class="change-password-btn"
+        >
+
+            <i class="fa-solid fa-key"></i>
+
+            Change Password
+
+        </a>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     CROP IMAGE MODAL
+====================================================== -->
+
+<div
+    class="crop-modal"
+    id="cropModal"
+>
+
+
+    <div class="crop-modal-content">
+
+
+        <!-- MODAL HEADER -->
+
+        <div class="crop-modal-header">
+
+            <h2>
+                Crop Profile Image
+            </h2>
+
+
+            <button
+                type="button"
+                id="closeCropModal"
+            >
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+
+        <!-- CROP AREA -->
+
+        <div class="crop-container">
+
+            <img
+                id="cropImage"
+                src=""
+                alt="Crop Image"
+            >
+
+        </div>
+
+
+
+        <!-- CROP ACTIONS -->
+
+        <div class="crop-actions">
+
+
+            <button
+                type="button"
+                class="crop-cancel-btn"
+                id="cancelCrop"
+            >
+
+                Cancel
+
+            </button>
+
+
+            <button
+                type="button"
+                class="crop-save-btn"
+                id="saveCrop"
+            >
+
+                <i class="fa-solid fa-crop-simple"></i>
+
+                Crop & Apply
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- =====================================================
+     CROPPER.JS
+====================================================== -->
+
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js">
+</script>
+
+
+<!-- =====================================================
+     PROFILE JS
+====================================================== -->
+
+<script
+    src="{% static 'js/profile.js' %}">
+</script>
+
+{% endblock %}

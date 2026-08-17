@@ -19,6 +19,7 @@ from accounts.views import (
     reset_password_page,
     dashboard_page,
     profile_page,
+    password_reset_page,
 )
 
 urlpatterns = [
@@ -61,8 +62,10 @@ urlpatterns = [
     path("reset-password/", reset_password_page, name="reset-password-page"),
     #Dashboard page
     path("dashboard/", dashboard_page, name="dashboard-page"),
-    # Profile page
-    path("profile/", profile_page, name="profile"),
+    #Profile page
+    path("profile/", profile_page, name="profile-page"),
+    #Password reset page
+    path("password_reset/", password_reset_page, name="password-reset-page"),
 ]
 
 
