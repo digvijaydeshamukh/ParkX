@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forgot_password.css' %}">
+    <link rel="stylesheet" href="{% static 'css/verify_otp.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reset_password.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" integrity="sha512-ApSLB1Pd3/bZN8fWB/RG9YhN/7bd9Hkf3AGaE2mPfebjrxagjuBtx2GcgdqIlJkUzwylBo61r9Xa9NmgBI0swA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
@@ -117,7 +121,7 @@
     </main>
 
     <!-- ================= Footer ================= -->
-     {% if request.path != '/login/' and request.path != '/register/' %}
+     {% if request.path != '/login/' and request.path != '/register/' and request.path != '/forgot-password/' and request.path != '/verify-otp/' and request.path != '/reset-password/' %} 
 
 
     <footer class="parkx-footer">

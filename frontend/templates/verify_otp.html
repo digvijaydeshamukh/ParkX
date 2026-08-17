@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    Verify OTP | ParkX
+{% endblock %}
+
+
+{% block extra_css %}
+
+<!-- <link
+    rel="stylesheet"
+    href="{% static 'css/verify_otp.css' %}"
+> -->
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="verify-otp-page">
+
+    <!-- Background Animation -->
+
+    <div class="verify-bg-circle verify-circle-one"></div>
+
+    <div class="verify-bg-circle verify-circle-two"></div>
+
+
+    <!-- OTP Card -->
+
+    <div class="verify-otp-card">
+
+
+        <!-- Icon -->
+
+        <div class="verify-icon">
+
+            <i class="fa-solid fa-shield-halved"></i>
+
+        </div>
+
+
+        <!-- Heading -->
+
+        <h1>
+            Verify Your Email
+        </h1>
+
+
+        <p class="verify-description">
+
+            Enter the 6-digit OTP sent to your
+            registered email.
+
+        </p>
+
+
+        <!-- Email Display -->
+
+        <div class="verify-email">
+
+            <i class="fa-solid fa-envelope"></i>
+
+            <span>
+                email@example.com
+            </span>
+
+        </div>
+
+
+        <!-- OTP Form -->
+
+        <form
+            method="POST"
+            action=""
+            class="verify-otp-form"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- OTP Inputs -->
+
+            <div class="otp-input-container">
+
+                <input
+                    type="text"
+                    class="otp-input"
+                    maxlength="1"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                    autofocus
+                >
+
+                <input
+                    type="text"
+                    class="otp-input"
+                    maxlength="1"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    class="otp-input"
+                    maxlength="1"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    class="otp-input"
+                    maxlength="1"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    class="otp-input"
+                    maxlength="1"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    class="otp-input"
+                    maxlength="1"
+                    inputmode="numeric"
+                >
+
+            </div>
+
+
+            <!-- Hidden OTP -->
+
+            <input
+                type="hidden"
+                name="otp"
+                id="fullOtp"
+            >
+
+
+            <!-- Verify Button -->
+
+            <button
+                type="submit"
+                class="verify-otp-btn"
+            >
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                Verify OTP
+
+            </button>
+
+        </form>
+
+
+        <!-- Resend -->
+
+        <div class="resend-section">
+
+            <span>
+                Didn't receive the OTP?
+            </span>
+
+            <!-- <a
+                href="#"
+                class="resend-otp"
+            >
+                Resend OTP
+            </a> -->
+            <button class="resend-otp" type="button" id="resendOtpBtn">
+                Resend OTP
+            </button>
+
+            <span id="resendMessage"></span>
+        </div>
+
+
+        <!-- Back -->
+
+        <a
+            href="{% url 'forgot-password-page' %}"
+            class="back-email"
+        >
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Change Email
+
+        </a>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+const otpInputs =
+    document.querySelectorAll(".otp-input");
+
+const fullOtp =
+    document.getElementById("fullOtp");
+
+
+otpInputs.forEach((input, index) => {
+
+    input.addEventListener("input", () => {
+
+        input.value =
+            input.value.replace(/[^0-9]/g, "");
+
+
+        if (
+            input.value &&
+            index < otpInputs.length - 1
+        ) {
+
+            otpInputs[index + 1].focus();
+
+        }
+
+
+        updateOtp();
+
+    });
+
+
+    input.addEventListener("keydown", (event) => {
+
+        if (
+            event.key === "Backspace" &&
+            !input.value &&
+            index > 0
+        ) {
+
+            otpInputs[index - 1].focus();
+
+        }
+
+    });
+
+
+    input.addEventListener("paste", (event) => {
+
+        event.preventDefault();
+
+        const pastedData =
+            event.clipboardData
+            .getData("text")
+            .replace(/\D/g, "")
+            .slice(0, 6);
+
+
+        pastedData
+            .split("")
+            .forEach((digit, i) => {
+
+                if (otpInputs[i]) {
+
+                    otpInputs[i].value = digit;
+
+                }
+
+            });
+
+
+        updateOtp();
+
+        if (pastedData.length === 6) {
+
+            otpInputs[5].focus();
+
+        }
+
+    });
+
+});
+
+
+function updateOtp() {
+
+    let otp = "";
+
+    otpInputs.forEach(input => {
+
+        otp += input.value;
+
+    });
+
+    fullOtp.value = otp;
+
+}
+
+</script>
+<script src="{% static 'js/verify-reset-otp.js' %}"></script>
+
+{% endblock %}

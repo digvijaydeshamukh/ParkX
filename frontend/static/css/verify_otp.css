@@ -1,0 +1,651 @@
+/* =====================================================
+   PARKX VERIFY OTP PAGE
+===================================================== */
+
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.verify-otp-page {
+
+    min-height: calc(100vh - 80px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 120px 20px 70px;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+
+/* =====================================================
+   BACKGROUND CIRCLES
+===================================================== */
+
+.verify-bg-circle {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter: blur(90px);
+
+    pointer-events: none;
+
+}
+
+
+.verify-circle-one {
+
+    width: 300px;
+
+    height: 300px;
+
+    top: 8%;
+
+    left: 8%;
+
+    background:
+        rgba(37, 99, 235, 0.14);
+
+    animation:
+        verifyFloatOne 7s ease-in-out infinite;
+
+}
+
+
+.verify-circle-two {
+
+    width: 350px;
+
+    height: 350px;
+
+    right: 8%;
+
+    bottom: 5%;
+
+    background:
+        rgba(0, 200, 83, 0.09);
+
+    animation:
+        verifyFloatTwo 8s ease-in-out infinite;
+
+}
+
+
+/* =====================================================
+   OTP CARD
+===================================================== */
+
+.verify-otp-card {
+
+    width: 100%;
+
+    max-width: 440px;
+
+    padding: 45px 40px;
+
+    position: relative;
+
+    z-index: 2;
+
+    text-align: center;
+
+    background:
+        rgba(255, 255, 255, 0.07);
+
+    backdrop-filter:
+        blur(20px);
+
+    -webkit-backdrop-filter:
+        blur(20px);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.13);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.35);
+
+    animation:
+        verifyCardAppear 0.7s ease;
+
+}
+
+
+/* =====================================================
+   ICON
+===================================================== */
+
+.verify-icon {
+
+    width: 65px;
+
+    height: 65px;
+
+    margin:
+        0 auto 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--secondary)
+        );
+
+    box-shadow:
+        0 12px 30px
+        rgba(37, 99, 235, 0.25);
+
+    animation:
+        verifyIconPulse 3s ease-in-out infinite;
+
+}
+
+
+.verify-icon i {
+
+    color: #ffffff;
+
+    font-size: 24px;
+
+}
+
+
+/* =====================================================
+   HEADING
+===================================================== */
+
+.verify-otp-card h1 {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 28px;
+
+    font-weight: 600;
+
+}
+
+
+.verify-description {
+
+    margin:
+        12px auto 20px;
+
+    max-width: 350px;
+
+    color:
+        rgba(255, 255, 255, 0.62);
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+}
+
+
+/* =====================================================
+   EMAIL DISPLAY
+===================================================== */
+
+.verify-email {
+
+    width: 100%;
+
+    min-height: 42px;
+
+    margin-bottom: 25px;
+
+    padding: 0 15px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(37, 99, 235, 0.08);
+
+    border:
+        1px solid rgba(37, 99, 235, 0.15);
+
+    color:
+        rgba(255,255,255,0.65);
+
+    font-size: 13px;
+
+}
+
+
+.verify-email i {
+
+    color:
+        #3b82f6;
+
+    font-size: 13px;
+
+}
+
+
+/* =====================================================
+   OTP FORM
+===================================================== */
+
+.verify-otp-form {
+
+    width: 100%;
+
+}
+
+
+/* =====================================================
+   OTP INPUT CONTAINER
+===================================================== */
+
+.otp-input-container {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    margin-bottom: 28px;
+
+}
+
+
+/* =====================================================
+   OTP INPUT
+===================================================== */
+
+.otp-input {
+
+    width: 50px;
+
+    height: 58px;
+
+    text-align: center;
+
+    border-radius: 13px;
+
+    outline: none;
+
+    border:
+        1px solid rgba(255,255,255,0.13);
+
+    background:
+        rgba(255,255,255,0.05);
+
+    color: #ffffff;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 21px;
+
+    font-weight: 600;
+
+    transition:
+        0.3s ease;
+
+}
+
+
+.otp-input:focus {
+
+    border-color:
+        var(--primary);
+
+    background:
+        rgba(37,99,235,0.08);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37,99,235,0.10);
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+/* =====================================================
+   VERIFY BUTTON
+===================================================== */
+
+.verify-otp-btn {
+
+    width: 100%;
+
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--secondary)
+        );
+
+    font-family:
+        Poppins, sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 10px 25px
+        rgba(37,99,235,0.20);
+
+    transition:
+        0.3s ease;
+
+}
+
+
+.verify-otp-btn:hover {
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 15px 35px
+        rgba(37,99,235,0.30);
+
+}
+
+
+/* =====================================================
+   RESEND
+===================================================== */
+
+.resend-section {
+
+    margin-top: 24px;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    color:
+        rgba(255,255,255,0.50);
+
+    font-size: 13px;
+
+}
+
+
+.resend-otp {
+
+    color:
+        #3b82f6;
+
+    /* text-decoration: none; */
+
+    font-weight: 500;
+
+    transition:
+        0.3s ease;
+    background-color: transparent;
+    border: none;
+
+}
+
+
+.resend-otp:hover {
+
+    color:
+        #00e676;
+
+}
+
+
+/* =====================================================
+   BACK TO EMAIL
+===================================================== */
+
+.back-email {
+
+    margin-top: 20px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    color:
+        rgba(255,255,255,0.50);
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    transition:
+        0.3s ease;
+
+}
+
+
+.back-email:hover {
+
+    color:
+        #ffffff;
+
+}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes verifyCardAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(30px)
+            scale(0.97);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+@keyframes verifyIconPulse {
+
+    0%,
+    100% {
+
+        transform:
+            scale(1);
+
+    }
+
+    50% {
+
+        transform:
+            scale(1.06);
+
+    }
+
+}
+
+
+@keyframes verifyFloatOne {
+
+    0%,
+    100% {
+
+        transform:
+            translate(0, 0);
+
+    }
+
+    50% {
+
+        transform:
+            translate(30px, 25px);
+
+    }
+
+}
+
+
+@keyframes verifyFloatTwo {
+
+    0%,
+    100% {
+
+        transform:
+            translate(0, 0);
+
+    }
+
+    50% {
+
+        transform:
+            translate(-25px, -30px);
+
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .verify-otp-page {
+
+        padding:
+            110px 15px 50px;
+
+    }
+
+
+    .verify-otp-card {
+
+        padding:
+            35px 20px;
+
+        border-radius:
+            20px;
+
+    }
+
+
+    .verify-otp-card h1 {
+
+        font-size:
+            24px;
+
+    }
+
+
+    .verify-description {
+
+        font-size:
+            13px;
+
+    }
+
+
+    .otp-input-container {
+
+        gap: 6px;
+
+    }
+
+
+    .otp-input {
+
+        width: 43px;
+
+        height: 52px;
+
+        font-size: 18px;
+
+    }
+
+}
+
+
+@media (max-width: 380px) {
+
+    .otp-input-container {
+
+        gap: 4px;
+
+    }
+
+
+    .otp-input {
+
+        width: 40px;
+
+        height: 49px;
+
+    }
+
+}
