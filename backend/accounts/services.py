@@ -3,6 +3,7 @@ from .models import (
     Roles,
     User,
     PasswordResetOTP,
+    PhoneVerificationOTP,
 )
 from .utils import (
     generate_otp,
@@ -19,6 +20,7 @@ from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from rest_framework_simplejwt.tokens import UntypedToken,AccessToken
 from rest_framework_simplejwt.exceptions import TokenError
+from .sms import send_sms_otp
 
 def get_pending_registration(email):
     """
@@ -362,3 +364,189 @@ def resend_password_reset_otp(email):
     )
 
     return None
+
+def _create_phone_verification_otp(user, phone):
+    otp = generate_otp()
+    otp_hash = make_otp_hash(otp)
+
+    now = timezone.now()
+
+    expires_at = now + timedelta(
+        minutes=settings.OTP_EXPIRY_MINUTES
+    )
+
+    PhoneVerificationOTP.objects.create(
+        user=user,
+        phone=phone,
+        otp_hash=otp_hash,
+        otp_created_at=now,
+        expires_at=expires_at,
+    )
+
+    send_sms_otp(
+        phone=phone,
+        otp=otp,
+    )
+
+def send_phone_verification_otp_service(user):
+    if not user.phone:
+        raise ValidationError({
+            "phone": [
+                "No phone number is associated with this account."
+            ]
+        })
+
+    if user.phone_verified:
+        raise ValidationError({
+            "phone": [
+                "Phone number is already verified."
+            ]
+        })
+
+    PhoneVerificationOTP.objects.filter(
+        user=user
+    ).delete()
+
+    _create_phone_verification_otp(
+        user=user,
+        phone=user.phone
+    )
+
+def resend_phone_verification_otp(user):
+
+    if not user.phone:
+        raise ValidationError({
+            "phone": [
+                "No phone number is associated with this account."
+            ]
+        })
+
+    if user.phone_verified:
+        raise ValidationError({
+            "phone": [
+                "Phone number is already verified."
+            ]
+        })
+
+    existing_otp = PhoneVerificationOTP.objects.filter(
+        user=user
+    ).first()
+
+    if existing_otp:
+        cooldown_expires_at = (
+            existing_otp.otp_created_at
+            + timedelta(
+                seconds=settings.OTP_RESEND_COOLDOWN_SECONDS
+            )
+        )
+
+        now = timezone.now()
+
+        if now < cooldown_expires_at:
+            remaining_seconds = int(
+                (
+                    cooldown_expires_at - now
+                ).total_seconds()
+            ) + 1
+
+            return remaining_seconds
+
+        existing_otp.delete()
+
+    _create_phone_verification_otp(
+        user=user,
+        phone=user.phone
+    )
+
+    return None
+
+def verify_phone_otp(user, otp):
+    """
+    Verify the phone verification OTP for the authenticated user.
+    """
+
+    if not user.phone:
+        raise ValidationError({
+            "phone": [
+                "No phone number is associated with this account."
+            ]
+        })
+
+    if user.phone_verified:
+        raise ValidationError({
+            "phone": [
+                "Phone number is already verified."
+            ]
+        })
+
+    phone_otp = PhoneVerificationOTP.objects.filter(
+        user=user
+    ).first()
+
+    if not phone_otp:
+        raise ValidationError({
+            "otp": [
+                "No verification OTP found."
+            ]
+        })
+
+    # Make sure the OTP belongs to the user's current phone.
+    if phone_otp.phone != user.phone:
+        phone_otp.delete()
+
+        raise ValidationError({
+            "otp": [
+                "Invalid verification request."
+            ]
+        })
+
+    # Check OTP expiration.
+    if timezone.now() >= phone_otp.expires_at:
+        phone_otp.delete()
+
+        raise ValidationError({
+            "otp": [
+                "OTP has expired."
+            ]
+        })
+
+    # Verify hashed OTP.
+    if not verify_otp_hash(
+        otp,
+        phone_otp.otp_hash
+    ):
+        raise ValidationError({
+            "otp": [
+                "Invalid OTP."
+            ]
+        })
+
+    # Prevent two verified users from owning the same phone.
+    if User.objects.filter(
+        phone=user.phone,
+        phone_verified=True
+    ).exclude(
+        id=user.id
+    ).exists():
+        phone_otp.delete()
+
+        raise ValidationError({
+            "phone": [
+                "Phone number is already registered."
+            ]
+        })
+
+    # Mark phone as verified.
+    user.phone_verified = True
+
+    user.save(
+        update_fields=[
+            "phone_verified",
+            "updated_at"
+        ]
+    )
+
+    # OTP is single-use.
+    phone_otp.delete()
+    
+    return user

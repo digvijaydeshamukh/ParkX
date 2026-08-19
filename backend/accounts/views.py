@@ -26,6 +26,10 @@ from .serializers import (
     ProfileUpdateResponseSerializer,
     VehicleSerializer,
     VehicleResponseSerializer,
+    VerifyPhoneOTPSerializer,
+    VerifyPhoneOTPResponseSerializer,
+    SendPhoneVerificationOTPResponseSerializer,
+    ResendPhoneVerificationOTPResponseSerializer,
 )
 from .services import (
     register_user,
@@ -34,6 +38,9 @@ from .services import (
     verify_password_reset_otp,
     reset_password,
     resend_password_reset_otp,
+    send_phone_verification_otp_service,
+    verify_phone_otp,
+    resend_phone_verification_otp,
 )
 
 from .models import (
@@ -683,3 +690,170 @@ def profile_page(request):
 def password_reset_page(request):
     return render(request, "password_reset.html")
 
+
+# phone verification views
+class SendPhoneVerificationOTPView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["Phone Verification"],
+        summary="Send phone verification OTP",
+        description=(
+            "Generates a verification OTP for the authenticated user's "
+            "phone number and sends it through the configured SMS service. "
+            "The OTP is stored securely as a hash and expires after the "
+            "configured OTP expiry period."
+        ),
+        responses={
+            200: SendPhoneVerificationOTPResponseSerializer,
+            400: OpenApiResponse(
+                description=(
+                    "Phone number is missing or the phone number "
+                    "is already verified."
+                )
+            ),
+            401: OpenApiResponse(
+                description="Authentication credentials were not provided."
+            ),
+        },
+    )
+    def post(self, request):
+
+        send_phone_verification_otp_service(
+            request.user
+        )
+
+        response_data = {
+            "message": "Phone verification OTP sent successfully."
+        }
+
+        serializer = SendPhoneVerificationOTPResponseSerializer(
+            response_data
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+
+class VerifyPhoneOTPView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["Phone Verification"],
+        summary="Verify phone number",
+        description=(
+            "Verifies the OTP entered by the authenticated user. "
+            "If the OTP is valid and has not expired, the user's "
+            "phone_verified status is changed to true and the OTP "
+            "is deleted so that it cannot be reused."
+        ),
+        request=VerifyPhoneOTPSerializer,
+        responses={
+            200: VerifyPhoneOTPResponseSerializer,
+            400: OpenApiResponse(
+                description=(
+                    "Invalid, expired, missing, or already-used OTP, "
+                    "or the phone number is already verified."
+                )
+            ),
+            401: OpenApiResponse(
+                description="Authentication credentials were not provided."
+            ),
+        },
+    )
+
+    def post(self, request):
+
+        serializer = VerifyPhoneOTPSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        user = verify_phone_otp(
+            user=request.user,
+            otp=serializer.validated_data["otp"]
+        )
+
+        response_data = {
+            "message": "Phone number verified successfully.",
+            "user": user,
+        }
+
+        response_serializer = VerifyPhoneOTPResponseSerializer(
+            response_data
+        )
+
+        return Response(
+            response_serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+
+class ResendPhoneVerificationOTPView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["Phone Verification"],
+        summary="Resend phone verification OTP",
+        description=(
+            "Resends a new phone verification OTP to the authenticated "
+            "user's phone number. A resend cooldown is enforced to "
+            "prevent repeated OTP requests."
+        ),
+        responses={
+            200: ResendPhoneVerificationOTPResponseSerializer,
+            400: OpenApiResponse(
+                description=(
+                    "Phone number is missing or the phone number "
+                    "is already verified."
+                )
+            ),
+            401: OpenApiResponse(
+                description="Authentication credentials were not provided."
+            ),
+            429: OpenApiResponse(
+                description=(
+                    "OTP resend cooldown is still active. "
+                    "The response includes the remaining cooldown time."
+                )
+            ),
+        },
+    )
+    
+    def post(self, request):
+
+        remaining_seconds = resend_phone_verification_otp(
+            request.user
+        )
+
+        if remaining_seconds is not None:
+            return Response(
+                {
+                    "message": (
+                        "Please wait before requesting another OTP."
+                    ),
+                    "remaining_seconds": remaining_seconds,
+                },
+                status=status.HTTP_429_TOO_MANY_REQUESTS
+            )
+
+        response_data = {
+            "message": "Phone verification OTP resent successfully."
+        }
+
+        serializer = ResendPhoneVerificationOTPResponseSerializer(
+            response_data
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )

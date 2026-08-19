@@ -232,7 +232,7 @@ class VehicleSerializer(serializers.ModelSerializer):
             "is_default",
         ]
 
-        def validate_registration_number(self, value):
+    def validate_registration_number(self, value):
 
             return value.strip().upper()
 
@@ -241,3 +241,35 @@ class VehicleResponseSerializer(serializers.Serializer):
 
     message = serializers.CharField()
     vehicle = VehicleSerializer()
+
+# Verify Phone OTP
+class VerifyPhoneOTPSerializer(serializers.Serializer):
+
+    otp = serializers.CharField(
+        min_length=6,
+        max_length=6,
+        trim_whitespace=True,
+        write_only=True,
+    )
+
+
+# Verify Phone Response Serializer
+class VerifyPhoneOTPResponseSerializer(serializers.Serializer):
+
+    message = serializers.CharField()
+    user = ProfileSerializer()
+
+# Send Phone Verification OTP Response
+class SendPhoneVerificationOTPResponseSerializer(serializers.Serializer):
+
+    message = serializers.CharField()
+
+# Resend Phone Verification OTP Response
+class ResendPhoneVerificationOTPResponseSerializer(serializers.Serializer):
+
+    message = serializers.CharField()
+
+    remaining_seconds = serializers.IntegerField(
+        required=False
+    )
+

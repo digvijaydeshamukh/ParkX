@@ -12,6 +12,9 @@ from .views import (
     VehicleListCreateView,
     VehicleDetailView,
     SetDefaultVehicleView,
+    SendPhoneVerificationOTPView,
+    VerifyPhoneOTPView,
+    ResendPhoneVerificationOTPView,
 )
 
 urlpatterns = [
@@ -27,4 +30,7 @@ urlpatterns = [
     path("vehicles/",VehicleListCreateView.as_view(),name="vehicle-list-create"),
     path("vehicles/<int:pk>/",VehicleDetailView.as_view(),name="vehicle-detail"),
     path("vehicles/<int:pk>/set-default/",SetDefaultVehicleView.as_view(),name="vehicle-set-default"),
+    path("phone/send-otp/",SendPhoneVerificationOTPView.as_view(),name="send-phone-verification-otp",),
+    path("phone/verify-otp/",VerifyPhoneOTPView.as_view(),name="verify-phone-otp",),
+    path("phone/resend-otp/",ResendPhoneVerificationOTPView.as_view(),name="resend-phone-verification-otp",),
 ]
