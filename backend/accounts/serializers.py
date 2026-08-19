@@ -50,7 +50,8 @@ class RegisterSerializer(serializers.Serializer):
 
     def validate_phone(self,value):
         if User.objects.filter(
-            phone=value
+            phone=value,
+            phone_verified=True
         ).exists():
 
             raise serializers.ValidationError(
@@ -99,7 +100,7 @@ class LoginSerializer(TokenObtainPairSerializer):
         data["user"] = {
             "id": self.user.id,
             "username": self.user.username,
-            "fisrt_name": self.user.first_name,
+            "first_name": self.user.first_name,
             "email": self.user.email,
             "role": self.user.role,
         }
@@ -110,6 +111,7 @@ class LoginSerializer(TokenObtainPairSerializer):
 class LoginUserSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     username = serializers.CharField()
+    first_name = serializers.CharField()
     email = serializers.EmailField()
     role = serializers.CharField()
 
@@ -191,6 +193,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "last_name",
             "email",
             "phone",
+            "phone_verified",
             "profile_image",
         ]
 
@@ -198,6 +201,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "phone",
+            "phone_verified",
         ]
 
 # User Profile Response serializer

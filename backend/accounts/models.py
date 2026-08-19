@@ -19,10 +19,13 @@ class User(AbstractUser):
     )
 
     phone = models.CharField(
-        unique=True,
         max_length=15,
+        blank=True,
+        null=True,
         validators=[phone_number_validator]
     )
+
+    phone_verified = models.BooleanField(default=False)
 
     profile_image = models.ImageField(
         upload_to="profile_images/",
@@ -88,7 +91,7 @@ class PendingRegistration(models.Model):
 
     email = models.EmailField(unique=True,db_index=True)
 
-    phone = models.CharField(max_length=15, unique=True, validators=[phone_number_validator])
+    phone = models.CharField(max_length=15, validators=[phone_number_validator])
 
     password = models.CharField(max_length=255)
 

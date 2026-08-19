@@ -122,7 +122,10 @@ def verify_registration_otp(validated_data):
                     "email": ["Email is already registered."]
                 })
         
-        if User.objects.filter(phone=pending_registration.phone).exists():
+        if User.objects.filter(
+            phone=pending_registration.phone,
+            phone_verified=True
+            ).exists():
             raise ValidationError({
                 "phone": ["Phone number already registered."]
             })
@@ -133,6 +136,7 @@ def verify_registration_otp(validated_data):
             last_name=pending_registration.last_name,
             email=pending_registration.email,
             phone=pending_registration.phone,
+            phone_verified=False,
             password=pending_registration.password,
             role=pending_registration.role,
             is_active = True
