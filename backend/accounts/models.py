@@ -235,3 +235,50 @@ class PhoneVerificationOTP(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.phone}"
+
+# Change contact details model
+class ContactChangeType(models.TextChoices):
+    EMAIL = "email", "Email"
+    PHONE = "phone", "Phone"
+
+
+class ContactChangeOTP(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="contact_change_otps"
+    )
+
+    contact_type = models.CharField(
+        max_length=10,
+        choices=ContactChangeType.choices
+    )
+
+    new_contact = models.CharField(
+        max_length=254
+    )
+
+    otp_hash = models.CharField(
+        max_length=255
+    )
+
+    otp_created_at = models.DateTimeField(
+        default=timezone.now
+    )
+
+    expires_at = models.DateTimeField()
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return (
+            f"{self.user.email} - "
+            f"{self.contact_type} - "
+            f"{self.new_contact}"
+        )

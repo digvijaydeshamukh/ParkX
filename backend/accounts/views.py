@@ -9,42 +9,78 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 
 from .serializers import (
+
+    # Register Serializer
     RegisterSerializer,
     RegisterResponseSerializer,
     VerifyOTPSerializer,
     VerifyOTPResponseSerializer,
+
+    # Login serializers
     LoginSerializer,
     LoginResponseSerializer,
+
+    # Forgot password Serializers
     ForgotPasswordSerializer,
     ForgotPasswordResponseSerializer,
+
+    # Reset Password Serializers
     VerifyResetOTPSerializer,
     VerifyResetOTPResponseSerializer,
     ResetPasswordSerializer,
     ResetPasswordResponseSerializer,
     ResendResetOTPSerializer,
+
+    # Profile serializers
     ProfileSerializer,
     ProfileUpdateResponseSerializer,
+
+    # Vehical Serializers
     VehicleSerializer,
     VehicleResponseSerializer,
+
+    # Phone OTP serializers
     VerifyPhoneOTPSerializer,
     VerifyPhoneOTPResponseSerializer,
     SendPhoneVerificationOTPResponseSerializer,
     ResendPhoneVerificationOTPResponseSerializer,
-    ChangePhoneNumberSerializer,
-    ChangePhoneNumberResponseSerializer,
+
+    # Change Phone number serializers
+    # ChangePhoneNumberSerializer,
+    # ChangePhoneNumberResponseSerializer,
+
+    # Contact Change Serializers
+    ContactChangeRequestSerializer,
+    VerifyContactChangeOTPSerializer,
+    ContactChangeResponseSerializer,
+    VerifyContactChangeOTPResponseSerializer,
+
 )
 from .services import (
+
+    # Registration
     register_user,
     verify_registration_otp,
+
+    # Forgot Password
     forgot_password,
     verify_password_reset_otp,
     reset_password,
     resend_password_reset_otp,
+
+    # Phone Verification
     send_phone_verification_otp_service,
     verify_phone_otp,
     resend_phone_verification_otp,
-    request_phone_number_change,
-    verify_phone_number_change,
+
+    # Phone Number Change
+    # request_phone_number_change,
+    # verify_phone_number_change,
+
+    # Contact Change
+    request_contact_change,
+    verify_contact_change,
+
 )
 
 from .models import (
@@ -862,25 +898,127 @@ class ResendPhoneVerificationOTPView(APIView):
             status=status.HTTP_200_OK
         )
 
-class ChangePhoneNumberView(APIView):
+# class ChangePhoneNumberView(APIView):
+
+#     permission_classes = [IsAuthenticated]
+
+#     @extend_schema(
+#         tags=["Phone Verification"],
+#         summary="Request phone number change",
+#         description=(
+#             "Starts the phone number change process for the authenticated "
+#             "user. The new phone number is not saved to the user's profile "
+#             "until the OTP sent to the new number is successfully verified."
+#         ),
+#         request=ChangePhoneNumberSerializer,
+#         responses={
+#             200: ChangePhoneNumberResponseSerializer,
+#             400: OpenApiResponse(
+#                 description=(
+#                     "Invalid phone number or the phone number "
+#                     "is already registered."
+#                 )
+#             ),
+#             401: OpenApiResponse(
+#                 description="Authentication credentials were not provided."
+#             ),
+#         },
+#     )
+#     def post(self, request):
+
+#         serializer = ChangePhoneNumberSerializer(
+#             data=request.data
+#         )
+
+#         serializer.is_valid(
+#             raise_exception=True
+#         )
+
+#         request_phone_number_change(
+#             user=request.user,
+#             new_phone=serializer.validated_data["phone"]
+#         )
+
+#         return Response(
+#             {
+#                 "message": (
+#                     "OTP sent successfully to the new phone number."
+#                 )
+#             },
+#             status=status.HTTP_200_OK
+#         )
+
+# class VerifyPhoneNumberChangeView(APIView):
+
+#     permission_classes = [IsAuthenticated]
+
+#     @extend_schema(
+#         tags=["Phone Verification"],
+#         summary="Verify new phone number",
+#         description=(
+#             "Verifies the OTP sent to the new phone number. "
+#             "The new phone number is saved to the user's profile "
+#             "only after successful OTP verification."
+#         ),
+#         request=VerifyPhoneOTPSerializer,
+#         responses={
+#             200: VerifyPhoneOTPResponseSerializer,
+#             400: OpenApiResponse(
+#                 description=(
+#                     "Invalid, expired, or missing OTP."
+#                 )
+#             ),
+#             401: OpenApiResponse(
+#                 description="Authentication credentials were not provided."
+#             ),
+#         },
+#     )
+#     def post(self, request):
+
+#         serializer = VerifyPhoneOTPSerializer(
+#             data=request.data
+#         )
+
+#         serializer.is_valid(
+#             raise_exception=True
+#         )
+
+#         user = verify_phone_number_change(
+#             user=request.user,
+#             otp=serializer.validated_data["otp"]
+#         )
+
+#         return Response(
+#             {
+#                 "message": (
+#                     "Phone number changed and verified successfully."
+#                 ),
+#                 "user": user,
+#             },
+#             status=status.HTTP_200_OK
+#         )
+
+# Contact Change Views
+
+class ContactChangeView(APIView):
 
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Phone Verification"],
-        summary="Request phone number change",
+        tags=["Contact Change"],
+        summary="Request contact details change",
         description=(
-            "Starts the phone number change process for the authenticated "
-            "user. The new phone number is not saved to the user's profile "
-            "until the OTP sent to the new number is successfully verified."
+            "Starts the contact change process for the authenticated "
+            "user. The new email address or phone number is not saved "
+            "until the OTP is successfully verified."
         ),
-        request=ChangePhoneNumberSerializer,
+        request=ContactChangeRequestSerializer,
         responses={
-            200: ChangePhoneNumberResponseSerializer,
+            200: ContactChangeResponseSerializer,
             400: OpenApiResponse(
                 description=(
-                    "Invalid phone number or the phone number "
-                    "is already registered."
+                    "Invalid contact details or the contact is "
+                    "already registered."
                 )
             ),
             401: OpenApiResponse(
@@ -890,43 +1028,46 @@ class ChangePhoneNumberView(APIView):
     )
     def post(self, request):
 
-        serializer = ChangePhoneNumberSerializer(
-            data=request.data
+        serializer = ContactChangeRequestSerializer(
+            data=request.data,
+            context={"request": request}
         )
 
         serializer.is_valid(
             raise_exception=True
         )
 
-        request_phone_number_change(
+        request_contact_change(
             user=request.user,
-            new_phone=serializer.validated_data["phone"]
+            contact_type=serializer.validated_data["contact_type"],
+            new_contact=serializer.validated_data["new_contact"],
         )
 
         return Response(
             {
                 "message": (
-                    "OTP sent successfully to the new phone number."
+                    "OTP sent successfully to the new contact."
                 )
             },
             status=status.HTTP_200_OK
         )
 
-class VerifyPhoneNumberChangeView(APIView):
+
+class VerifyContactChangeOTPView(APIView):
 
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Phone Verification"],
-        summary="Verify new phone number",
+        tags=["Contact Change"],
+        summary="Verify contact change OTP",
         description=(
-            "Verifies the OTP sent to the new phone number. "
-            "The new phone number is saved to the user's profile "
-            "only after successful OTP verification."
+            "Verifies the OTP sent to the new email address or "
+            "phone number. The contact details are updated only "
+            "after successful OTP verification."
         ),
-        request=VerifyPhoneOTPSerializer,
+        request=VerifyContactChangeOTPSerializer,
         responses={
-            200: VerifyPhoneOTPResponseSerializer,
+            200: VerifyContactChangeOTPResponseSerializer,
             400: OpenApiResponse(
                 description=(
                     "Invalid, expired, or missing OTP."
@@ -939,7 +1080,7 @@ class VerifyPhoneNumberChangeView(APIView):
     )
     def post(self, request):
 
-        serializer = VerifyPhoneOTPSerializer(
+        serializer = VerifyContactChangeOTPSerializer(
             data=request.data
         )
 
@@ -947,17 +1088,25 @@ class VerifyPhoneNumberChangeView(APIView):
             raise_exception=True
         )
 
-        user = verify_phone_number_change(
+        user = verify_contact_change(
             user=request.user,
-            otp=serializer.validated_data["otp"]
+            otp=serializer.validated_data["otp"],
+        )
+
+        response_data = {
+            "message": (
+                "Contact details changed successfully."
+            ),
+            "user": user,
+        }
+
+        response_serializer = (
+            VerifyContactChangeOTPResponseSerializer(
+                response_data
+            )
         )
 
         return Response(
-            {
-                "message": (
-                    "Phone number changed and verified successfully."
-                ),
-                "user": user,
-            },
+            response_serializer.data,
             status=status.HTTP_200_OK
         )

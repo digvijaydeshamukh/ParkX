@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer 
-from .models import PendingRegistration,User,Roles,Vehicle
+from .models import PendingRegistration,User,Roles,Vehicle,ContactChangeType
 from .validators import(
     phone_number_validator,
     password_validator,
@@ -274,14 +274,129 @@ class ResendPhoneVerificationOTPResponseSerializer(serializers.Serializer):
     )
 
 # Change Phone Number Serializer
-class ChangePhoneNumberSerializer(serializers.Serializer):
+# class ChangePhoneNumberSerializer(serializers.Serializer):
 
-    phone = serializers.CharField(
-        max_length=15,
-        validators=[phone_number_validator]
+#     phone = serializers.CharField(
+#         max_length=15,
+#         validators=[phone_number_validator]
+#     )
+
+# # Change Phone Number Response Serializer
+# class ChangePhoneNumberResponseSerializer(serializers.Serializer):
+
+#     message = serializers.CharField()
+
+# Contact Change Details
+
+# ==============================
+# Contact Change Serializers
+# ==============================
+
+class ContactChangeRequestSerializer(serializers.Serializer):
+
+    contact_type = serializers.ChoiceField(
+        choices=ContactChangeType.choices
     )
 
-# Change Phone Number Response Serializer
-class ChangePhoneNumberResponseSerializer(serializers.Serializer):
+    new_contact = serializers.CharField(
+        max_length=254,
+        trim_whitespace=True
+    )
+
+    def validate(self, attrs):
+
+        contact_type = attrs["contact_type"]
+        new_contact = attrs["new_contact"].strip()
+
+        # ------------------------------
+        # Email Change
+        # ------------------------------
+
+        if contact_type == ContactChangeType.EMAIL:
+
+            email = serializers.EmailField().run_validation(
+                new_contact
+            )
+
+            email = email.lower()
+
+            # Do not allow the user to change
+            # to their current email.
+            if email == self.context["request"].user.email.lower():
+                raise serializers.ValidationError({
+                    "new_contact": [
+                        "This is already your current email address."
+                    ]
+                })
+
+            # Prevent duplicate email accounts.
+            if User.objects.filter(
+                email__iexact=email
+            ).exclude(
+                id=self.context["request"].user.id
+            ).exists():
+
+                raise serializers.ValidationError({
+                    "new_contact": [
+                        "Email is already registered."
+                    ]
+                })
+
+            attrs["new_contact"] = email
+
+        # ------------------------------
+        # Phone Change
+        # ------------------------------
+
+        elif contact_type == ContactChangeType.PHONE:
+
+            phone_number_validator(new_contact)
+
+            # Do not allow the user to change
+            # to their current phone number.
+            if new_contact == self.context["request"].user.phone:
+                raise serializers.ValidationError({
+                    "new_contact": [
+                        "This is already your current phone number."
+                    ]
+                })
+
+            # Prevent duplicate verified phone numbers.
+            if User.objects.filter(
+                phone=new_contact,
+                phone_verified=True
+            ).exclude(
+                id=self.context["request"].user.id
+            ).exists():
+
+                raise serializers.ValidationError({
+                    "new_contact": [
+                        "Phone number is already registered."
+                    ]
+                })
+
+            attrs["new_contact"] = new_contact
+
+        return attrs
+
+
+class VerifyContactChangeOTPSerializer(serializers.Serializer):
+
+    otp = serializers.CharField(
+        min_length=6,
+        max_length=6,
+        trim_whitespace=True,
+        write_only=True
+    )
+
+
+class ContactChangeResponseSerializer(serializers.Serializer):
 
     message = serializers.CharField()
+
+
+class VerifyContactChangeOTPResponseSerializer(serializers.Serializer):
+
+    message = serializers.CharField()
+
+    user = ProfileSerializer()

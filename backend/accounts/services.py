@@ -4,6 +4,8 @@ from .models import (
     User,
     PasswordResetOTP,
     PhoneVerificationOTP,
+    ContactChangeOTP,
+    ContactChangeType,
 )
 from .utils import (
     generate_otp,
@@ -551,85 +553,217 @@ def verify_phone_otp(user, otp):
     
     return user
 
-def request_phone_number_change(user, new_phone):
+# def request_phone_number_change(user, new_phone):
+#     """
+#     Starts the phone number change process.
+
+#     The new phone number is stored in PhoneVerificationOTP
+#     and is not written to User until OTP verification succeeds.
+#     """
+
+#     if not new_phone:
+#         raise ValidationError({
+#             "phone": [
+#                 "Phone number is required."
+#             ]
+#         })
+
+#     # If the submitted number is the current number
+#     if user.phone == new_phone:
+
+#         if user.phone_verified:
+#             raise ValidationError({
+#                 "phone": [
+#                     "This is already your verified phone number."
+#                 ]
+#             })
+
+#         raise ValidationError({
+#             "phone": [
+#                 "This is already your current phone number."
+#             ]
+#         })
+
+#     # Prevent another verified user from owning the phone number.
+#     if User.objects.filter(
+#         phone=new_phone,
+#         phone_verified=True
+#     ).exclude(
+#         id=user.id
+#     ).exists():
+
+#         raise ValidationError({
+#             "phone": [
+#                 "Phone number already registered."
+#             ]
+#         })
+
+#     # Remove any existing phone verification OTP.
+#     PhoneVerificationOTP.objects.filter(
+#         user=user
+#     ).delete()
+
+#     # Create OTP for the NEW phone.
+#     _create_phone_verification_otp(
+#         user=user,
+#         phone=new_phone
+#     )
+
+# def verify_phone_number_change(user, otp):
+#     """
+#     Verifies the OTP for a phone number change.
+
+#     The new phone number is applied to the user only
+#     after successful OTP verification.
+#     """
+
+#     phone_otp = PhoneVerificationOTP.objects.filter(
+#         user=user
+#     ).first()
+
+#     if not phone_otp:
+#         raise ValidationError({
+#             "otp": [
+#                 "No phone change verification OTP found."
+#             ]
+#         })
+
+#     # Check OTP expiration.
+#     if timezone.now() >= phone_otp.expires_at:
+
+#         phone_otp.delete()
+
+#         raise ValidationError({
+#             "otp": [
+#                 "OTP has expired."
+#             ]
+#         })
+
+#     # Verify hashed OTP.
+#     if not verify_otp_hash(
+#         otp,
+#         phone_otp.otp_hash
+#     ):
+#         raise ValidationError({
+#             "otp": [
+#                 "Invalid OTP."
+#             ]
+#         })
+
+#     new_phone = phone_otp.phone
+
+#     # Make sure nobody verified this number while
+#     # the OTP was pending.
+#     if User.objects.filter(
+#         phone=new_phone,
+#         phone_verified=True
+#     ).exclude(
+#         id=user.id
+#     ).exists():
+
+#         phone_otp.delete()
+
+#         raise ValidationError({
+#             "phone": [
+#                 "Phone number already registered."
+#             ]
+#         })
+
+    # # Apply the new phone only after successful OTP verification.
+    # user.phone = new_phone
+    # user.phone_verified = True
+
+    # user.save(
+    #     update_fields=[
+    #         "phone",
+    #         "phone_verified",
+    #         "updated_at"
+    #     ]
+    # )
+
+    # # OTP is single-use.
+    # phone_otp.delete()
+
+    # return user
+
+def _create_contact_change_otp(user, contact_type, new_contact):
     """
-    Starts the phone number change process.
-
-    The new phone number is stored in PhoneVerificationOTP
-    and is not written to User until OTP verification succeeds.
+    Generates, hashes, stores, and sends an OTP for a contact change.
     """
 
-    if not new_phone:
-        raise ValidationError({
-            "phone": [
-                "Phone number is required."
-            ]
-        })
+    otp = generate_otp()
+    otp_hash = make_otp_hash(otp)
 
-    # If the submitted number is the current number
-    if user.phone == new_phone:
+    now = timezone.now()
 
-        if user.phone_verified:
-            raise ValidationError({
-                "phone": [
-                    "This is already your verified phone number."
-                ]
-            })
+    expires_at = now + timedelta(
+        minutes=settings.OTP_EXPIRY_MINUTES
+    )
 
-        raise ValidationError({
-            "phone": [
-                "This is already your current phone number."
-            ]
-        })
+    ContactChangeOTP.objects.create(
+        user=user,
+        contact_type=contact_type,
+        new_contact=new_contact,
+        otp_hash=otp_hash,
+        otp_created_at=now,
+        expires_at=expires_at,
+    )
 
-    # Prevent another verified user from owning the phone number.
-    if User.objects.filter(
-        phone=new_phone,
-        phone_verified=True
-    ).exclude(
-        id=user.id
-    ).exists():
+    if contact_type == "email":
+        send_registration_otp(
+            email=new_contact,
+            first_name=user.first_name,
+            otp=otp,
+        )
 
-        raise ValidationError({
-            "phone": [
-                "Phone number already registered."
-            ]
-        })
+    elif contact_type == "phone":
+        send_sms_otp(
+            phone=new_contact,
+            otp=otp,
+        )
 
-    # Remove any existing phone verification OTP.
-    PhoneVerificationOTP.objects.filter(
+
+def request_contact_change(user, contact_type, new_contact):
+    """
+    Starts the contact change process.
+
+    The new email/phone is stored only in ContactChangeOTP.
+    The User record is not changed until OTP verification succeeds.
+    """
+
+    # Remove any existing contact-change OTP.
+    ContactChangeOTP.objects.filter(
         user=user
     ).delete()
 
-    # Create OTP for the NEW phone.
-    _create_phone_verification_otp(
+    _create_contact_change_otp(
         user=user,
-        phone=new_phone
+        contact_type=contact_type,
+        new_contact=new_contact,
     )
 
-def verify_phone_number_change(user, otp):
-    """
-    Verifies the OTP for a phone number change.
 
-    The new phone number is applied to the user only
-    after successful OTP verification.
+def verify_contact_change(user, otp):
+    """
+    Verifies the contact-change OTP and updates the user's
+    email or phone only after successful OTP verification.
     """
 
-    phone_otp = PhoneVerificationOTP.objects.filter(
+    contact_otp = ContactChangeOTP.objects.filter(
         user=user
     ).first()
 
-    if not phone_otp:
+    if not contact_otp:
         raise ValidationError({
             "otp": [
-                "No phone change verification OTP found."
+                "No contact change verification OTP found."
             ]
         })
 
     # Check OTP expiration.
-    if timezone.now() >= phone_otp.expires_at:
+    if timezone.now() >= contact_otp.expires_at:
 
-        phone_otp.delete()
+        contact_otp.delete()
 
         raise ValidationError({
             "otp": [
@@ -637,10 +771,10 @@ def verify_phone_number_change(user, otp):
             ]
         })
 
-    # Verify hashed OTP.
+    # Verify the hashed OTP.
     if not verify_otp_hash(
         otp,
-        phone_otp.otp_hash
+        contact_otp.otp_hash
     ):
         raise ValidationError({
             "otp": [
@@ -648,38 +782,77 @@ def verify_phone_number_change(user, otp):
             ]
         })
 
-    new_phone = phone_otp.phone
+    contact_type = contact_otp.contact_type
+    new_contact = contact_otp.new_contact
 
-    # Make sure nobody verified this number while
-    # the OTP was pending.
-    if User.objects.filter(
-        phone=new_phone,
-        phone_verified=True
-    ).exclude(
-        id=user.id
-    ).exists():
+    # Check again for duplicate contact.
+    # Another user could have registered this contact
+    # while the OTP was pending.
 
-        phone_otp.delete()
+    if contact_type == ContactChangeType.EMAIL:
+
+        if User.objects.filter(
+            email__iexact=new_contact
+        ).exclude(
+            id=user.id
+        ).exists():
+
+            contact_otp.delete()
+
+            raise ValidationError({
+                "new_contact": [
+                    "Email is already registered."
+                ]
+            })
+
+        user.email = new_contact
+
+        user.save(
+            update_fields=[
+                "email",
+                "updated_at",
+            ]
+        )
+
+    elif contact_type == ContactChangeType.PHONE:
+
+        if User.objects.filter(
+            phone=new_contact,
+            phone_verified=True
+        ).exclude(
+            id=user.id
+        ).exists():
+
+            contact_otp.delete()
+
+            raise ValidationError({
+                "new_contact": [
+                    "Phone number is already registered."
+                ]
+            })
+
+        user.phone = new_contact
+        user.phone_verified = True
+
+        user.save(
+            update_fields=[
+                "phone",
+                "phone_verified",
+                "updated_at",
+            ]
+        )
+
+    else:
+
+        contact_otp.delete()
 
         raise ValidationError({
-            "phone": [
-                "Phone number already registered."
+            "contact_type": [
+                "Invalid contact type."
             ]
         })
 
-    # Apply the new phone only after successful OTP verification.
-    user.phone = new_phone
-    user.phone_verified = True
-
-    user.save(
-        update_fields=[
-            "phone",
-            "phone_verified",
-            "updated_at"
-        ]
-    )
-
     # OTP is single-use.
-    phone_otp.delete()
+    contact_otp.delete()
 
     return user
