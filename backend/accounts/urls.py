@@ -34,6 +34,9 @@ from .views import (
     ContactChangeView,
     VerifyContactChangeOTPView,
     ResendContactChangeOTPView,
+
+    # Change password
+    ChangePasswordAPIView,
 )
 
 urlpatterns = [
@@ -85,4 +88,11 @@ urlpatterns = [
         ResendContactChangeOTPView.as_view(),
         name="resend-contact-change-otp",
     ),
+
+    # Change password
+    path(
+    "change-password/",
+    ChangePasswordAPIView.as_view(),
+    name="change-password",
+),
 ]

@@ -55,6 +55,10 @@ from .serializers import (
     ContactChangeResponseSerializer,
     VerifyContactChangeOTPResponseSerializer,
 
+    # Change Password Serializer
+    ChangePasswordSerializer,
+    ChangePasswordResponseSerializer,
+
 )
 from .services import (
 
@@ -1160,6 +1164,61 @@ class ResendContactChangeOTPView(APIView):
                 "message": (
                     "Contact change OTP resent successfully."
                 )
+            },
+            status=status.HTTP_200_OK,
+        )
+
+# Change Password
+class ChangePasswordAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["Accounts"],
+        summary="Change authenticated user's password",
+        description=(
+            "Changes the password of the currently authenticated user. "
+            "The current password must be provided and verified before "
+            "the new password is saved."
+        ),
+        request=ChangePasswordSerializer,
+        responses={
+            200: ChangePasswordResponseSerializer,
+            400: OpenApiResponse(
+                description=(
+                    "Current password is incorrect, passwords do not "
+                    "match, or the new password is invalid."
+                )
+            ),
+            401: OpenApiResponse(
+                description=(
+                    "Authentication credentials were not provided."
+                )
+            ),
+        },
+    )
+    def post(self, request):
+
+        serializer = ChangePasswordSerializer(
+            data=request.data,
+            context={"request": request},
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        request.user.set_password(
+            serializer.validated_data["new_password"]
+        )
+
+        request.user.save(
+            update_fields=["password"]
+        )
+
+        return Response(
+            {
+                "message": "Password changed successfully."
             },
             status=status.HTTP_200_OK,
         )

@@ -400,3 +400,64 @@ class VerifyContactChangeOTPResponseSerializer(serializers.Serializer):
     message = serializers.CharField()
 
     user = ProfileSerializer()
+
+# Change Password Serializer
+class ChangePasswordSerializer(serializers.Serializer):
+
+    current_password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+    )
+
+    new_password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+        validators=[password_validator],
+    )
+
+    confirm_password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+    )
+
+    def validate(self, attrs):
+
+        user = self.context["request"].user
+
+        # Verify current password
+        if not user.check_password(
+            attrs["current_password"]
+        ):
+            raise serializers.ValidationError({
+                "current_password": [
+                    "Current password is incorrect."
+                ]
+            })
+
+        # New password and confirm password
+        if attrs["new_password"] != attrs["confirm_password"]:
+            raise serializers.ValidationError({
+                "confirm_password": [
+                    "Passwords do not match."
+                ]
+            })
+
+        # Prevent using the same password
+        if user.check_password(
+            attrs["new_password"]
+        ):
+            raise serializers.ValidationError({
+                "new_password": [
+                    "New password must be different from the current password."
+                ]
+            })
+
+        attrs.pop("confirm_password")
+
+        return attrs
+
+
+# Change Password Response Serializer
+class ChangePasswordResponseSerializer(serializers.Serializer):
+
+    message = serializers.CharField()
