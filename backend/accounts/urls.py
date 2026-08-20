@@ -15,6 +15,8 @@ from .views import (
     SendPhoneVerificationOTPView,
     VerifyPhoneOTPView,
     ResendPhoneVerificationOTPView,
+    ChangePhoneNumberView,
+    VerifyPhoneNumberChangeView,
 )
 
 urlpatterns = [
@@ -33,4 +35,6 @@ urlpatterns = [
     path("phone/send-otp/",SendPhoneVerificationOTPView.as_view(),name="send-phone-verification-otp",),
     path("phone/verify-otp/",VerifyPhoneOTPView.as_view(),name="verify-phone-otp",),
     path("phone/resend-otp/",ResendPhoneVerificationOTPView.as_view(),name="resend-phone-verification-otp",),
+    path("phone/change/",ChangePhoneNumberView.as_view(),name="change-phone-number"),
+    path("phone/change/verify-otp/",VerifyPhoneNumberChangeView.as_view(),name="verify-phone-number-change"),
 ]

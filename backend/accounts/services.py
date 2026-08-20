@@ -606,3 +606,80 @@ def request_phone_number_change(user, new_phone):
         user=user,
         phone=new_phone
     )
+
+def verify_phone_number_change(user, otp):
+    """
+    Verifies the OTP for a phone number change.
+
+    The new phone number is applied to the user only
+    after successful OTP verification.
+    """
+
+    phone_otp = PhoneVerificationOTP.objects.filter(
+        user=user
+    ).first()
+
+    if not phone_otp:
+        raise ValidationError({
+            "otp": [
+                "No phone change verification OTP found."
+            ]
+        })
+
+    # Check OTP expiration.
+    if timezone.now() >= phone_otp.expires_at:
+
+        phone_otp.delete()
+
+        raise ValidationError({
+            "otp": [
+                "OTP has expired."
+            ]
+        })
+
+    # Verify hashed OTP.
+    if not verify_otp_hash(
+        otp,
+        phone_otp.otp_hash
+    ):
+        raise ValidationError({
+            "otp": [
+                "Invalid OTP."
+            ]
+        })
+
+    new_phone = phone_otp.phone
+
+    # Make sure nobody verified this number while
+    # the OTP was pending.
+    if User.objects.filter(
+        phone=new_phone,
+        phone_verified=True
+    ).exclude(
+        id=user.id
+    ).exists():
+
+        phone_otp.delete()
+
+        raise ValidationError({
+            "phone": [
+                "Phone number already registered."
+            ]
+        })
+
+    # Apply the new phone only after successful OTP verification.
+    user.phone = new_phone
+    user.phone_verified = True
+
+    user.save(
+        update_fields=[
+            "phone",
+            "phone_verified",
+            "updated_at"
+        ]
+    )
+
+    # OTP is single-use.
+    phone_otp.delete()
+
+    return user
