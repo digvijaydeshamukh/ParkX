@@ -273,3 +273,15 @@ class ResendPhoneVerificationOTPResponseSerializer(serializers.Serializer):
         required=False
     )
 
+# Change Phone Number Serializer
+class ChangePhoneNumberSerializer(serializers.Serializer):
+
+    phone = serializers.CharField(
+        max_length=15,
+        validators=[phone_number_validator]
+    )
+
+# Change Phone Number Response Serializer
+class ChangePhoneNumberResponseSerializer(serializers.Serializer):
+
+    message = serializers.CharField()

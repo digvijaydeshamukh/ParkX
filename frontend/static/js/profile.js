@@ -1,26 +1,40 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("PROFILE.JS FILE LOADED");
+    console.log("ParkX Profile JS DOM LOADED");
 
-    console.log("ParkX Profile JS Loaded");
+    // =====================================================
+    // ELEMENTS
+    // =====================================================
 
-    /* =====================================================
-       ELEMENTS
-    ===================================================== */
+    const profileForm = document.getElementById("profileForm");
 
+    const usernameInput = document.getElementById("username");
+    const firstNameInput = document.getElementById("first_name");
+    const lastNameInput = document.getElementById("last_name");
+    const emailInput = document.getElementById("email");
+    const phoneInput = document.getElementById("phone");
+
+    // Profile image
     const profileImageWrapper =
         document.getElementById("profileImageWrapper");
-
-    const profileImageMenu =
-        document.getElementById("profileImageMenu");
-
-    const addProfileImageBtn =
-        document.getElementById("addProfileImageBtn");
-
-    const cropProfileImageBtn =
-        document.getElementById("cropProfileImageBtn");
 
     const profileImageInput =
         document.getElementById("profileImageInput");
 
+    // Profile image modal
+    const profileImageModal =
+        document.getElementById("profileImageModal");
+
+    const closeProfileImageModal =
+        document.getElementById("closeProfileImageModal");
+
+    const uploadProfileImageBtn =
+        document.getElementById("uploadProfileImageBtn");
+
+    const removeProfileImageBtn =
+        document.getElementById("removeProfileImageBtn");
+
+    // Crop modal
     const cropModal =
         document.getElementById("cropModal");
 
@@ -37,163 +51,732 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("saveCrop");
 
 
+    console.log("Profile form:", profileForm);
+    console.log("Username:", usernameInput);
+    console.log("First name:", firstNameInput);
+    console.log("Last name:", lastNameInput);
+    console.log("Email:", emailInput);
+    console.log("Phone:", phoneInput);
+
+    console.log(
+        "Profile image wrapper:",
+        profileImageWrapper
+    );
+
+    console.log(
+        "Profile image modal:",
+        profileImageModal
+    );
+
+    console.log(
+        "Upload button:",
+        uploadProfileImageBtn
+    );
+
+    console.log(
+        "Remove button:",
+        removeProfileImageBtn
+    );
+
+    console.log(
+        "File input:",
+        profileImageInput
+    );
+
+
+    // =====================================================
+    // VARIABLES
+    // =====================================================
+
     let cropper = null;
 
+    // Holds the cropped image file temporarily
+    let croppedImageFile = null;
 
-    /* =====================================================
-       PROFILE IMAGE CLICK
-       Click image -> show/hide menu
-    ===================================================== */
 
-    if (profileImageWrapper && profileImageMenu) {
+    // =====================================================
+    // GET ACCESS TOKEN
+    // =====================================================
 
-        profileImageWrapper.addEventListener("click", function (event) {
+    function getAccessToken() {
 
-            event.stopPropagation();
-
-            profileImageMenu.classList.toggle("show");
-
-        });
+        return localStorage.getItem("access_token");
 
     }
 
 
-    /* =====================================================
-       ADD NEW PROFILE IMAGE
-    ===================================================== */
+    // =====================================================
+    // LOAD PROFILE
+    // =====================================================
 
-    if (addProfileImageBtn && profileImageInput) {
+    async function loadProfile() {
 
-        addProfileImageBtn.addEventListener("click", function (event) {
+        console.log("Loading profile...");
 
-            event.stopPropagation();
+        const accessToken = getAccessToken();
 
-            profileImageInput.click();
-
-        });
-
-    }
-
-
-    /* =====================================================
-       IMAGE SELECTED
-    ===================================================== */
-
-    if (profileImageInput) {
-
-        profileImageInput.addEventListener("change", function (event) {
-
-            const file = event.target.files[0];
-
-            if (!file) {
-                return;
-            }
+        console.log(
+            "Access token exists:",
+            !!accessToken
+        );
 
 
-            /* Check image */
+        if (!accessToken) {
 
-            if (!file.type.startsWith("image/")) {
+            console.error(
+                "Access token not found."
+            );
 
-                alert("Please select a valid image.");
-
-                profileImageInput.value = "";
-
-                return;
-
-            }
-
-
-            /* Read image */
-
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-
-                openCropModal(e.target.result);
-
-            };
-
-            reader.readAsDataURL(file);
-
-
-            /* Hide menu */
-
-            if (profileImageMenu) {
-
-                profileImageMenu.classList.remove("show");
-
-            }
-
-        });
-
-    }
-
-
-    /* =====================================================
-       CROP EXISTING PROFILE IMAGE
-    ===================================================== */
-
-    if (cropProfileImageBtn) {
-
-        cropProfileImageBtn.addEventListener("click", function (event) {
-
-            event.stopPropagation();
-
-
-            const currentImage =
-                document.getElementById("profileImagePreview");
-
-
-            /* No image */
-
-            if (
-                !currentImage ||
-                currentImage.tagName !== "IMG"
-            ) {
-
-                alert("Please add a profile image first.");
-
-                return;
-
-            }
-
-
-            /* Open crop modal */
-
-            openCropModal(currentImage.src);
-
-
-            /* Hide menu */
-
-            if (profileImageMenu) {
-
-                profileImageMenu.classList.remove("show");
-
-            }
-
-        });
-
-    }
-
-
-    /* =====================================================
-       OPEN CROP MODAL
-    ===================================================== */
-
-    function openCropModal(imageURL) {
-
-        if (!cropModal || !cropImage) {
             return;
+
         }
 
 
-        cropModal.classList.add("show");
+        try {
 
-        cropImage.src = imageURL;
+            const response = await fetch(
+                "/api/accounts/profile/",
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            `Bearer ${accessToken}`,
+
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
 
 
-        /* Destroy previous cropper */
+            console.log(
+                "Profile API status:",
+                response.status
+            );
 
+
+            const data = await response.json();
+
+
+            console.log(
+                "Profile API response:",
+                data
+            );
+
+
+            if (!response.ok) {
+
+                console.error(
+                    "Profile API error:",
+                    data
+                );
+
+
+                if (response.status === 401) {
+
+                    console.error(
+                        "Access token expired or invalid."
+                    );
+
+                    localStorage.removeItem(
+                        "access_token"
+                    );
+
+                    localStorage.removeItem(
+                        "refresh_token"
+                    );
+
+                    localStorage.removeItem(
+                        "user"
+                    );
+
+                    window.location.href = "/login/";
+                    return;
+
+                }
+
+                return;
+
+            }
+
+
+            populateProfile(data);
+
+        } catch (error) {
+
+            console.error(
+                "Error loading profile:",
+                error
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // POPULATE PROFILE
+    // =====================================================
+
+    function populateProfile(data) {
+
+        console.log(
+            "Populating profile with:",
+            data
+        );
+
+
+        // Username
+        if (usernameInput) {
+
+            usernameInput.value =
+                data.username || "";
+
+        }
+
+
+        // First name
+        if (firstNameInput) {
+
+            firstNameInput.value =
+                data.first_name || "";
+
+        }
+
+
+        // Last name
+        if (lastNameInput) {
+
+            lastNameInput.value =
+                data.last_name || "";
+
+        }
+
+
+        // Email
+        if (emailInput) {
+
+            emailInput.value =
+                data.email || "";
+
+        }
+
+
+        // Phone
+        if (phoneInput) {
+
+            phoneInput.value =
+                data.phone || "";
+
+        }
+
+
+        // Profile image
+        if (data.profile_image) {
+
+    updateProfileImage(
+        data.profile_image
+    );
+
+    updateSidebarProfileImage(
+        data.profile_image
+    );
+
+} else {
+
+    updateSidebarProfileImage(null);
+}
+
+
+        console.log(
+            "Profile populated successfully."
+        );
+
+    }
+
+
+    // =====================================================
+    // UPDATE PROFILE IMAGE PREVIEW
+    // =====================================================
+
+    function updateProfileImage(imageURL) {
+
+    // =====================================================
+    // MAIN PROFILE IMAGE
+    // =====================================================
+
+    const currentPreview =
+        document.getElementById("profileImagePreview");
+
+
+    if (currentPreview) {
+
+        if (currentPreview.tagName === "IMG") {
+
+            currentPreview.src = imageURL;
+
+        } else {
+
+            const image =
+                document.createElement("img");
+
+            image.src = imageURL;
+
+            image.alt = "Profile Image";
+
+            image.className = "profile-image";
+
+            image.id = "profileImagePreview";
+
+            currentPreview.replaceWith(image);
+        }
+    }
+
+
+    // =====================================================
+    // MODAL PROFILE IMAGE
+    // =====================================================
+
+    const modalPreview =
+        document.querySelector(
+            ".profile-image-modal-preview"
+        );
+
+
+    if (!modalPreview) {
+        return;
+    }
+
+
+    // Remove existing modal content
+    modalPreview.innerHTML = "";
+
+
+    // Create image
+    const modalImage =
+        document.createElement("img");
+
+
+    modalImage.src =
+        imageURL;
+
+    modalImage.alt =
+        "Profile Image";
+
+    modalImage.id =
+        "profileModalImage";
+
+    modalImage.className =
+        "profile-modal-image";
+
+
+    modalPreview.appendChild(
+        modalImage
+    );
+}
+
+    // =====================================================
+    // PROFILE FORM SUBMIT
+    // =====================================================
+
+    if (profileForm) {
+
+        profileForm.addEventListener(
+            "submit",
+            async (event) => {
+
+                event.preventDefault();
+
+                console.log(
+                    "Profile form submitted."
+                );
+
+
+                const accessToken =
+                    getAccessToken();
+
+
+                if (!accessToken) {
+
+                    console.error(
+                        "Access token not found."
+                    );
+
+                    return;
+
+                }
+
+
+                const formData =
+                    new FormData();
+
+
+                // First name
+                if (firstNameInput) {
+
+                    formData.append(
+                        "first_name",
+                        firstNameInput.value.trim()
+                    );
+
+                }
+
+
+                // Last name
+                if (lastNameInput) {
+
+                    formData.append(
+                        "last_name",
+                        lastNameInput.value.trim()
+                    );
+
+                }
+
+
+                // Profile image
+                if (croppedImageFile) {
+
+                    formData.append(
+                        "profile_image",
+                        croppedImageFile
+                    );
+
+                }
+                else if (
+                    profileImageInput &&
+                    profileImageInput.files.length > 0
+                ) {
+
+                    formData.append(
+                        "profile_image",
+                        profileImageInput.files[0]
+                    );
+
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/accounts/profile/",
+                            {
+                                method: "PATCH",
+
+                                headers: {
+                                    "Authorization":
+                                        `Bearer ${accessToken}`
+                                },
+
+                                body: formData
+                            }
+                        );
+
+
+                    console.log(
+                        "Update profile status:",
+                        response.status
+                    );
+
+
+                    const data =
+                        await response.json();
+
+
+                    console.log(
+                        "Update profile response:",
+                        data
+                    );
+
+
+                    if (!response.ok) {
+
+                        console.error(
+                            "Profile update failed:",
+                            data
+                        );
+
+                        return;
+
+                    }
+
+
+                    console.log(
+                        "Profile updated successfully."
+                    );
+
+
+                    if (data.user) {
+
+                        populateProfile(
+                            data.user
+                        );
+
+                    }
+
+
+                    // Clear temporary image
+                    croppedImageFile = null;
+
+                    if (profileImageInput) {
+
+                        profileImageInput.value =
+                            "";
+
+                    }
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Profile update error:",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // OPEN PROFILE IMAGE MODAL
+    // =====================================================
+
+    if (profileImageWrapper) {
+
+        profileImageWrapper.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                console.log(
+                    "Profile image clicked"
+                );
+
+
+                if (profileImageModal) {
+
+                    profileImageModal.classList.add(
+                        "show"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // CLOSE PROFILE IMAGE MODAL
+    // =====================================================
+
+    function closeProfileImageModalFunction() {
+
+        if (profileImageModal) {
+
+            profileImageModal.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+
+
+    // Close button
+    if (closeProfileImageModal) {
+
+        closeProfileImageModal.addEventListener(
+            "click",
+            closeProfileImageModalFunction
+        );
+
+    }
+
+
+    // Click outside modal
+    if (profileImageModal) {
+
+        profileImageModal.addEventListener(
+            "click",
+            (event) => {
+
+                if (
+                    event.target ===
+                    profileImageModal
+                ) {
+
+                    closeProfileImageModalFunction();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // UPLOAD IMAGE BUTTON
+    // =====================================================
+
+    if (
+        uploadProfileImageBtn &&
+        profileImageInput
+    ) {
+
+        uploadProfileImageBtn.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                console.log(
+                    "Upload image clicked"
+                );
+
+
+                profileImageInput.click();
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // IMAGE SELECTED
+    // =====================================================
+
+    if (profileImageInput) {
+
+        profileImageInput.addEventListener(
+            "change",
+            (event) => {
+
+                const file =
+                    event.target.files[0];
+
+
+                if (!file) {
+
+                    return;
+
+                }
+
+
+                console.log(
+                    "Selected image:",
+                    file
+                );
+
+
+                // Validate file type
+                if (
+                    !file.type.startsWith(
+                        "image/"
+                    )
+                ) {
+
+                    alert(
+                        "Please select a valid image."
+                    );
+
+
+                    profileImageInput.value =
+                        "";
+
+                    return;
+
+                }
+
+
+                // Validate file size
+                const maxSize =
+                    5 * 1024 * 1024;
+
+
+                if (file.size > maxSize) {
+
+                    alert(
+                        "Image size must be less than 5 MB."
+                    );
+
+
+                    profileImageInput.value =
+                        "";
+
+                    return;
+
+                }
+
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    (readerEvent) => {
+
+                        const imageURL =
+                            readerEvent.target.result;
+
+
+                        openCropModal(
+                            imageURL
+                        );
+
+
+                        closeProfileImageModalFunction();
+
+                    };
+
+
+                reader.readAsDataURL(
+                    file
+                );
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // OPEN CROP MODAL
+    // =====================================================
+
+    function openCropModal(imageURL) {
+
+        if (
+            !cropModal ||
+            !cropImage
+        ) {
+
+            console.error(
+                "Crop modal elements not found."
+            );
+
+            return;
+
+        }
+
+
+        cropModal.classList.add(
+            "show"
+        );
+
+
+        // Destroy previous Cropper instance
         if (cropper) {
 
             cropper.destroy();
@@ -203,125 +786,163 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        /* Create cropper after image loads */
+        cropImage.src =
+            imageURL;
 
-        cropImage.onload = function () {
 
-            cropper = new Cropper(
-                cropImage,
-                {
-                    aspectRatio: 1,
+        cropImage.onload =
+            () => {
 
-                    viewMode: 1,
+                cropper =
+                    new Cropper(
+                        cropImage,
+                        {
+                            aspectRatio: 1,
 
-                    dragMode: "move",
+                            viewMode: 1,
 
-                    autoCropArea: 1,
+                            dragMode: "move",
 
-                    responsive: true,
+                            autoCropArea: 1,
 
-                    background: false
-                }
-            );
+                            responsive: true,
 
-        };
+                            background: false,
+
+                            movable: true,
+
+                            zoomable: true,
+
+                            rotatable: false,
+
+                            scalable: false
+                        }
+                    );
+
+            };
 
     }
 
 
-    /* =====================================================
-       SAVE CROPPED IMAGE
-    ===================================================== */
+    // =====================================================
+    // SAVE CROP
+    // =====================================================
 
     if (saveCrop) {
 
-        saveCrop.addEventListener("click", function () {
+        saveCrop.addEventListener(
+            "click",
+            () => {
 
-            if (!cropper) {
-                return;
-            }
+                if (!cropper) {
 
+                    console.error(
+                        "Cropper is not initialized."
+                    );
 
-            const canvas =
-                cropper.getCroppedCanvas({
-                    width: 400,
-                    height: 400,
-                    imageSmoothingQuality: "high"
-                });
+                    return;
 
-
-            if (!canvas) {
-                return;
-            }
+                }
 
 
-            const croppedImageURL =
-                canvas.toDataURL("image/png");
+                const canvas =
+                    cropper.getCroppedCanvas(
+                        {
+                            width: 400,
+
+                            height: 400,
+
+                            imageSmoothingEnabled:
+                                true,
+
+                            imageSmoothingQuality:
+                                "high"
+                        }
+                    );
 
 
-            const currentPreview =
-                document.getElementById(
-                    "profileImagePreview"
+                if (!canvas) {
+
+                    console.error(
+                        "Could not create cropped image."
+                    );
+
+                    return;
+
+                }
+
+
+                // Preview image
+                const croppedImageURL =
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.9
+                    );
+
+
+                updateProfileImage(
+                    croppedImageURL
                 );
 
 
-            /* Existing image */
+                // Convert canvas to File
+                canvas.toBlob(
+                    (blob) => {
 
-            if (
-                currentPreview &&
-                currentPreview.tagName === "IMG"
-            ) {
+                        if (!blob) {
 
-                currentPreview.src =
-                    croppedImageURL;
+                            console.error(
+                                "Could not create image blob."
+                            );
 
-            }
+                            return;
 
-
-            /* Placeholder */
-
-            else if (currentPreview) {
-
-                const newImage =
-                    document.createElement("img");
+                        }
 
 
-                newImage.src =
-                    croppedImageURL;
+                        croppedImageFile =
+                            new File(
+                                [
+                                    blob
+                                ],
+                                "profile_image.jpg",
+                                {
+                                    type:
+                                        "image/jpeg"
+                                }
+                            );
 
-                newImage.alt =
-                    "Profile Image";
 
-                newImage.className =
-                    "profile-image";
-
-                newImage.id =
-                    "profileImagePreview";
+                        console.log(
+                            "Cropped image ready:",
+                            croppedImageFile
+                        );
 
 
-                currentPreview.replaceWith(
-                    newImage
+                        closeCropModalFunction();
+
+                    },
+                    "image/jpeg",
+                    0.9
                 );
 
             }
-
-
-            closeCropModalFunction();
-
-        });
+        );
 
     }
 
 
-    /* =====================================================
-       CLOSE CROP MODAL
-    ===================================================== */
+    // =====================================================
+    // CLOSE CROP MODAL
+    // =====================================================
 
     function closeCropModalFunction() {
 
         if (cropModal) {
 
-            cropModal.classList.remove("show");
+            cropModal.classList.remove(
+                "show"
+            );
 
         }
 
@@ -344,10 +965,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =====================================================
-       CLOSE BUTTON
-    ===================================================== */
-
+    // Close crop button
     if (closeCropModal) {
 
         closeCropModal.addEventListener(
@@ -358,10 +976,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =====================================================
-       CANCEL BUTTON
-    ===================================================== */
-
+    // Cancel crop
     if (cancelCrop) {
 
         cancelCrop.addEventListener(
@@ -372,52 +987,240 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =====================================================
-       CLICK OUTSIDE PROFILE MENU
-    ===================================================== */
+    // =====================================================
+// REMOVE PROFILE IMAGE
+// =====================================================
 
-    document.addEventListener("click", function (event) {
+if (removeProfileImageBtn) {
 
-        if (
-            profileImageMenu &&
-            profileImageWrapper &&
-            !profileImageMenu.contains(event.target) &&
-            !profileImageWrapper.contains(event.target)
-        ) {
+    removeProfileImageBtn.addEventListener(
+        "click",
+        async (event) => {
 
-            profileImageMenu.classList.remove("show");
+            event.preventDefault();
+            event.stopPropagation();
+
+            console.log("Remove image clicked");
+
+            const confirmed = confirm(
+                "Are you sure you want to remove your profile image?"
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            const accessToken = getAccessToken();
+
+            if (!accessToken) {
+                console.error("Access token not found.");
+                return;
+            }
+
+            try {
+
+                const formData = new FormData();
+
+                // Tell backend to remove the image
+                formData.append(
+                    "profile_image",
+                    ""
+                );
+
+                const response = await fetch(
+                    "/api/accounts/profile/",
+                    {
+                        method: "PATCH",
+
+                        headers: {
+                            "Authorization":
+                                `Bearer ${accessToken}`
+                        },
+
+                        body: formData
+                    }
+                );
+
+                console.log(
+                    "Remove image status:",
+                    response.status
+                );
+
+                const data = await response.json();
+
+                console.log(
+                    "Remove image response:",
+                    data
+                );
+
+                if (!response.ok) {
+
+                    console.error(
+                        "Remove image failed:",
+                        data
+                    );
+
+                    alert(
+                        "Unable to remove profile image."
+                    );
+
+                    return;
+                }
+
+
+                // =================================================
+                // REMOVE IMAGE FROM MAIN PROFILE AREA
+                // =================================================
+
+                const currentPreview =
+                    document.getElementById(
+                        "profileImagePreview"
+                    );
+
+                if (currentPreview) {
+
+                    const placeholder =
+                        document.createElement("div");
+
+                    placeholder.id =
+                        "profileImagePreview";
+
+                    placeholder.className =
+                        "profile-image-placeholder";
+
+                    placeholder.innerHTML =
+                        '<i class="fa-solid fa-user"></i>';
+
+                    currentPreview.replaceWith(
+                        placeholder
+                    );
+                }
+
+
+                // =================================================
+                // REMOVE IMAGE FROM MODAL
+                // =================================================
+
+                const modalPreview =
+                    document.querySelector(
+                        ".profile-image-modal-preview"
+                    );
+
+                if (modalPreview) {
+
+                    modalPreview.innerHTML = `
+                        <div
+                            id="profileModalPlaceholder"
+                            class="profile-modal-placeholder"
+                        >
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    `;
+                }
+
+
+                // =================================================
+                // CLEAR FILE INPUT
+                // =================================================
+
+                if (profileImageInput) {
+
+                    profileImageInput.value = "";
+
+                }
+
+
+                // =================================================
+                // CLEAR CROPPED IMAGE
+                // =================================================
+
+                croppedImageFile = null;
+
+
+                // =================================================
+                // CLOSE MODAL
+                // =================================================
+
+                closeProfileImageModalFunction();
+
+
+                console.log(
+                    "Profile image removed successfully."
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Remove image error:",
+                    error
+                );
+
+            }
 
         }
+    );
 
-    });
+}
 
 
-    /* =====================================================
-       ESCAPE KEY
-    ===================================================== */
+    // =====================================================
+    // ESCAPE KEY
+    // =====================================================
 
-    document.addEventListener("keydown", function (event) {
+    document.addEventListener(
+        "keydown",
+        (event) => {
 
-        if (event.key === "Escape") {
+            if (event.key !== "Escape") {
 
-            if (profileImageMenu) {
-
-                profileImageMenu.classList.remove("show");
+                return;
 
             }
 
 
-            if (
-                cropModal &&
-                cropModal.classList.contains("show")
-            ) {
+            closeProfileImageModalFunction();
 
-                closeCropModalFunction();
-
-            }
+            closeCropModalFunction();
 
         }
+    );
 
-    });
+    function updateSidebarProfileImage(imageURL) {
+
+    const sidebarImageContainer =
+        document.querySelector(".sidebar-profile-image");
+
+    if (!sidebarImageContainer) {
+        console.warn("Sidebar profile image container not found.");
+        return;
+    }
+
+    if (!imageURL) {
+        sidebarImageContainer.innerHTML = `
+            <i class="fa-solid fa-user"></i>
+        `;
+        return;
+    }
+
+    sidebarImageContainer.innerHTML = `
+        <img
+            src="${imageURL}"
+            alt="Profile Image"
+            class="sidebar-profile-img"
+        >
+    `;
+
+    console.log(
+        "Sidebar profile image updated:",
+        imageURL
+    );
+}
+
+
+    // =====================================================
+    // LOAD PROFILE
+    // =====================================================
+
+    loadProfile();
 
 });

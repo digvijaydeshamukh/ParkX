@@ -48,9 +48,6 @@
         href="{% static 'css/dashboard_base.css' %}"
     >
 
-<script src="{% static 'js/dashboard_base.js' %}"></script>
-
-
     <!-- =========================
          PAGE SPECIFIC CSS
     ========================== -->
@@ -131,7 +128,7 @@
 
             <div class="sidebar-user-info">
 
-                <h3>
+                <h3 id="sidebarUserName" >
                     {{ user.first_name|default:user.username }}
                 </h3>
 
@@ -300,6 +297,8 @@
                 <button
                     type="submit"
                     class="sidebar-logout"
+                    id="logoutButton"
+                    data-login-url="{% url 'login-page' %}"
                 >
 
                     <i class="fa-solid fa-right-from-bracket"></i>
@@ -367,6 +366,8 @@
 ========================== -->
 
 <script src="{% static 'js/dashboard_base.js' %}"></script>
+{% block extra_js %}
+    {% endblock %}
 
 
 </body>

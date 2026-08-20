@@ -550,3 +550,59 @@ def verify_phone_otp(user, otp):
     phone_otp.delete()
     
     return user
+
+def request_phone_number_change(user, new_phone):
+    """
+    Starts the phone number change process.
+
+    The new phone number is stored in PhoneVerificationOTP
+    and is not written to User until OTP verification succeeds.
+    """
+
+    if not new_phone:
+        raise ValidationError({
+            "phone": [
+                "Phone number is required."
+            ]
+        })
+
+    # If the submitted number is the current number
+    if user.phone == new_phone:
+
+        if user.phone_verified:
+            raise ValidationError({
+                "phone": [
+                    "This is already your verified phone number."
+                ]
+            })
+
+        raise ValidationError({
+            "phone": [
+                "This is already your current phone number."
+            ]
+        })
+
+    # Prevent another verified user from owning the phone number.
+    if User.objects.filter(
+        phone=new_phone,
+        phone_verified=True
+    ).exclude(
+        id=user.id
+    ).exists():
+
+        raise ValidationError({
+            "phone": [
+                "Phone number already registered."
+            ]
+        })
+
+    # Remove any existing phone verification OTP.
+    PhoneVerificationOTP.objects.filter(
+        user=user
+    ).delete()
+
+    # Create OTP for the NEW phone.
+    _create_phone_verification_otp(
+        user=user,
+        phone=new_phone
+    )
