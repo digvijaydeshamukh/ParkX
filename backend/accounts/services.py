@@ -742,6 +742,56 @@ def request_contact_change(user, contact_type, new_contact):
         new_contact=new_contact,
     )
 
+def resend_contact_change_otp(user):
+    """
+    Resends the OTP for the user's existing contact-change request.
+
+    The existing contact type and new contact are reused.
+    A resend is blocked during the configured cooldown period.
+    """
+
+    contact_otp = ContactChangeOTP.objects.filter(
+        user=user
+    ).first()
+
+    if not contact_otp:
+        raise ValidationError({
+            "otp": [
+                "No contact change verification request found."
+            ]
+        })
+
+    now = timezone.now()
+
+    cooldown_expires_at = (
+        contact_otp.otp_created_at
+        + timedelta(
+            seconds=settings.OTP_RESEND_COOLDOWN_SECONDS
+        )
+    )
+
+    if now < cooldown_expires_at:
+        remaining_seconds = int(
+            (
+                cooldown_expires_at - now
+            ).total_seconds()
+        ) + 1
+
+        return remaining_seconds
+
+    contact_type = contact_otp.contact_type
+    new_contact = contact_otp.new_contact
+
+    # Remove old OTP before creating a new one.
+    contact_otp.delete()
+
+    _create_contact_change_otp(
+        user=user,
+        contact_type=contact_type,
+        new_contact=new_contact,
+    )
+
+    return None
 
 def verify_contact_change(user, otp):
     """

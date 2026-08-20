@@ -80,6 +80,7 @@ from .services import (
     # Contact Change
     request_contact_change,
     verify_contact_change,
+    resend_contact_change_otp,
 
 )
 
@@ -1109,4 +1110,56 @@ class VerifyContactChangeOTPView(APIView):
         return Response(
             response_serializer.data,
             status=status.HTTP_200_OK
+        )
+# Resent Otp for contact change
+@extend_schema(
+    tags=["Contact Change"],
+    summary="Resend contact change OTP",
+    description=(
+        "Resends the OTP for an existing pending contact change request. "
+        "The OTP is sent to the previously requested email address or "
+        "phone number. A resend cooldown is enforced."
+    ),
+    responses={
+        200: OpenApiResponse(
+            description="Contact change OTP resent successfully."
+        ),
+        401: OpenApiResponse(
+            description="Authentication credentials were not provided."
+        ),
+        429: OpenApiResponse(
+            description="OTP resend cooldown is still active."
+        ),
+        400: OpenApiResponse(
+            description="No pending contact change request found."
+        ),
+    },
+)
+class ResendContactChangeOTPView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        remaining_seconds = resend_contact_change_otp(
+            request.user
+        )
+
+        if remaining_seconds is not None:
+            return Response(
+                {
+                    "message": (
+                        "Please wait before requesting another OTP."
+                    ),
+                    "remaining_seconds": remaining_seconds,
+                },
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+
+        return Response(
+            {
+                "message": (
+                    "Contact change OTP resent successfully."
+                )
+            },
+            status=status.HTTP_200_OK,
         )

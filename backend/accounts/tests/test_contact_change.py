@@ -1,3 +1,4 @@
+
 from datetime import timedelta
 
 from django.test import override_settings
@@ -15,7 +16,9 @@ from accounts.utils import make_otp_hash
 
 
 @override_settings(
-    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend"
+    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    OTP_EXPIRY_MINUTES=5,
+    OTP_RESEND_COOLDOWN_SECONDS=60,
 )
 class ContactChangeAPITest(APITestCase):
 
@@ -35,9 +38,16 @@ class ContactChangeAPITest(APITestCase):
             user=self.user
         )
 
-        self.change_url = "/api/accounts/contact/change/"
+        self.change_url = (
+            "/api/accounts/contact/change/"
+        )
+
         self.verify_url = (
             "/api/accounts/contact/change/verify-otp/"
+        )
+
+        self.resend_url = (
+            "/api/accounts/contact/change/resend-otp/"
         )
 
     # ==================================================
@@ -107,7 +117,6 @@ class ContactChangeAPITest(APITestCase):
             "new@example.com",
         )
 
-        # User email must NOT change before OTP verification.
         self.user.refresh_from_db()
 
         self.assertEqual(
@@ -299,7 +308,6 @@ class ContactChangeAPITest(APITestCase):
             status.HTTP_200_OK,
         )
 
-        # Try using the same OTP again.
         response = self.client.post(
             self.verify_url,
             {
@@ -347,7 +355,6 @@ class ContactChangeAPITest(APITestCase):
             "9123456789",
         )
 
-        # Phone must not change before OTP verification.
         self.user.refresh_from_db()
 
         self.assertEqual(
@@ -459,7 +466,9 @@ class ContactChangeAPITest(APITestCase):
     # Authentication
     # ==================================================
 
-    def test_unauthenticated_user_cannot_request_contact_change(self):
+    def test_unauthenticated_user_cannot_request_contact_change(
+        self
+    ):
 
         self.client.force_authenticate(
             user=None
@@ -479,7 +488,9 @@ class ContactChangeAPITest(APITestCase):
             status.HTTP_401_UNAUTHORIZED,
         )
 
-    def test_unauthenticated_user_cannot_verify_contact_change(self):
+    def test_unauthenticated_user_cannot_verify_contact_change(
+        self
+    ):
 
         self.client.force_authenticate(
             user=None
@@ -497,3 +508,160 @@ class ContactChangeAPITest(APITestCase):
             response.status_code,
             status.HTTP_401_UNAUTHORIZED,
         )
+
+    # ==================================================
+    # Resend Contact Change OTP
+    # ==================================================
+
+    def test_resend_contact_change_otp_cooldown(self):
+
+        self.create_contact_otp(
+            contact_type=ContactChangeType.EMAIL,
+            new_contact="new@example.com",
+        )
+
+        response = self.client.post(
+            self.resend_url,
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_429_TOO_MANY_REQUESTS,
+        )
+
+        self.assertIn(
+            "remaining_seconds",
+            response.data,
+        )
+
+    def test_resend_contact_change_otp_success_after_cooldown(
+        self
+    ):
+
+        contact_otp = self.create_contact_otp(
+            contact_type=ContactChangeType.EMAIL,
+            new_contact="new@example.com",
+        )
+
+        contact_otp.otp_created_at = (
+            timezone.now()
+            - timedelta(seconds=61)
+        )
+
+        contact_otp.save(
+            update_fields=[
+                "otp_created_at"
+            ]
+        )
+
+        response = self.client.post(
+            self.resend_url,
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        self.assertEqual(
+            response.data["message"],
+            "Contact change OTP resent successfully.",
+        )
+
+        new_otp = ContactChangeOTP.objects.get(
+            user=self.user
+        )
+
+        self.assertEqual(
+            new_otp.contact_type,
+            ContactChangeType.EMAIL,
+        )
+
+        self.assertEqual(
+            new_otp.new_contact,
+            "new@example.com",
+        )
+
+    def test_unauthenticated_user_cannot_resend_contact_change_otp(
+        self
+    ):
+
+        self.client.force_authenticate(
+            user=None
+        )
+
+        response = self.client.post(
+            self.resend_url,
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_401_UNAUTHORIZED,
+        )
+
+    def test_resend_contact_change_otp_without_pending_request(
+        self
+    ):
+
+        response = self.client.post(
+            self.resend_url,
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST,
+        )
+
+        self.assertIn(
+            "otp",
+            response.data,
+        )
+
+    def test_resend_phone_contact_change_otp_success_after_cooldown(
+        self
+    ):
+
+        contact_otp = self.create_contact_otp(
+            contact_type=ContactChangeType.PHONE,
+            new_contact="9123456789",
+        )
+
+        contact_otp.otp_created_at = (
+            timezone.now()
+            - timedelta(seconds=61)
+        )
+
+        contact_otp.save(
+            update_fields=[
+                "otp_created_at"
+            ]
+        )
+
+        response = self.client.post(
+            self.resend_url,
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        self.assertEqual(
+            response.data["message"],
+            "Contact change OTP resent successfully.",
+        )
+
+        new_otp = ContactChangeOTP.objects.get(
+            user=self.user
+        )
+
+        self.assertEqual(
+            new_otp.contact_type,
+            ContactChangeType.PHONE,
+        )
+
+        self.assertEqual(
+            new_otp.new_contact,
+            "9123456789",
+        )
+

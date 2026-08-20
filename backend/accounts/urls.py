@@ -33,6 +33,7 @@ from .views import (
     # Contact Change
     ContactChangeView,
     VerifyContactChangeOTPView,
+    ResendContactChangeOTPView,
 )
 
 urlpatterns = [
@@ -77,5 +78,11 @@ urlpatterns = [
         "contact/change/verify-otp/",
         VerifyContactChangeOTPView.as_view(),
         name="verify-contact-change-otp",
+    ),
+
+    path(
+        "contact/change/resend-otp/",
+        ResendContactChangeOTPView.as_view(),
+        name="resend-contact-change-otp",
     ),
 ]
