@@ -3,7 +3,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from accounts.models import User, Vehicle
+from accounts.models import User
+from vehicles.models import Vehicle
 
 
 class VehicleAPITestCase(APITestCase):

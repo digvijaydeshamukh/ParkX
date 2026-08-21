@@ -17,11 +17,6 @@ from .views import (
     # Profile
     ProfileView,
 
-    # Vehicles
-    VehicleListCreateView,
-    VehicleDetailView,
-    SetDefaultVehicleView,
-
     # Phone Verification
     SendPhoneVerificationOTPView,
     VerifyPhoneOTPView,
@@ -56,11 +51,6 @@ urlpatterns = [
 
     # Profile
     path("profile/",ProfileView.as_view(),name="profile"),
-
-    # Vehicles
-    path("vehicles/",VehicleListCreateView.as_view(),name="vehicle-list-create"),
-    path("vehicles/<int:pk>/",VehicleDetailView.as_view(),name="vehicle-detail"),
-    path("vehicles/<int:pk>/set-default/",SetDefaultVehicleView.as_view(),name="vehicle-set-default"),
 
     # Phone Verification
     path("phone/send-otp/",SendPhoneVerificationOTPView.as_view(),name="send-phone-verification-otp",),
