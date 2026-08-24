@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import (
+from ..views.api_views import (
     # Registration
     RegisterView,
     VerifyOTPView,
@@ -30,8 +30,19 @@ from .views import (
     VerifyContactChangeOTPView,
     ResendContactChangeOTPView,
 
-    # Change password
-    ChangePasswordAPIView,
+    # Create List Parking Owner
+    ParkingOwnerListCreateView,
+
+    # Parking Owner
+    PromoteParkingOwnerView,
+    DemoteParkingOwnerView,
+    DeleteParkingOwnerView,
+
+    # Delete User
+    DeleteUserView,
+
+    # Change Password 
+    ChangePasswordAPIView
 )
 
 urlpatterns = [
@@ -58,9 +69,6 @@ urlpatterns = [
     path("phone/resend-otp/",ResendPhoneVerificationOTPView.as_view(),
     name="resend-phone-verification-otp",),
 
-    # Contact Change
-    # path("phone/change/",ChangePhoneNumberView.as_view(),name="change-phone-number"),
-    # path("phone/change/verify-otp/",VerifyPhoneNumberChangeView.as_view(),name="verify-phone-number-change"),
     path(
         "contact/change/",
         ContactChangeView.as_view(),
@@ -81,8 +89,44 @@ urlpatterns = [
 
     # Change password
     path(
-    "change-password/",
-    ChangePasswordAPIView.as_view(),
-    name="change-password",
-),
+        "change-password/",
+        ChangePasswordAPIView.as_view(),
+        name="change-password",
+    ),
+
+    # Create List Parking Owner 
+    path(
+        "admin/parking-owners/",
+        ParkingOwnerListCreateView.as_view(),
+        name="create-list-parking-owner",
+    ),
+
+    # Promote Existing User
+    path(
+        "admin/users/<int:user_id>/promote-parking-owner/",
+        PromoteParkingOwnerView.as_view(),
+        name="promote-parking-owner",
+    ),
+
+    # Demote Parking owner to vehicle owner
+    path(
+        "admin/users/<int:user_id>/demote-parking-owner/",
+        DemoteParkingOwnerView.as_view(),
+        name="demote-parking-owner",
+    ),
+
+    # Deletes Parking Owner
+    path(
+        "admin/parking-owners/<int:user_id>/",
+        DeleteParkingOwnerView.as_view(),
+        name="delete-parking-owner",
+    ),
+
+    # Deletes Any user
+    path(
+        "admin/users/<int:user_id>/",
+        DeleteUserView.as_view(),
+        name="delete-user",
+    ),
+
 ]

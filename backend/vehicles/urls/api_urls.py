@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (
+from ..views.api_views import (
     # Vehicles
     VehicleListCreateView,
     VehicleDetailView,
