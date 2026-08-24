@@ -814,3 +814,118 @@ class VehicleAPITestCase(APITestCase):
             response.status_code,
             status.HTTP_401_UNAUTHORIZED
         )
+
+    def test_saving_vehicle_as_default_unsets_previous_default(self):
+
+        first_vehicle = self.create_vehicle(
+            registration_number="MH12AB1234",
+            is_default=True
+        )
+
+        second_vehicle = self.create_vehicle(
+            registration_number="MH14CD5678",
+            is_default=False
+        )
+
+        second_vehicle.is_default = True
+        second_vehicle.save()
+
+        first_vehicle.refresh_from_db()
+        second_vehicle.refresh_from_db()
+
+        self.assertFalse(
+            first_vehicle.is_default
+        )
+
+        self.assertTrue(
+            second_vehicle.is_default
+        )
+
+        self.assertEqual(
+            Vehicle.objects.filter(
+                user=self.user,
+                is_default=True
+            ).count(),
+            1
+        )
+
+    # Missing registration update test
+    def test_update_vehicle_invalid_registration_number(self):
+
+        vehicle = self.create_vehicle()
+
+        response = self.client.patch(
+            self.vehicle_detail_url(vehicle),
+            {
+                "registration_number": "INVALID"
+            },
+            format="json"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
+
+        vehicle.refresh_from_db()
+
+        self.assertEqual(
+            vehicle.registration_number,
+            "MH12AB1234"
+        )
+
+
+    def test_update_vehicle_duplicate_registration_number(self):
+
+        first_vehicle = self.create_vehicle(
+            registration_number="MH12AB1234"
+        )
+
+        second_vehicle = self.create_vehicle(
+            registration_number="MH14CD5678"
+        )
+
+        response = self.client.patch(
+            self.vehicle_detail_url(second_vehicle),
+            {
+                "registration_number": "MH12AB1234"
+            },
+            format="json"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
+
+        second_vehicle.refresh_from_db()
+
+        self.assertEqual(
+            second_vehicle.registration_number,
+            "MH14CD5678"
+        )
+
+
+    def test_update_vehicle_registration_number_normalizes_value(self):
+
+        vehicle = self.create_vehicle()
+
+        response = self.client.patch(
+            self.vehicle_detail_url(vehicle),
+            {
+                "registration_number": " mh20xy9999 "
+            },
+            format="json"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+        )
+
+        vehicle.refresh_from_db()
+
+        self.assertEqual(
+            vehicle.registration_number,
+            "MH20XY9999"
+        )

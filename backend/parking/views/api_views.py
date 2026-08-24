@@ -13,7 +13,12 @@ from ..models import (
 )
 
 from ..serializers import (
+    # Parking Area
     ParkingAreaSerializer,
+    ParkingAreaCreateSerializer,
+    ParkingAreaUpdateSerializer,
+
+    # floor
     ParkingFloorSerializer,
 )
 
@@ -60,7 +65,7 @@ class ParkingAreaListCreateView(APIView):
             "Creates a new parking area for the currently "
             "authenticated parking owner."
         ),
-        request=ParkingAreaSerializer,
+        request=ParkingAreaCreateSerializer,
         responses={
             201: ParkingAreaSerializer,
             403: {
@@ -82,7 +87,7 @@ class ParkingAreaListCreateView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = ParkingAreaSerializer(
+        serializer = ParkingAreaCreateSerializer(
             data=request.data,
         )
 
@@ -145,7 +150,7 @@ class ParkingAreaDetailView(APIView):
             "Updates a parking area owned by the currently "
             "authenticated parking owner."
         ),
-        request=ParkingAreaSerializer,
+        request=ParkingAreaUpdateSerializer,
         responses={
             200: ParkingAreaSerializer,
             403: {
@@ -184,7 +189,7 @@ class ParkingAreaDetailView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = ParkingAreaSerializer(
+        serializer = ParkingAreaUpdateSerializer(
             parking_area,
             data=request.data,
         )
@@ -207,7 +212,7 @@ class ParkingAreaDetailView(APIView):
             "Partially updates a parking area owned by the "
             "currently authenticated parking owner."
         ),
-        request=ParkingAreaSerializer,
+        request=ParkingAreaUpdateSerializer,
         responses={
             200: ParkingAreaSerializer,
             403: {
@@ -246,7 +251,7 @@ class ParkingAreaDetailView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = ParkingAreaSerializer(
+        serializer = ParkingAreaUpdateSerializer(
             parking_area,
             data=request.data,
             partial=True,
@@ -423,6 +428,9 @@ class ParkingFloorListCreateView(APIView):
 
         serializer = ParkingFloorSerializer(
             data=request.data,
+            context={
+                "parking_area": parking_area,
+            },
         )
 
         serializer.is_valid(
@@ -536,6 +544,9 @@ class ParkingFloorDetailView(APIView):
         serializer = ParkingFloorSerializer(
             floor,
             data=request.data,
+            context={
+                "parking_area": floor.parking_area,
+            },
         )
 
         serializer.is_valid(
@@ -605,6 +616,9 @@ class ParkingFloorDetailView(APIView):
             floor,
             data=request.data,
             partial=True,
+            context={
+                "parking_area": floor.parking_area,
+            },
         )
 
         serializer.is_valid(

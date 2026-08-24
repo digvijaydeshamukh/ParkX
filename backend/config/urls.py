@@ -23,7 +23,7 @@ urlpatterns = [
     path("api/vehicles/",include("vehicles.urls.api_urls")),
 
     # Parking
-    path("parking/",include("parking.urls.page_urls")),
+    path("parking/",include("parking.urls.pages_urls")),
     path("api/parking/",include("parking.urls.api_urls")),
     
 

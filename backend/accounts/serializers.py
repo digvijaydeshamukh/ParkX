@@ -438,3 +438,214 @@ class ChangePasswordSerializer(serializers.Serializer):
 class ChangePasswordResponseSerializer(serializers.Serializer):
 
     message = serializers.CharField()
+
+# Create Parking Owner Serializer
+class CreateParkingOwnerSerializer(serializers.ModelSerializer):
+
+    password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+        validators=[password_validator],
+    )
+
+    confirm_password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+    )
+
+    class Meta:
+        model = User
+
+        fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "password",
+            "confirm_password",
+        ]
+
+    def validate_email(self, value):
+
+        value = value.lower()
+
+        if User.objects.filter(
+            email__iexact=value
+        ).exists():
+
+            raise serializers.ValidationError(
+                "Email is already registered."
+            )
+
+        return value
+
+    def validate_phone(self, value):
+
+        if User.objects.filter(
+            phone=value,
+            phone_verified=True
+        ).exists():
+
+            raise serializers.ValidationError(
+                "Phone number already registered."
+            )
+
+        return value
+
+    def validate(self, attrs):
+
+        if attrs["password"] != attrs["confirm_password"]:
+
+            raise serializers.ValidationError({
+                "confirm_password": [
+                    "Passwords do not match."
+                ]
+            })
+
+        attrs.pop("confirm_password")
+
+        return attrs
+
+# Promote User to Parking Owner Serializer
+class PromotedUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "role",
+        ]
+
+# Promote user to Parking Owner Responce serializer
+class PromoteParkingOwnerResponseSerializer(serializers.Serializer):
+
+    message = serializers.CharField()
+    user = LoginUserSerializer()
+
+class DemoteParkingOwnerResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+    user = LoginUserSerializer()
+
+
+class DeleteUserResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+ 
+
+class ParkingAreaOwnershipDecisionSerializer(serializers.Serializer):
+
+    parking_area_id = serializers.IntegerField()
+
+    action = serializers.ChoiceField(
+        choices=[
+            ("reassign", "Reassign"),
+            ("deactivate", "Deactivate"),
+        ]
+    )
+
+    new_owner_id = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+    )
+
+    def validate(self, attrs):
+
+        action = attrs["action"]
+        new_owner_id = attrs.get("new_owner_id")
+
+        # Reassignment requires a new owner
+        if action == "reassign" and not new_owner_id:
+            raise serializers.ValidationError({
+                "new_owner_id": [
+                    "New owner is required when reassigning a parking area."
+                ]
+            })
+
+        # Deactivation must not contain a new owner
+        if action == "deactivate" and new_owner_id:
+            raise serializers.ValidationError({
+                "new_owner_id": [
+                    "New owner must not be provided when deactivating "
+                    "a parking area."
+                ]
+            })
+
+        return attrs
+
+# Resolve Parking Ownership Serializers
+
+class ResolveParkingOwnershipSerializer(serializers.Serializer):
+    decisions = ParkingAreaOwnershipDecisionSerializer(
+        many=True,
+        required=False,
+        default=list
+    )
+    
+    def validate_decisions(self, value):
+
+        parking_area_ids = [
+            decision["parking_area_id"]
+            for decision in value
+        ]
+
+        if len(parking_area_ids) != len(set(parking_area_ids)):
+            raise serializers.ValidationError(
+                "A parking area cannot appear more than once."
+            )
+
+        return value
+
+
+class ResolveParkingOwnershipResponseSerializer(serializers.Serializer):
+
+    message = serializers.CharField()
+
+    demoted = serializers.BooleanField(
+        required=False
+    )
+
+    deleted = serializers.BooleanField(
+        required=False
+    )
+
+    parking_areas = serializers.ListField(
+        child=serializers.DictField(),
+        required=False
+    )
+
+class ResolvedParkingAreaSerializer(serializers.Serializer):
+
+    id = serializers.IntegerField()
+
+    name = serializers.CharField()
+
+    action = serializers.CharField()
+
+    new_owner_id = serializers.IntegerField(
+        required=False
+    )
+
+# Parking Owner Serializer
+class ParkingOwnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "phone_verified",
+            "role",
+            "is_active",
+        ]
+
+
+class ParkingOwnerListResponseSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    parking_owners = ParkingOwnerSerializer(many=True)

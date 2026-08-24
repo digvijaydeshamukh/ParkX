@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 
 from .validators import vehicle_registration_validator
 
@@ -54,3 +54,24 @@ class Vehicle(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True,
     )
+
+    def save(self, *args, **kwargs):
+
+        self.registration_number = (
+            self.registration_number.strip().upper()
+        )
+
+        with transaction.atomic():
+
+            if self.is_default:
+
+                Vehicle.objects.filter(
+                    user=self.user,
+                    is_default=True,
+                ).exclude(
+                    pk=self.pk
+                ).update(
+                    is_default=False
+                )
+
+            super().save(*args, **kwargs)
