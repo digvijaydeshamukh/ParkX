@@ -1,0 +1,324 @@
+/* =========================================================
+   PARKX VERIFY PHONE PAGE
+========================================================= */
+
+.verify-phone-page {
+
+    width: 100%;
+
+    min-height: calc(100vh - 100px);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 40px 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.verify-phone-card {
+
+    width: 100%;
+
+    max-width: 450px;
+
+    padding: 40px;
+
+    background: #111;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.35);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.verify-phone-header {
+
+    text-align: center;
+
+    margin-bottom: 30px;
+}
+
+
+.verify-phone-icon {
+
+    width: 65px;
+
+    height: 65px;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(0, 230, 118, 0.10);
+
+    color: #00e676;
+
+    font-size: 28px;
+}
+
+
+.verify-phone-header h2 {
+
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: 26px;
+
+    font-weight: 600;
+}
+
+
+.verify-phone-header p {
+
+    margin: 0;
+
+    color: #999;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.verify-phone-form-group {
+
+    margin-bottom: 20px;
+}
+
+
+.verify-phone-form-group label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   OTP INPUT
+========================================================= */
+
+.verify-phone-input-wrapper {
+
+    position: relative;
+
+    width: 100%;
+}
+
+
+.verify-phone-input-wrapper i {
+
+    position: absolute;
+
+    left: 15px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #00e676;
+
+    pointer-events: none;
+}
+
+
+.verify-phone-input-wrapper input {
+
+    width: 100%;
+
+    height: 50px;
+
+    padding: 0 15px 0 45px;
+
+    box-sizing: border-box;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    border-radius: 8px;
+
+    background: #181818;
+
+    color: #ffffff;
+
+    outline: none;
+
+    font-size: 18px;
+
+    letter-spacing: 5px;
+
+    text-align: center;
+
+    transition: 0.2s ease;
+}
+
+
+.verify-phone-input-wrapper input:focus {
+
+    border-color: #00e676;
+
+    box-shadow:
+        0 0 0 2px rgba(0, 230, 118, 0.10);
+}
+
+
+.verify-phone-input-wrapper input::placeholder {
+
+    color: #666;
+
+    letter-spacing: normal;
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.verify-phone-message {
+
+    min-height: 22px;
+
+    margin-bottom: 15px;
+
+    text-align: center;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.verify-phone-actions {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+
+.verify-otp-btn,
+.resend-otp-btn {
+
+    width: 100%;
+
+    height: 48px;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+/* Verify */
+
+.verify-otp-btn {
+
+    border: none;
+
+    background: #00e676;
+
+    color: #000000;
+}
+
+
+.verify-otp-btn:hover {
+
+    background: #00c853;
+
+    transform: translateY(-1px);
+}
+
+
+/* Resend */
+
+.resend-otp-btn {
+
+    border: 1px solid rgba(0, 230, 118, 0.5);
+
+    background: transparent;
+
+    color: #00e676;
+}
+
+
+.resend-otp-btn:hover {
+
+    background: rgba(0, 230, 118, 0.08);
+}
+
+
+/* Disabled */
+
+.verify-otp-btn:disabled,
+.resend-otp-btn:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .verify-phone-card {
+
+        padding: 30px 20px;
+    }
+
+
+    .verify-phone-header h2 {
+
+        font-size: 22px;
+    }
+
+}

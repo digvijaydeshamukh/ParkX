@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             window.location.href =
-                "/reset-password/";
+                "/forgot-reset/";
 
 
         } catch (error) {

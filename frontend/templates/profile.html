@@ -4,10 +4,7 @@ My Profile {% endblock %} {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}" />
 
 <!-- Cropper.js CSS -->
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
-/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" />
 
 {% endblock %} {% block dashboard_content %}
 
@@ -41,12 +38,7 @@ My Profile {% endblock %} {% block extra_css %}
         <div class="profile-image-wrapper" id="profileImageWrapper">
           {% if user.profile_image %}
 
-          <img
-            src="{{ user.profile_image.url }}"
-            alt="Profile Image"
-            class="profile-image"
-            id="profileImagePreview"
-          />
+          <img src="{{ user.profile_image.url }}" alt="Profile Image" class="profile-image" id="profileImagePreview" />
 
           {% else %}
 
@@ -84,13 +76,7 @@ My Profile {% endblock %} {% block extra_css %}
         </div> -->
 
         <!-- HIDDEN FILE INPUT -->
-        <input
-          type="file"
-          id="profileImageInput"
-          name="profile_image"
-          accept="image/*"
-          hidden
-        />
+        <input type="file" id="profileImageInput" name="profile_image" accept="image/*" hidden />
       </div>
 
       <!-- USER INFORMATION -->
@@ -110,12 +96,7 @@ My Profile {% endblock %} {% block extra_css %}
              PROFILE INFORMATION FORM
         ====================================== -->
 
-    <form
-      method="POST"
-      enctype="multipart/form-data"
-      class="profile-form"
-      id="profileForm"
-    >
+    <form method="POST" enctype="multipart/form-data" class="profile-form" id="profileForm">
       {% csrf_token %}
 
       <!-- =================================
@@ -128,13 +109,7 @@ My Profile {% endblock %} {% block extra_css %}
         <div class="profile-input-wrapper">
           <i class="fa-solid fa-user"></i>
 
-          <input
-            type="text"
-            id="username"
-            name="username"
-            value="{{ user.username }}"
-            readonly
-          />
+          <input type="text" id="username" name="username" value="{{ user.username }}" readonly />
         </div>
       </div>
 
@@ -148,13 +123,8 @@ My Profile {% endblock %} {% block extra_css %}
         <div class="profile-input-wrapper">
           <i class="fa-solid fa-user"></i>
 
-          <input
-            type="text"
-            id="first_name"
-            name="first_name"
-            value="{{ user.first_name }}"
-            placeholder="Enter first name"
-          />
+          <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}"
+            placeholder="Enter first name" />
         </div>
       </div>
 
@@ -168,13 +138,8 @@ My Profile {% endblock %} {% block extra_css %}
         <div class="profile-input-wrapper">
           <i class="fa-solid fa-user"></i>
 
-          <input
-            type="text"
-            id="last_name"
-            name="last_name"
-            value="{{ user.last_name }}"
-            placeholder="Enter last name"
-          />
+          <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}"
+            placeholder="Enter last name" />
         </div>
       </div>
 
@@ -188,13 +153,7 @@ My Profile {% endblock %} {% block extra_css %}
         <div class="profile-input-wrapper">
           <i class="fa-solid fa-envelope"></i>
 
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value="{{ user.email }}"
-            readonly
-          />
+          <input type="email" id="email" name="email" value="{{ user.email }}" readonly />
         </div>
       </div>
 
@@ -208,13 +167,19 @@ My Profile {% endblock %} {% block extra_css %}
         <div class="profile-input-wrapper">
           <i class="fa-solid fa-phone"></i>
 
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value="{{ user.phone|default:'' }}"
-            readonly
-          />
+          <input type="tel" id="phone" name="phone" value="{{ user.phone|default:'' }}" readonly />
+          
+          <!-- VERIFIED STATUS -->
+        <span
+            class="phone-verified"
+            id="phone-verified-status"
+            style="display: none;"
+        >
+            <i class="fa-solid fa-circle-check"></i>
+            Verified
+        </span>
+          
+          
         </div>
       </div>
 
@@ -223,76 +188,99 @@ My Profile {% endblock %} {% block extra_css %}
             ================================== -->
 
       <div class="profile-form-actions full-width">
+        <!-- verify phone btn -->
+
+        <!-- <a
+            href="{% url 'verify-phone-page' %}"
+            class="profile-verify-btn"
+        >
+            <i class="fa-solid fa-shield-halved"></i>
+            Verify Phone
+        </a>
+
+        <span
+            class="phone-verified"
+            style="display: none;"
+        >
+            <i class="fa-solid fa-circle-check"></i>
+            Verified
+        </span> -->
+
+        <!-- VERIFY PHONE BUTTON -->
+        <a
+            href="{% url 'verify-phone-page' %}"
+            class="profile-verify-btn"
+            id="verify-phone-btn"
+        >
+            <i class="fa-solid fa-shield-halved"></i>
+            Verify Phone
+        </a>
+
+
+        <!-- VERIFIED STATUS
+        <span
+            class="phone-verified"
+            id="phone-verified-status"
+            style="display: none;"
+        >
+            <i class="fa-solid fa-circle-check"></i>
+            Verified
+        </span> -->
+        
+        <!-- save changes btn -->
         <button type="submit" class="profile-save-btn">
           <i class="fa-solid fa-floppy-disk"></i>
 
           Save Changes
         </button>
+
+
       </div>
     </form>
   </div>
 
   <!-- PROFILE IMAGE ACTION MODAL -->
-        <div class="profile-image-modal" id="profileImageModal">
-          <div class="profile-image-modal-content">
-            <!-- MODAL HEADER -->
-            <div class="profile-image-modal-header">
-              <h2>Profile Image</h2>
+  <div class="profile-image-modal" id="profileImageModal">
+    <div class="profile-image-modal-content">
+      <!-- MODAL HEADER -->
+      <div class="profile-image-modal-header">
+        <h2>Profile Image</h2>
 
-              <button
-                type="button"
-                id="closeProfileImageModal"
-                class="profile-image-modal-close"
-              >
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </div>
+        <button type="button" id="closeProfileImageModal" class="profile-image-modal-close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
 
-            <!-- IMAGE PREVIEW -->
-            <div class="profile-image-modal-preview">
-              {% if user.profile_image %}
+      <!-- IMAGE PREVIEW -->
+      <div class="profile-image-modal-preview">
+        {% if user.profile_image %}
 
-              <img
-                src="{{ user.profile_image.url }}"
-                alt="Profile Image"
-                id="profileModalImage"
-                class="profile-modal-image"
-              />
+        <img src="{{ user.profile_image.url }}" alt="Profile Image" id="profileModalImage"
+          class="profile-modal-image" />
 
-              {% else %}
+        {% else %}
 
-              <div
-                id="profileModalPlaceholder"
-                class="profile-modal-placeholder"
-              >
-                <i class="fa-solid fa-user"></i>
-              </div>
-
-              {% endif %}
-            </div>
-
-            <!-- ACTION BUTTONS -->
-            <div class="profile-image-modal-actions">
-              <button
-                type="button"
-                id="uploadProfileImageBtn"
-                class="profile-image-action-btn upload-image-btn"
-              >
-                <i class="fa-solid fa-upload"></i>
-                <span>Upload Image</span>
-              </button>
-
-              <button
-                type="button"
-                id="removeProfileImageBtn"
-                class="profile-image-action-btn remove-image-btn"
-              >
-                <i class="fa-solid fa-trash"></i>
-                <span>Remove Image</span>
-              </button>
-            </div>
-          </div>
+        <div id="profileModalPlaceholder" class="profile-modal-placeholder">
+          <i class="fa-solid fa-user"></i>
         </div>
+
+        {% endif %}
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="profile-image-modal-actions">
+        <button type="button" id="uploadProfileImageBtn" class="profile-image-action-btn upload-image-btn">
+          <i class="fa-solid fa-upload"></i>
+          <span>Upload Image</span>
+        </button>
+
+        <button type="button" id="removeProfileImageBtn" class="profile-image-action-btn remove-image-btn">
+          <i class="fa-solid fa-trash"></i>
+          <span>Remove Image</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- =========================================
          PASSWORD SECTION
@@ -309,12 +297,48 @@ My Profile {% endblock %} {% block extra_css %}
       <p>Keep your account secure by regularly updating your password.</p>
     </div>
 
-    <a href="{% url 'password-reset-page' %}" class="change-password-btn">
+    <a href="{% url 'change-password-page' %}" class="change-password-btn">
       <i class="fa-solid fa-key"></i>
 
       Change Password
     </a>
   </div>
+
+  <div class="password-card">
+
+
+    <div class="profile-icon">
+
+      <i class="fa-solid fa-user"></i>
+
+    </div>
+
+
+    <div class="password-content">
+
+      <h2>
+        Edit Contact
+      </h2>
+
+      <p>
+        Keep your professional information current and accurate.
+      </p>
+
+    </div>
+
+
+    <a href="{% url 'edit-contact-page' %}" class="change-password-btn">
+
+      <i class="fa-solid fa-key"></i>
+
+      Edit Contact
+
+    </a>
+
+
+  </div>
+
+
 </section>
 
 <!-- =====================================================
@@ -355,7 +379,8 @@ My Profile {% endblock %} {% block extra_css %}
   </div>
 </div>
 
-{% endblock %} {% block extra_js %}
+{% endblock %}
+{% block extra_js %}
 <!-- =====================================================
      CROPPER.JS
 ====================================================== -->

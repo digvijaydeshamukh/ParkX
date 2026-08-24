@@ -15,11 +15,14 @@ from accounts.views import (
     home_page,
     login_page,
     forgot_page,
+    forgot_reset_password_page,
     verify_otp_page,
-    reset_password_page,
+    change_password_page,
     dashboard_page,
     profile_page,
     password_reset_page,
+    verify_phone_page,
+    edit_contact_page,
 )
 
 urlpatterns = [
@@ -59,14 +62,20 @@ urlpatterns = [
     path("forgot-password/", forgot_page, name="forgot-password-page"),
     #Verify otp page
     path("verify-otp/", verify_otp_page, name="verify-otp-page"),
+    #Forgot reset password page 
+    path("forgot-reset/", forgot_reset_password_page, name="forgot-reset-page"),
     #Reset password page
-    path("reset-password/", reset_password_page, name="reset-password-page"),
+    path("change-password/", change_password_page, name="change-password-page"),
     #Dashboard page
     path("dashboard/", dashboard_page, name="dashboard-page"),
     #Profile page
     path("profile/", profile_page, name="profile-page"),
     #Password reset page
     path("password_reset/", password_reset_page, name="password-reset-page"),
+    #Verify phone page
+    path("verify-phone/", verify_phone_page, name="verify-phone-page"),
+    #Edit contact page
+    path("edit-contact", edit_contact_page, name="edit-contact-page"),
 ]
 
 
