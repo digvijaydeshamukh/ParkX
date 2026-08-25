@@ -15,6 +15,7 @@ class ParkingAreaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ParkingArea
+
         fields = [
             "id",
             "owner",
@@ -28,6 +29,7 @@ class ParkingAreaSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
         read_only_fields = [
             "id",
             "owner",
@@ -66,6 +68,7 @@ class ParkingAreaSerializer(serializers.ModelSerializer):
         return value
 
     def validate_latitude(self, value):
+
         if value is not None and not -90 <= value <= 90:
             raise serializers.ValidationError(
                 "Latitude must be between -90 and 90."
@@ -74,6 +77,7 @@ class ParkingAreaSerializer(serializers.ModelSerializer):
         return value
 
     def validate_longitude(self, value):
+
         if value is not None and not -180 <= value <= 180:
             raise serializers.ValidationError(
                 "Longitude must be between -180 and 180."
@@ -85,6 +89,7 @@ class ParkingAreaSerializer(serializers.ModelSerializer):
 class ParkingAreaCreateSerializer(ParkingAreaSerializer):
 
     class Meta(ParkingAreaSerializer.Meta):
+
         fields = [
             "name",
             "address",
@@ -100,6 +105,7 @@ class ParkingAreaUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ParkingArea
+
         fields = [
             "name",
             "address",
@@ -111,6 +117,7 @@ class ParkingAreaUpdateSerializer(serializers.ModelSerializer):
         ]
 
     def validate_name(self, value):
+
         value = value.strip()
 
         if not value:
@@ -121,6 +128,7 @@ class ParkingAreaUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_address(self, value):
+
         value = value.strip()
 
         if not value:
@@ -131,6 +139,7 @@ class ParkingAreaUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_city(self, value):
+
         value = value.strip()
 
         if not value:
@@ -141,6 +150,7 @@ class ParkingAreaUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_latitude(self, value):
+
         if value is not None and not -90 <= value <= 90:
             raise serializers.ValidationError(
                 "Latitude must be between -90 and 90."
@@ -149,6 +159,7 @@ class ParkingAreaUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_longitude(self, value):
+
         if value is not None and not -180 <= value <= 180:
             raise serializers.ValidationError(
                 "Longitude must be between -180 and 180."
@@ -179,8 +190,20 @@ class ParkingFloorSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
             "parking_area",
+            "name",
             "created_at",
             "updated_at",
+        ]
+    
+# Floor update 
+class ParkingFloorWriteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ParkingFloor
+
+        fields = [
+            "floor_number",
+            "is_active",
         ]
 
     def validate_floor_number(self, value):
@@ -199,10 +222,6 @@ class ParkingFloorSerializer(serializers.ModelSerializer):
 
         return value
 
-    def validate_name(self, value):
-
-        return value.strip()
-
     def validate(self, attrs):
 
         parking_area = self.context.get("parking_area")
@@ -212,7 +231,11 @@ class ParkingFloorSerializer(serializers.ModelSerializer):
 
         floor_number = attrs.get(
             "floor_number",
-            getattr(self.instance, "floor_number", None),
+            getattr(
+                self.instance,
+                "floor_number",
+                None,
+            ),
         )
 
         existing_floor = ParkingFloor.objects.filter(
@@ -236,3 +259,40 @@ class ParkingFloorSerializer(serializers.ModelSerializer):
             )
 
         return attrs
+
+    @staticmethod
+    def generate_floor_name(floor_number):
+
+        if floor_number < 0:
+            return f"Basement {abs(floor_number)}"
+
+        if floor_number == 0:
+            return "Ground Floor"
+
+        return f"Floor {floor_number}"
+
+    def create(self, validated_data):
+
+        floor_number = validated_data["floor_number"]
+
+        validated_data["name"] = self.generate_floor_name(
+            floor_number
+        )
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+
+        floor_number = validated_data.get(
+            "floor_number",
+            instance.floor_number,
+        )
+
+        validated_data["name"] = self.generate_floor_name(
+            floor_number
+        )
+
+        return super().update(
+            instance,
+            validated_data,
+        )

@@ -195,7 +195,40 @@ class ParkingFloorAPITestCase(APITestCase):
                 self.floor,
             ),
             {
-                "name": "Updated Floor",
+                "is_active": False,
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        self.floor.refresh_from_db()
+
+        self.assertFalse(
+            self.floor.is_active,
+        )
+
+        self.assertEqual(
+            self.floor.name,
+            "Floor 1",
+        )
+
+    def test_owner_can_change_floor_number_and_name_is_regenerated(self):
+
+        self.client.force_authenticate(
+            user=self.parking_owner
+        )
+
+        response = self.client.patch(
+            self.floor_detail_url(
+                self.parking_area,
+                self.floor,
+            ),
+            {
+                "floor_number": 2,
             },
             format="json",
         )
@@ -208,10 +241,15 @@ class ParkingFloorAPITestCase(APITestCase):
         self.floor.refresh_from_db()
 
         self.assertEqual(
-            self.floor.name,
-            "Updated Floor",
+            self.floor.floor_number,
+            2,
         )
 
+        self.assertEqual(
+            self.floor.name,
+            "Floor 2",
+        )
+        
     def test_vehicle_owner_cannot_update_floor(self):
 
         self.client.force_authenticate(

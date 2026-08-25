@@ -20,6 +20,7 @@ from ..serializers import (
 
     # floor
     ParkingFloorSerializer,
+    ParkingFloorWriteSerializer,
 )
 
 
@@ -381,7 +382,7 @@ class ParkingFloorListCreateView(APIView):
             "Creates a new floor inside a parking area. "
             "Only the parking area owner can create floors."
         ),
-        request=ParkingFloorSerializer,
+        request=ParkingFloorWriteSerializer,
         responses={
             201: ParkingFloorSerializer,
             400: {
@@ -426,7 +427,7 @@ class ParkingFloorListCreateView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = ParkingFloorSerializer(
+        serializer = ParkingFloorWriteSerializer(
             data=request.data,
             context={
                 "parking_area": parking_area,
@@ -496,7 +497,7 @@ class ParkingFloorDetailView(APIView):
             "Updates a parking floor. Only the owner of the "
             "parent parking area can update it."
         ),
-        request=ParkingFloorSerializer,
+        request=ParkingFloorWriteSerializer,
         responses={
             200: ParkingFloorSerializer,
             400: {
@@ -541,7 +542,7 @@ class ParkingFloorDetailView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = ParkingFloorSerializer(
+        serializer = ParkingFloorWriteSerializer(
             floor,
             data=request.data,
             context={
@@ -567,7 +568,7 @@ class ParkingFloorDetailView(APIView):
             "Partially updates a parking floor. Only the owner "
             "of the parent parking area can update it."
         ),
-        request=ParkingFloorSerializer,
+        request=ParkingFloorWriteSerializer,
         responses={
             200: ParkingFloorSerializer,
             400: {
@@ -612,7 +613,7 @@ class ParkingFloorDetailView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = ParkingFloorSerializer(
+        serializer = ParkingFloorWriteSerializer(
             floor,
             data=request.data,
             partial=True,
