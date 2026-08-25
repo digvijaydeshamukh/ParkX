@@ -6,10 +6,13 @@ from ..views.pages_views import (
     login_page,
     forgot_page,
     verify_otp_page,
+    verify_phone_page,
     reset_password_page,
     dashboard_page,
     profile_page,
     password_reset_page,
+    change_password_page,
+    edit_contact_page,
 )
 
 urlpatterns = [
@@ -25,6 +28,8 @@ urlpatterns = [
     path("forgot-password/", forgot_page, name="forgot-password-page"),
     #Verify otp page
     path("verify-otp/", verify_otp_page, name="verify-otp-page"),
+    # Verify phone page
+    path("verify-phone/", verify_phone_page, name="verify-phone-page"),
     #Reset password page
     path("reset-password/", reset_password_page, name="reset-password-page"),
     #Dashboard page
@@ -33,4 +38,8 @@ urlpatterns = [
     path("profile/", profile_page, name="profile-page"),
     #Password reset page
     path("password_reset/", password_reset_page, name="password-reset-page"),
+    # Change password
+    path("change-password/",change_password_page,name="change-password-page"),
+    # Edit Contact
+    path("edit-contact/",edit_contact_page,name="edit-contact-page"),
 ]

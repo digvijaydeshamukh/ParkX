@@ -36,3 +36,15 @@ def profile_page(request):
 #Reset password page view
 def password_reset_page(request):
     return render(request, "password_reset.html")
+
+# Verify phone page view
+def verify_phone_page(request):
+    return render(request, "verify_phone.html")
+
+# Change password page view
+def change_password_page(request):
+    return render(request, "change_password.html")
+
+# Edit contact page view
+def edit_contact_page(request):
+    return render(request, "edit_contact.html")
