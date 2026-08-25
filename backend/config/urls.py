@@ -15,15 +15,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Accounts
-    path("accounts/",include("accounts.urls.pages_urls")),
+    path("",include("accounts.urls.pages_urls")),
     path("api/accounts/", include("accounts.urls.api_urls")),
 
     # Vehicle
-    path("vehicle/",include("vehicles.urls.pages_urls")),
+    path("",include("vehicles.urls.pages_urls")),
     path("api/vehicles/",include("vehicles.urls.api_urls")),
 
     # Parking
-    path("parking/",include("parking.urls.pages_urls")),
+    path("",include("parking.urls.pages_urls")),
     path("api/parking/",include("parking.urls.api_urls")),
     
 
