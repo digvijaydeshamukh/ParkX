@@ -1,0 +1,410 @@
+{% extends "dashboard_base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Edit Contact
+{% endblock %}
+
+
+{% block dashboard_content %}
+
+<div class="edit-contact-page">
+
+    <div class="edit-contact-card">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="edit-contact-header">
+
+            <div class="edit-contact-icon">
+                <i class="fa-solid fa-address-book"></i>
+            </div>
+
+            <h2>Edit Contact Information</h2>
+
+            <p>
+                Update your email address or mobile number.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             GLOBAL MESSAGE
+        ====================================================== -->
+
+        <div
+            id="contactMessage"
+            class="contact-message"
+        ></div>
+
+
+        <!-- =====================================================
+             EMAIL SECTION
+        ====================================================== -->
+
+        <div class="contact-section">
+
+            <div class="contact-section-header">
+
+                <div class="contact-section-icon">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+
+                <div>
+                    <h3>Email Address</h3>
+
+                    <p>
+                        Update your email address securely.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- OLD EMAIL -->
+
+            <div class="contact-form-group">
+
+                <label for="oldEmail">
+                    Old Email
+                </label>
+
+                <div class="contact-input-wrapper">
+
+                    <i class="fa-solid fa-envelope"></i>
+
+                    <input
+                        type="email"
+                        id="oldEmail"
+                        name="old_email"
+                        readonly
+                        placeholder="Current email"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- NEW EMAIL -->
+
+            <div class="contact-form-group">
+
+                <label for="newEmail">
+                    New Email
+                </label>
+
+                <div class="contact-input-wrapper">
+
+                    <i class="fa-solid fa-envelope"></i>
+
+                    <input
+                        type="email"
+                        id="newEmail"
+                        name="new_email"
+                        placeholder="Enter new email"
+                        autocomplete="email"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- SEND EMAIL OTP -->
+
+            <button
+                type="button"
+                id="sendEmailOtpBtn"
+                class="contact-action-btn"
+            >
+
+                <i class="fa-solid fa-paper-plane"></i>
+
+                Send Email OTP
+
+            </button>
+
+
+            <!-- EMAIL OTP AREA -->
+
+            <div
+                id="emailOtpSection"
+                class="otp-section"
+                style="display: none;"
+            >
+
+                <div class="contact-form-group">
+
+                    <label for="emailOtp">
+                        Enter Email OTP
+                    </label>
+
+                    <div class="contact-input-wrapper">
+
+                        <i class="fa-solid fa-key"></i>
+
+                        <input
+                            type="text"
+                            id="emailOtp"
+                            name="email_otp"
+                            placeholder="Enter 6-digit OTP"
+                            maxlength="6"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="otp-actions">
+
+                    <button
+                        type="button"
+                        id="verifyEmailOtpBtn"
+                        class="verify-otp-btn"
+                    >
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        Verify Email OTP
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="resendEmailOtpBtn"
+                        class="resend-otp-btn"
+                    >
+
+                        <i class="fa-solid fa-rotate"></i>
+
+                        Resend Email OTP
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             DIVIDER
+        ====================================================== -->
+
+        <div class="contact-divider">
+            <span>OR</span>
+        </div>
+
+
+        <!-- =====================================================
+             MOBILE SECTION
+        ====================================================== -->
+
+        <div class="contact-section">
+
+            <div class="contact-section-header">
+
+                <div class="contact-section-icon">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+
+                <div>
+
+                    <h3>Mobile Number</h3>
+
+                    <p>
+                        Update your mobile number securely.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- OLD MOBILE -->
+
+            <div class="contact-form-group">
+
+                <label for="oldPhone">
+                    Old Mobile Number
+                </label>
+
+                <div class="contact-input-wrapper">
+
+                    <i class="fa-solid fa-phone"></i>
+
+                    <input
+                        type="tel"
+                        id="oldPhone"
+                        name="old_phone"
+                        readonly
+                        placeholder="Current mobile number"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- NEW MOBILE -->
+
+            <div class="contact-form-group">
+
+                <label for="newPhone">
+                    New Mobile Number
+                </label>
+
+                <div class="contact-input-wrapper">
+
+                    <i class="fa-solid fa-phone"></i>
+
+                    <input
+                        type="tel"
+                        id="newPhone"
+                        name="new_phone"
+                        placeholder="Enter new mobile number"
+                        maxlength="15"
+                        inputmode="numeric"
+                        autocomplete="tel"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- SEND MOBILE OTP -->
+
+            <button
+                type="button"
+                id="sendMobileOtpBtn"
+                class="contact-action-btn"
+            >
+
+                <i class="fa-solid fa-paper-plane"></i>
+
+                Send Mobile OTP
+
+            </button>
+
+
+            <!-- MOBILE OTP AREA -->
+
+            <div
+                id="mobileOtpSection"
+                class="otp-section"
+                style="display: none;"
+            >
+
+                <div class="contact-form-group">
+
+                    <label for="mobileOtp">
+                        Enter Mobile OTP
+                    </label>
+
+                    <div class="contact-input-wrapper">
+
+                        <i class="fa-solid fa-key"></i>
+
+                        <input
+                            type="text"
+                            id="mobileOtp"
+                            name="mobile_otp"
+                            placeholder="Enter 6-digit OTP"
+                            maxlength="6"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="otp-actions">
+
+                    <button
+                        type="button"
+                        id="verifyMobileOtpBtn"
+                        class="verify-otp-btn"
+                    >
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        Verify Mobile OTP
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="resendMobileOtpBtn"
+                        class="resend-otp-btn"
+                    >
+
+                        <i class="fa-solid fa-rotate"></i>
+
+                        Resend Mobile OTP
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             BACK BUTTON
+        ====================================================== -->
+
+        <div class="contact-page-actions">
+
+            <a
+                href="{% url 'profile' %}"
+                class="contact-back-btn"
+            >
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Back to Profile
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/edit_contact.css' %}?v=1"
+>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script
+    src="{% static 'js/edit_contact.js' %}?v=2"
+></script>
+
+{% endblock %}

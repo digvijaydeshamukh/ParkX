@@ -216,84 +216,158 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =====================================================
-    // POPULATE PROFILE
-    // =====================================================
+// POPULATE PROFILE
+// =====================================================
 
-    function populateProfile(data) {
+function populateProfile(data) {
 
-        console.log(
-            "Populating profile with:",
-            data
+    console.log(
+        "Populating profile with:",
+        data
+    );
+
+
+    // =================================================
+    // HANDLE API RESPONSE
+    // =================================================
+
+    // Some APIs return:
+    //
+    // {
+    //     username: "...",
+    //     phone: "...",
+    //     phone_verified: true
+    // }
+    //
+    // Others return:
+    //
+    // {
+    //     user: {
+    //         username: "...",
+    //         phone: "...",
+    //         phone_verified: true
+    //     }
+    // }
+
+    const userData =
+        data.user || data;
+
+
+    console.log(
+        "Actual user data:",
+        userData
+    );
+
+
+    // =================================================
+    // USERNAME
+    // =================================================
+
+    if (usernameInput) {
+
+        usernameInput.value =
+            userData.username || "";
+
+    }
+
+
+    // =================================================
+    // FIRST NAME
+    // =================================================
+
+    if (firstNameInput) {
+
+        firstNameInput.value =
+            userData.first_name || "";
+
+    }
+
+
+    // =================================================
+    // LAST NAME
+    // =================================================
+
+    if (lastNameInput) {
+
+        lastNameInput.value =
+            userData.last_name || "";
+
+    }
+
+
+    // =================================================
+    // EMAIL
+    // =================================================
+
+    if (emailInput) {
+
+        emailInput.value =
+            userData.email || "";
+
+    }
+
+
+    // =================================================
+    // PHONE
+    // =================================================
+
+    if (phoneInput) {
+
+        phoneInput.value =
+            userData.phone || "";
+
+    }
+
+
+    // =================================================
+    // PHONE VERIFICATION
+    // =================================================
+
+    updatePhoneVerificationStatus(
+        userData.phone_verified
+    );
+
+
+    console.log(
+        "Phone:",
+        userData.phone
+    );
+
+    console.log(
+        "Phone Verified:",
+        userData.phone_verified
+    );
+
+
+    // =================================================
+    // PROFILE IMAGE
+    // =================================================
+
+    if (userData.profile_image) {
+
+        updateProfileImage(
+            userData.profile_image
         );
 
-
-        // Username
-        if (usernameInput) {
-
-            usernameInput.value =
-                data.username || "";
-
-        }
-
-
-        // First name
-        if (firstNameInput) {
-
-            firstNameInput.value =
-                data.first_name || "";
-
-        }
-
-
-        // Last name
-        if (lastNameInput) {
-
-            lastNameInput.value =
-                data.last_name || "";
-
-        }
-
-
-        // Email
-        if (emailInput) {
-
-            emailInput.value =
-                data.email || "";
-
-        }
-
-
-        // Phone
-        if (phoneInput) {
-
-            phoneInput.value =
-                data.phone || "";
-
-        }
-
-
-        // Profile image
-        if (data.profile_image) {
-
-    updateProfileImage(
-        data.profile_image
-    );
-
-    updateSidebarProfileImage(
-        data.profile_image
-    );
-
-} else {
-
-    updateSidebarProfileImage(null);
-}
-
-
-        console.log(
-            "Profile populated successfully."
+        updateSidebarProfileImage(
+            userData.profile_image
         );
 
     }
+    else {
+
+        updateSidebarProfileImage(
+            null
+        );
+
+    }
+
+
+    console.log(
+        "Profile populated successfully."
+    );
+
+}
 
 
     // =====================================================
@@ -1214,7 +1288,107 @@ if (removeProfileImageBtn) {
         "Sidebar profile image updated:",
         imageURL
     );
-}
+    }
+
+    // =====================================================
+    // UPDATE PHONE NUMBER FUNCTION
+    // =====================================================
+
+    // =====================================================
+// UPDATE PHONE VERIFICATION STATUS
+// =====================================================
+
+function updatePhoneVerificationStatus(phoneVerified) {
+
+    console.log(
+        "Phone verification status received:",
+        phoneVerified
+    );
+
+    const verifyPhoneButton =
+        document.getElementById("verify-phone-btn");
+
+    const phoneVerifiedStatus =
+        document.getElementById("phone-verified-status");
+
+
+    console.log(
+        "Verify phone button:",
+        verifyPhoneButton
+    );
+
+    console.log(
+        "Phone verified status:",
+        phoneVerifiedStatus
+    );
+
+
+    if (!verifyPhoneButton) {
+
+        console.warn(
+            "Verify phone button not found."
+        );
+
+        return;
+    }
+
+
+    if (!phoneVerifiedStatus) {
+
+        console.warn(
+            "Phone verified status element not found."
+        );
+
+        return;
+    }
+
+
+    // Convert possible string values to boolean
+    const isVerified =
+        phoneVerified === true ||
+        phoneVerified === "true" ||
+        phoneVerified === 1 ||
+        phoneVerified === "1";
+
+
+    // =================================================
+    // PHONE VERIFIED
+    // =================================================
+
+    if (isVerified) {
+
+        verifyPhoneButton.style.display =
+            "none";
+
+        phoneVerifiedStatus.style.display =
+            "inline-flex";
+
+        console.log(
+            "PHONE VERIFIED -> Verify button hidden."
+        );
+
+    }
+
+
+    // =================================================
+    // PHONE NOT VERIFIED
+    // =================================================
+
+    else {
+
+        verifyPhoneButton.style.display =
+            "inline-flex";
+
+        phoneVerifiedStatus.style.display =
+            "none";
+
+        console.log(
+            "PHONE NOT VERIFIED -> Verify button shown."
+        );
+
+    }
+
+    }
 
 
     // =====================================================

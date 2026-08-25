@@ -546,7 +546,7 @@
 .profile-form-group.full-width {
 
     grid-column:
-        1 / -1;
+        2 / -2;
 
 }
 
@@ -723,9 +723,12 @@
 
     display: flex;
 
-    justify-content: flex-end;
+    justify-content: center;
 
-    margin-top: 5px;
+    /* margin-top: 25px; */
+    align-items: center;
+    gap: 40px;
+    margin-top: 25px;
 
 }
 
@@ -740,7 +743,7 @@
 
     height: 45px;
 
-    padding: 0 22px;
+    padding: 10px 22px;
 
     display: flex;
 
@@ -748,7 +751,7 @@
 
     justify-content: center;
 
-    gap: 8px;
+    gap: 20px;
 
     color: #ffffff;
 
@@ -781,6 +784,65 @@
 
 
 .profile-save-btn:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 28px
+        rgba(37,99,235,0.30);
+
+}
+
+/* verify btn */
+.profile-verify-btn {
+
+    min-width: 150px;
+
+    height: 45px;
+
+    padding: 0 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 20px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #00c853
+        );
+
+    border: none;
+
+    border-radius: 12px;
+
+    font-family: Poppins, sans-serif;
+    text-transform: none !important;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: .3s ease;
+
+    box-shadow:
+        0 8px 20px
+        rgba(37,99,235,0.20);
+}
+
+.profile-form-actions a {
+    text-decoration:  none;
+}
+.profile-verify-btn:hover {
 
     transform: translateY(-2px);
 
@@ -1188,9 +1250,50 @@
 }
 
 
+
 /* =========================================================
-   PROFILE IMAGE MENU
+   VERIFIED STATUS INSIDE INPUT
 ========================================================= */
+
+.phone-verified {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #00c853;
+    font-size: 12px;
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    pointer-events: none;
+}
+
+
+.phone-verified i {
+    position: static !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+
+    transform: none !important;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    font-size: 14px;
+    line-height: 1;
+}
 
 /* =========================================================
    PROFILE IMAGE MENU

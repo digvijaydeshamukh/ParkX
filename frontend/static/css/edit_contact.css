@@ -1,0 +1,719 @@
+/* =========================================================
+   EDIT CONTACT PAGE
+========================================================= */
+
+.edit-contact-page {
+
+    width: 100%;
+
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.edit-contact-card {
+
+    width: 100%;
+
+    padding: 35px;
+
+    box-sizing: border-box;
+
+    background: rgba(15, 23, 42, 0.95);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.25);
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.edit-contact-header {
+
+    text-align: center;
+
+    margin-bottom: 30px;
+
+}
+
+
+.edit-contact-icon {
+
+    width: 55px;
+
+    height: 55px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 15px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #00c853
+        );
+
+    font-size: 22px;
+
+}
+
+
+.edit-contact-header h2 {
+
+    margin: 0 0 8px;
+
+    color: #ffffff;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 24px;
+
+    font-weight: 600;
+
+}
+
+
+.edit-contact-header p {
+
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   GLOBAL MESSAGE
+========================================================= */
+
+.contact-message {
+
+    display: none;
+
+    margin-bottom: 20px;
+
+    padding: 12px 15px;
+
+    border-radius: 10px;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 13px;
+
+}
+
+
+.contact-message.success {
+
+    display: block;
+
+    color: #00e676;
+
+    background: rgba(0, 200, 83, 0.10);
+
+    border: 1px solid rgba(0, 200, 83, 0.25);
+
+}
+
+
+.contact-message.error {
+
+    display: block;
+
+    color: #ff5252;
+
+    background: rgba(255, 82, 82, 0.10);
+
+    border: 1px solid rgba(255, 82, 82, 0.25);
+
+}
+
+
+/* =========================================================
+   CONTACT SECTION
+========================================================= */
+
+.contact-section {
+
+    padding: 25px;
+
+    background: rgba(255, 255, 255, 0.025);
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 16px;
+
+}
+
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.contact-section-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.contact-section-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 11px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #00c853
+        );
+
+}
+
+
+.contact-section-header h3 {
+
+    margin: 0 0 4px;
+
+    color: #ffffff;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 17px;
+
+    font-weight: 500;
+
+}
+
+
+.contact-section-header p {
+
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 11px;
+
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.contact-form-group {
+
+    margin-bottom: 18px;
+
+}
+
+
+.contact-form-group label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #cbd5e1;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+}
+
+
+/* =========================================================
+   INPUT WRAPPER
+========================================================= */
+
+.contact-input-wrapper {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+}
+
+
+.contact-input-wrapper > i {
+
+    position: absolute;
+
+    left: 15px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    z-index: 2;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    pointer-events: none;
+
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.contact-input-wrapper input {
+
+    width: 100%;
+
+    height: 45px;
+
+    padding: 0 15px 0 43px;
+
+    box-sizing: border-box;
+
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 10px;
+
+    outline: none;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 12px;
+
+    transition: 0.3s ease;
+
+}
+
+
+.contact-input-wrapper input:focus {
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+
+}
+
+
+.contact-input-wrapper input::placeholder {
+
+    color: #64748b;
+
+}
+
+
+.contact-input-wrapper input[readonly] {
+
+    color: #94a3b8;
+
+    background: rgba(255, 255, 255, 0.025);
+
+    cursor: not-allowed;
+
+}
+
+
+/* =========================================================
+   ACTION BUTTON
+========================================================= */
+
+.contact-action-btn {
+
+    min-width: 170px;
+
+    height: 42px;
+
+    padding: 0 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #00c853
+        );
+
+    border: none;
+
+    border-radius: 10px;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
+
+}
+
+
+.contact-action-btn:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.25);
+
+}
+
+
+.contact-action-btn:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+}
+
+
+/* =========================================================
+   OTP SECTION
+========================================================= */
+
+.otp-section {
+
+    margin-top: 22px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+
+}
+
+
+/* =========================================================
+   OTP ACTIONS
+========================================================= */
+
+.otp-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+
+}
+
+
+/* =========================================================
+   VERIFY OTP BUTTON
+========================================================= */
+
+.verify-otp-btn {
+
+    height: 42px;
+
+    padding: 0 20px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #00c853
+        );
+
+    border: none;
+
+    border-radius: 10px;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
+
+}
+
+
+.verify-otp-btn:hover {
+
+    transform: translateY(-2px);
+
+}
+
+
+/* =========================================================
+   RESEND OTP BUTTON
+========================================================= */
+
+.resend-otp-btn {
+
+    height: 42px;
+
+    padding: 0 20px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    color: #cbd5e1;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 10px;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
+
+}
+
+
+.resend-otp-btn:hover {
+
+    color: #ffffff;
+
+    border-color: #2563eb;
+
+}
+
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.contact-divider {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin: 28px 0;
+
+    color: #64748b;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 11px;
+
+}
+
+
+.contact-divider::before,
+.contact-divider::after {
+
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+}
+
+
+.contact-divider span {
+
+    padding: 0 5px;
+
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.contact-page-actions {
+
+    display: flex;
+
+    justify-content: center;
+
+    margin-top: 30px;
+
+}
+
+
+.contact-back-btn {
+
+    height: 42px;
+
+    padding: 0 20px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    color: #cbd5e1;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 12px;
+
+    transition: 0.3s ease;
+
+}
+
+
+.contact-back-btn:hover {
+
+    color: #ffffff;
+
+    border-color: #2563eb;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .edit-contact-page {
+
+        padding: 10px;
+
+    }
+
+
+    .edit-contact-card {
+
+        padding: 20px;
+
+    }
+
+
+    .contact-section {
+
+        padding: 18px;
+
+    }
+
+
+    .otp-actions {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .verify-otp-btn,
+    .resend-otp-btn {
+
+        width: 100%;
+
+    }
+
+}
