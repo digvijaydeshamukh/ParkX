@@ -5,7 +5,6 @@ from drf_spectacular.utils import extend_schema,OpenApiResponse
 from rest_framework.response import Response
 from rest_framework import status
 
-
 from ..models import (
     Vehicle,
 )
@@ -299,13 +298,6 @@ class SetDefaultVehicleView(APIView):
                 },
                 status=status.HTTP_404_NOT_FOUND
             )
-
-        Vehicle.objects.filter(
-            user=request.user,
-            is_default=True
-        ).update(
-            is_default=False
-        )
 
         vehicle.is_default = True
 

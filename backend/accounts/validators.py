@@ -28,6 +28,11 @@ def password_validator(value):
     if not re.search(r"[A-Z]",value):
         raise ValidationError("Password must contain one uppercase letter.")
 
+    if not re.search(r"[a-z]", value):
+        raise ValidationError(
+            "Password must contain one lowercase letter."
+        )
+
     if not re.search(r"\d",value):
         raise ValidationError("Password must contain atleast one digit.")
 

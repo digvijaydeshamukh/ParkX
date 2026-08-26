@@ -14,6 +14,7 @@ from .utils import (
     verify_otp_hash,
     generate_unique_username,
 )
+from django.http import Http404
 from django.utils import timezone
 from .email import send_registration_otp,send_password_reset_otp
 from datetime import timedelta
@@ -23,6 +24,8 @@ from django.db import transaction
 from rest_framework_simplejwt.tokens import UntypedToken,AccessToken
 from rest_framework_simplejwt.exceptions import TokenError
 from .sms import send_sms_otp
+from django.core.exceptions import ObjectDoesNotExist
+from parking.models import ParkingArea
 
 def get_pending_registration(email):
     """
@@ -906,3 +909,343 @@ def verify_contact_change(user, otp):
     contact_otp.delete()
 
     return user
+
+# Creates Parking Owner
+def create_parking_owner(validated_data):
+
+    email = validated_data["email"].lower()
+
+    if User.objects.filter(
+        email__iexact=email
+    ).exists():
+
+        raise ValidationError({
+            "email": [
+                "Email is already registered."
+            ]
+        })
+
+    if User.objects.filter(
+        phone=validated_data["phone"],
+        phone_verified=True
+    ).exists():
+
+        raise ValidationError({
+            "phone": [
+                "Phone number already registered."
+            ]
+        })
+
+    user = User.objects.create(
+        username=generate_unique_username(),
+        first_name=validated_data["first_name"],
+        last_name=validated_data["last_name"],
+        email=email,
+        phone=validated_data["phone"],
+        phone_verified=False,
+        password=hash_password(
+            validated_data["password"]
+        ),
+        role=Roles.PARKING_OWNER,
+        is_active=True,
+    )
+
+    return user
+
+# Promote user to parking owner
+def promote_user_to_parking_owner(user_id):
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        raise Http404("User not found.")
+
+    if user.role == Roles.PARKING_OWNER:
+        raise ValidationError({
+            "role": [
+                "User is already a parking owner."
+            ]
+        })
+
+    if user.role != Roles.VEHICLE_OWNER:
+        raise ValidationError({
+            "role": [
+                "Only vehicle owners can be promoted to parking owner."
+            ]
+        })
+
+    user.role = Roles.PARKING_OWNER
+
+    user.save(
+        update_fields=[
+            "role",
+            "updated_at",
+        ]
+    )
+
+    return user
+
+# Demote Parking User
+def demote_parking_owner(user):
+    """
+    Demotes a parking owner back to vehicle owner.
+    """
+
+    if user.role != Roles.PARKING_OWNER:
+        raise ValidationError({
+            "role": [
+                "User is not a parking owner."
+            ]
+        })
+
+    user.role = Roles.VEHICLE_OWNER
+
+    user.save(
+        update_fields=[
+            "role",
+            "updated_at",
+        ]
+    )
+
+    return user
+
+# Deletes Parking Owner
+def delete_parking_owner(user):
+    """
+    Deletes a parking owner account.
+    """
+
+    if user.role != Roles.PARKING_OWNER:
+        raise ValidationError({
+            "role": [
+                "User is not a parking owner."
+            ]
+        })
+
+    user.delete()
+
+# Deletes Any User
+def delete_user(user):
+    """
+    Deletes a user account.
+    """
+
+    user.delete()
+
+
+def resolve_parking_ownership(
+    user,
+    decisions,
+    operation,
+):
+    """
+    Resolves parking ownership before a parking owner
+    is demoted or deleted.
+
+    Rules:
+
+    Demotion:
+        - Reassigned area -> assigned to the new parking owner + active
+        - Deactivated area -> owner is set to NULL + inactive
+        - Unspecified area -> owner is set to NULL + inactive
+
+    Deletion:
+        - Reassigned area -> assigned to the new parking owner + active
+        - Deactivated area -> owner is set to NULL + inactive
+        - Unspecified area -> owner is set to NULL + inactive
+
+    Existing bookings are not modified.
+    """
+
+    if operation not in ["demote", "delete"]:
+        raise ValidationError({
+            "operation": [
+                "Invalid ownership operation."
+            ]
+        })
+
+    if user.role != Roles.PARKING_OWNER:
+        raise ValidationError({
+            "role": [
+                "User is not a parking owner."
+            ]
+        })
+
+    parking_areas = ParkingArea.objects.filter(
+        owner=user
+    )
+
+    parking_area_map = {
+        area.id: area
+        for area in parking_areas
+    }
+
+    decision_map = {
+        decision["parking_area_id"]: decision
+        for decision in decisions
+    }
+
+    # Make sure every submitted area belongs
+    # to the owner being demoted/deleted.
+    invalid_area_ids = (
+        set(decision_map.keys())
+        - set(parking_area_map.keys())
+    )
+
+    if invalid_area_ids:
+        raise ValidationError({
+            "parking_area_id": [
+                "One or more parking areas do not belong "
+                "to this parking owner."
+            ]
+        })
+
+    resolved_areas = []
+
+    with transaction.atomic():
+
+        for area in parking_areas:
+
+            decision = decision_map.get(area.id)
+
+            # ==========================================
+            # NO DECISION
+            # ==========================================
+
+            if not decision:
+
+                area.is_active = False
+                area.owner = None
+
+                area.save(
+                    update_fields=[
+                        "owner",
+                        "is_active",
+                        "updated_at",
+                    ]
+                )
+
+                resolved_areas.append({
+                    "id": area.id,
+                    "name": area.name,
+                    "action": "deactivated",
+                })
+
+                continue
+
+            action = decision["action"]
+
+            # ==========================================
+            # DEACTIVATE
+            # ==========================================
+
+            if action == "deactivate":
+
+                area.is_active = False
+                area.owner = None
+
+                area.save(
+                    update_fields=[
+                        "owner",
+                        "is_active",
+                        "updated_at",
+                    ]
+                )
+
+                resolved_areas.append({
+                    "id": area.id,
+                    "name": area.name,
+                    "action": "deactivated",
+                })
+
+                continue
+
+            # ==========================================
+            # REASSIGN
+            # ==========================================
+
+            if action == "reassign":
+
+                new_owner_id = decision.get(
+                    "new_owner_id"
+                )
+
+                if not new_owner_id:
+                    raise ValidationError({
+                        "new_owner_id": [
+                            "New owner is required for reassignment."
+                        ]
+                    })
+
+                try:
+                    new_owner = User.objects.get(
+                        id=new_owner_id
+                    )
+
+                except User.DoesNotExist:
+                    raise ValidationError({
+                        "new_owner_id": [
+                            "New owner not found."
+                        ]
+                    })
+
+                if new_owner.id == user.id:
+                    raise ValidationError({
+                        "new_owner_id": [
+                            "Parking area cannot be assigned "
+                            "to the current owner."
+                        ]
+                    })
+
+                if new_owner.role != Roles.PARKING_OWNER:
+                    raise ValidationError({
+                        "new_owner_id": [
+                            "Selected user is not a parking owner."
+                        ]
+                    })
+
+                if not new_owner.is_active:
+                    raise ValidationError({
+                        "new_owner_id": [
+                            "Parking area cannot be assigned "
+                            "to an inactive user."
+                        ]
+                    })
+
+                area.owner = new_owner
+                area.is_active = True
+
+                area.save(
+                    update_fields=[
+                        "owner",
+                        "is_active",
+                        "updated_at",
+                    ]
+                )
+
+                resolved_areas.append({
+                    "id": area.id,
+                    "name": area.name,
+                    "action": "reassigned",
+                    "new_owner_id": new_owner.id,
+                })
+
+        # ==========================================
+        # FINAL OWNER OPERATION
+        # ==========================================
+
+        if operation == "demote":
+
+            user.role = Roles.VEHICLE_OWNER
+
+            user.save(
+                update_fields=[
+                    "role",
+                    "updated_at",
+                ]
+            )
+
+        elif operation == "delete":
+
+            user.delete()
+
+    return resolved_areas

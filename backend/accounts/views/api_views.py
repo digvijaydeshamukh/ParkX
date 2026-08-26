@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -6,6 +5,10 @@ from drf_spectacular.utils import extend_schema,OpenApiResponse
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.permissions import IsAdminUser
+from accounts.models import User,Roles
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 
 from ..serializers import (
@@ -41,9 +44,6 @@ from ..serializers import (
     SendPhoneVerificationOTPResponseSerializer,
     ResendPhoneVerificationOTPResponseSerializer,
 
-    # Change Phone number serializers
-    # ChangePhoneNumberSerializer,
-    # ChangePhoneNumberResponseSerializer,
 
     # Contact Change Serializers
     ContactChangeRequestSerializer,
@@ -54,6 +54,20 @@ from ..serializers import (
     # Change Password Serializer
     ChangePasswordSerializer,
     ChangePasswordResponseSerializer,
+
+    # Create/List Parking Owner Serializer
+    CreateParkingOwnerSerializer,
+    ParkingOwnerListResponseSerializer,
+    ParkingOwnerSerializer,
+
+    # Parking Owner Serializer
+    PromoteParkingOwnerResponseSerializer,
+    DemoteParkingOwnerResponseSerializer,
+    DeleteUserResponseSerializer,
+    
+    # Resolve parking area serializer
+    ResolveParkingOwnershipSerializer,
+    ResolveParkingOwnershipResponseSerializer,
 
 )
 from ..services import (
@@ -73,15 +87,24 @@ from ..services import (
     verify_phone_otp,
     resend_phone_verification_otp,
 
-    # Phone Number Change
-    # request_phone_number_change,
-    # verify_phone_number_change,
-
     # Contact Change
     request_contact_change,
     verify_contact_change,
     resend_contact_change_otp,
 
+    # Create Parking Owner
+    create_parking_owner,
+
+    # Parking Owner Operations by admin
+    promote_user_to_parking_owner,
+    demote_parking_owner,
+    delete_parking_owner,
+
+    # Delete any User
+    delete_user,
+
+    # Resolves Parking area ownerships
+    resolve_parking_ownership,
 )
 
 # API views
@@ -141,19 +164,6 @@ class VerifyOTPView(APIView):
             status=status.HTTP_201_CREATED
         )
 
-# Page views
-def register_page(request):
-    return render(request, "register.html")
-
-
-#Home / landing page views
-def home_page(request):
-    return render(request, "home.html")
-
-#Login page
-def login_page(request):
-    return render(request, "login.html")
-
 @extend_schema(
     tags=["Accounts"],
     summary="Login user",
@@ -170,7 +180,7 @@ class LoginView(TokenObtainPairView):
 # Forgot password view
 class ForgotPasswordAPIView(APIView):
     @extend_schema(
-    tags=["Accounts"],
+    tags=["Forgot Password"],
     summary="Request password reset OTP",
     description="Sends a password reset OTP to the user's email if an account exists.",
     request=ForgotPasswordSerializer,
@@ -202,7 +212,7 @@ class ForgotPasswordAPIView(APIView):
 
 # Verify forgot Password
 @extend_schema(
-    tags=["Accounts"],
+    tags=["Forgot Password"],
     summary="Verify password reset OTP",
     description=(
         "Verifies the password reset OTP and returns a short-lived "
@@ -270,27 +280,6 @@ class ResetPasswordAPIView(APIView):
             },
             status=status.HTTP_200_OK,
         )
-
-#Forgot page view
-def forgot_page(request):
-    return render(request, "forgot_password.html")
-
-#Forgot Reset Password page view
-def forgot_reset_password_page(request):
-    return render(request, "forgot_reset_password.html")
-
-#verify otp page view
-def verify_otp_page(request):
-    return render(request, "verify_otp.html")
-
-#Reset password view
-def change_password_page(request):
-    return render(request, "change_password.html")
-
-#Dashboard view
-def dashboard_page(request):
-    return render(request, "dashboard.html")
-
 
 #Resent Otp Api View
 class ResendResetOTPAPIView(APIView):
@@ -416,15 +405,6 @@ class ProfileView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-    
-#Profile page view
-def profile_page(request):
-    return render(request, "profile.html")
-
-#Reset password page view
-def password_reset_page(request):
-    return render(request, "password_reset.html")
-
 
 # phone verification views
 class SendPhoneVerificationOTPView(APIView):
@@ -593,108 +573,7 @@ class ResendPhoneVerificationOTPView(APIView):
             status=status.HTTP_200_OK
         )
 
-# class ChangePhoneNumberView(APIView):
-
-#     permission_classes = [IsAuthenticated]
-
-#     @extend_schema(
-#         tags=["Phone Verification"],
-#         summary="Request phone number change",
-#         description=(
-#             "Starts the phone number change process for the authenticated "
-#             "user. The new phone number is not saved to the user's profile "
-#             "until the OTP sent to the new number is successfully verified."
-#         ),
-#         request=ChangePhoneNumberSerializer,
-#         responses={
-#             200: ChangePhoneNumberResponseSerializer,
-#             400: OpenApiResponse(
-#                 description=(
-#                     "Invalid phone number or the phone number "
-#                     "is already registered."
-#                 )
-#             ),
-#             401: OpenApiResponse(
-#                 description="Authentication credentials were not provided."
-#             ),
-#         },
-#     )
-#     def post(self, request):
-
-#         serializer = ChangePhoneNumberSerializer(
-#             data=request.data
-#         )
-
-#         serializer.is_valid(
-#             raise_exception=True
-#         )
-
-#         request_phone_number_change(
-#             user=request.user,
-#             new_phone=serializer.validated_data["phone"]
-#         )
-
-#         return Response(
-#             {
-#                 "message": (
-#                     "OTP sent successfully to the new phone number."
-#                 )
-#             },
-#             status=status.HTTP_200_OK
-#         )
-
-# class VerifyPhoneNumberChangeView(APIView):
-
-#     permission_classes = [IsAuthenticated]
-
-#     @extend_schema(
-#         tags=["Phone Verification"],
-#         summary="Verify new phone number",
-#         description=(
-#             "Verifies the OTP sent to the new phone number. "
-#             "The new phone number is saved to the user's profile "
-#             "only after successful OTP verification."
-#         ),
-#         request=VerifyPhoneOTPSerializer,
-#         responses={
-#             200: VerifyPhoneOTPResponseSerializer,
-#             400: OpenApiResponse(
-#                 description=(
-#                     "Invalid, expired, or missing OTP."
-#                 )
-#             ),
-#             401: OpenApiResponse(
-#                 description="Authentication credentials were not provided."
-#             ),
-#         },
-#     )
-#     def post(self, request):
-
-#         serializer = VerifyPhoneOTPSerializer(
-#             data=request.data
-#         )
-
-#         serializer.is_valid(
-#             raise_exception=True
-#         )
-
-#         user = verify_phone_number_change(
-#             user=request.user,
-#             otp=serializer.validated_data["otp"]
-#         )
-
-#         return Response(
-#             {
-#                 "message": (
-#                     "Phone number changed and verified successfully."
-#                 ),
-#                 "user": user,
-#             },
-#             status=status.HTTP_200_OK
-#         )
-
 # Contact Change Views
-
 class ContactChangeView(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -747,7 +626,7 @@ class ContactChangeView(APIView):
             status=status.HTTP_200_OK
         )
 
-
+# Verify Contact Change OTP view
 class VerifyContactChangeOTPView(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -805,6 +684,7 @@ class VerifyContactChangeOTPView(APIView):
             response_serializer.data,
             status=status.HTTP_200_OK
         )
+    
 # Resent Otp for contact change
 @extend_schema(
     tags=["Contact Change"],
@@ -864,7 +744,7 @@ class ChangePasswordAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Accounts"],
+        tags=["Change Password"],
         summary="Change authenticated user's password",
         description=(
             "Changes the password of the currently authenticated user. "
@@ -913,10 +793,430 @@ class ChangePasswordAPIView(APIView):
             status=status.HTTP_200_OK,
         )
 
-#verify phone view
-def verify_phone_page(request):
-    return render(request, "verify_phone.html")
+# Create Parking Owner Api View
+class ParkingOwnerListCreateView(APIView):
 
-#edit contact page view
-def edit_contact_page(request):
-    return render(request, "edit_contact.html")
+    permission_classes = [IsAdminUser]
+
+    @extend_schema(
+        tags=["Admin"],
+        summary="Create a parking owner",
+        description=(
+            "Allows an authenticated staff/admin user to create "
+            "a parking owner account."
+        ),
+        request=CreateParkingOwnerSerializer,
+        responses={
+            201: OpenApiResponse(
+                description="Parking owner created successfully."
+            ),
+            400: OpenApiResponse(
+                description="Invalid parking owner data."
+            ),
+            403: OpenApiResponse(
+                description="Admin privileges required."
+            ),
+        },
+    )
+    def post(self, request):
+
+        serializer = CreateParkingOwnerSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        user = create_parking_owner(
+            serializer.validated_data
+        )
+
+        return Response(
+            {
+                "message": "Parking owner created successfully.",
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "email": user.email,
+                    "role": user.role,
+                },
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    @extend_schema(
+        tags=["Admin"],
+        summary="List parking owners",
+        description=(
+            "Returns the total number of parking owners and "
+            "their details. Only authenticated admin users "
+            "can access this endpoint."
+        ),
+        responses={
+            200: ParkingOwnerListResponseSerializer,
+            403: OpenApiResponse(
+                description="Admin privileges required."
+            ),
+        },
+    )
+    def get(self, request):
+
+        parking_owners = User.objects.filter(
+            role=Roles.PARKING_OWNER
+        ).order_by("id")
+
+        serializer = ParkingOwnerSerializer(
+            parking_owners,
+            many=True
+        )
+
+        response_data = {
+            "count": parking_owners.count(),
+            "parking_owners": serializer.data,
+        }
+
+        response_serializer = ParkingOwnerListResponseSerializer(
+            response_data
+        )
+
+        return Response(
+            response_serializer.data,
+            status=status.HTTP_200_OK,
+        )
+
+# Promote Existing User to Parking Owner
+class PromoteParkingOwnerView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    @extend_schema(
+        tags=["Admin"],
+        summary="Promote a vehicle owner to parking owner",
+        description=(
+            "Allows an authenticated staff/admin user to promote "
+            "an existing vehicle owner to parking owner."
+        ),
+        responses={
+            200: PromoteParkingOwnerResponseSerializer,
+            400: OpenApiResponse(
+                description="Invalid promotion request."
+            ),
+            403: OpenApiResponse(
+                description="Admin privileges required."
+            ),
+            404: OpenApiResponse(
+                description="User not found."
+            ),
+        },
+    )
+    def patch(self, request, user_id):
+
+        user = promote_user_to_parking_owner(
+            user_id=user_id
+        )
+
+
+        response_data = {
+            "message": "User promoted to parking owner successfully.",
+            "user": user,
+        }
+
+        response_serializer = PromoteParkingOwnerResponseSerializer(
+            response_data
+        )
+
+        return Response(
+            response_serializer.data,
+            status=status.HTTP_200_OK,
+        )
+        
+# Demote To vehicle owner
+class DemoteParkingOwnerView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    @extend_schema(
+        tags=["Admin"],
+        summary="Demote a parking owner",
+        description=(
+            "Demotes a parking owner to vehicle owner after resolving "
+            "ownership of all parking areas. Areas can be reassigned "
+            "to another parking owner or deactivated. Any unspecified "
+            "area is automatically deactivated."
+        ),
+        request=ResolveParkingOwnershipSerializer,
+        responses={
+            200: ResolveParkingOwnershipResponseSerializer,
+            400: OpenApiResponse(
+                description="Invalid ownership resolution."
+            ),
+            403: OpenApiResponse(
+                description="Admin privileges required."
+            ),
+            404: OpenApiResponse(
+                description="User not found."
+            ),
+        },
+    )
+    def patch(self, request, user_id):
+
+        user = User.objects.filter(
+            id=user_id
+        ).first()
+
+        if not user:
+            return Response(
+                {
+                    "detail": "User not found."
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if user.id == request.user.id:
+            return Response(
+                {
+                    "detail": "You cannot demote yourself."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = ResolveParkingOwnershipSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        resolved_areas = resolve_parking_ownership(
+            user=user,
+            decisions=serializer.validated_data["decisions"],
+            operation="demote",
+        )
+
+        return Response(
+            {
+                "message": "Parking owner demoted successfully.",
+                "demoted": True,
+                "parking_areas": resolved_areas,
+            },
+            status=status.HTTP_200_OK,
+        )
+    
+# Delete Parking owner
+class DeleteParkingOwnerView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    @extend_schema(
+        tags=["Admin"],
+        summary="Delete a parking owner",
+        description=(
+            "Deletes a parking owner after resolving ownership of "
+            "all parking areas. Areas can be reassigned to another "
+            "parking owner or deactivated. Any unspecified area "
+            "is automatically deactivated."
+        ),
+        request=ResolveParkingOwnershipSerializer,
+        responses={
+            200: ResolveParkingOwnershipResponseSerializer,
+            400: OpenApiResponse(
+                description="Invalid ownership resolution."
+            ),
+            403: OpenApiResponse(
+                description="Admin privileges required."
+            ),
+            404: OpenApiResponse(
+                description="User not found."
+            ),
+        },
+    )
+    def delete(self, request, user_id):
+
+        user = User.objects.filter(
+            id=user_id
+        ).first()
+
+        if not user:
+            return Response(
+                {
+                    "detail": "User not found."
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if user.id == request.user.id:
+            return Response(
+                {
+                    "detail": "You cannot delete yourself."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = ResolveParkingOwnershipSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        resolved_areas = resolve_parking_ownership(
+            user=user,
+            decisions=serializer.validated_data["decisions"],
+            operation="delete",
+        )
+
+        return Response(
+            {
+                "message": "Parking owner deleted successfully.",
+                "deleted": True,
+                "parking_areas": resolved_areas,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+# Delete any User
+class DeleteUserView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    @extend_schema(
+        tags=["Admin"],
+        summary="Delete a user",
+        description="Deletes a specific user account.",
+        responses={
+            200: DeleteUserResponseSerializer,
+            403: OpenApiResponse(
+                description="Admin privileges required."
+            ),
+            404: OpenApiResponse(
+                description="User not found."
+            ),
+        },
+    )
+    def delete(self, request, user_id):
+
+        user = User.objects.filter(
+            id=user_id
+        ).first()
+
+        if not user:
+            return Response(
+                {
+                    "detail": "User not found."
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if user.id == request.user.id:
+            return Response(
+                {
+                    "detail": "You cannot delete yourself."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        delete_user(user)
+
+        return Response(
+            {
+                "message": "User deleted successfully."
+            },
+            status=status.HTTP_200_OK,
+        )
+
+# Resolve Parking Ownership view
+class ResolveParkingOwnershipView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    @extend_schema(
+        tags=["Admin"],
+        summary="Resolve parking ownership before owner removal",
+        description=(
+            "Allows an admin to resolve every parking area owned by a "
+            "parking owner before demotion or deletion. Each area can "
+            "either be reassigned to another parking owner or deactivated. "
+            "Any unspecified area is automatically deactivated."
+        ),
+        request=ResolveParkingOwnershipSerializer,
+        responses={
+            200: ResolveParkingOwnershipResponseSerializer,
+            400: OpenApiResponse(
+                description="Invalid ownership resolution."
+            ),
+            403: OpenApiResponse(
+                description="Admin privileges required."
+            ),
+            404: OpenApiResponse(
+                description="Parking owner not found."
+            ),
+        },
+    )
+    def patch(self, request, user_id):
+
+        user = User.objects.filter(
+            id=user_id
+        ).first()
+
+        if not user:
+            return Response(
+                {
+                    "detail": "User not found."
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if user.id == request.user.id:
+            return Response(
+                {
+                    "detail": (
+                        "You cannot demote or delete yourself."
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = ResolveParkingOwnershipSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        resolved_areas = resolve_parking_ownership(
+            user=user,
+            decisions=serializer.validated_data.get(
+                "decisions",
+                []
+            ),
+            operation=serializer.validated_data["operation"],
+        )
+
+        response_data = {
+            "message": (
+                "Parking ownership resolved successfully."
+            ),
+            "parking_areas": resolved_areas,
+        }
+
+        if serializer.validated_data["operation"] == "demote":
+            response_data["demoted"] = True
+        else:
+            response_data["deleted"] = True
+
+        response_serializer = (
+            ResolveParkingOwnershipResponseSerializer(
+                response_data
+            )
+        )
+
+        return Response(
+            response_serializer.data,
+            status=status.HTTP_200_OK,
+        )
